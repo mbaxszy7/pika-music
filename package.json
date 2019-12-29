@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "dec:client:csr": "webpack-dev-server --config 'webpack.client.js'"
   },
   "husky": {
     "hooks": {
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "@commitlint/cli": "^8.2.0",
@@ -62,6 +64,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
@@ -71,6 +74,22 @@
   },
   "dependencies": {
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "styled-components": "^4.4.1"
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "last 2 version",
+      "not android <= 6",
+      "not ie<=11",
+      "not ie_mob<=11",
+      "ios >= 11.3",
+      "safari >= 10",
+      "not op_mini all"
+    ],
+    "ssr": [
+      "node 12"
+    ]
   }
 }
