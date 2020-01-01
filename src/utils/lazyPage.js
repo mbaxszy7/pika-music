@@ -19,7 +19,8 @@ function Loading(props) {
 }
 
 export const Home = Loadable({
-  loader: () => import(/* webpackChunkName: 'home'  */ "../client/Home.jsx"),
+  loader: () =>
+    import(/* webpackChunkName: 'home'  */ "../client/Home/Home.jsx"),
   loading: Loading,
   delay: 300,
 })

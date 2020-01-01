@@ -10,6 +10,14 @@ function findPara(param) {
   return result
 }
 
+const setWebpackPlugins = () => {
+  const plugins = []
+  if (findPara("render") === "server") {
+    plugins.push(new CleanWebpackPlugin())
+  }
+  return plugins
+}
+
 exports.isDEV = process.env.NODE_ENV
 exports.babelPlugins = [
   "@babel/plugin-syntax-dynamic-import",
@@ -28,7 +36,7 @@ exports.webpackResolve = {
   extensions: [".jsx", ".js", ".mjs"],
 }
 
-exports.webpackPlugins = [findPara("render") && new CleanWebpackPlugin()]
+exports.webpackPlugins = setWebpackPlugins()
 
 exports.babelPresets = env => {
   const common = [

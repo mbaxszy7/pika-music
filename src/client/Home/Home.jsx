@@ -3,7 +3,6 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
-import { awaitWrapper } from "../utils"
 
 const Home = () => {
   const newList = useSelector(state => state.home.newsList)
@@ -15,7 +14,7 @@ const Home = () => {
     })
   return (
     <>
-      <div>this is home lalall ffxsxsxcsdcsdcccceeexsxs</div>
+      <div>this is home lalall ffgvhggv</div>
       <ul>
         {newList.map((news, index) => (
           <li key={index}>{news}</li>
@@ -26,20 +25,5 @@ const Home = () => {
     </>
   )
 }
-Home.loadData = async store => {
-  const fakeFetchData = new Promise(resolve => {
-    setTimeout(() => {
-      resolve(["rrrrr", "llllll"])
-    }, 2000)
-  })
 
-  const [error, data] = await awaitWrapper(fakeFetchData)
-  if (error) {
-    return Promise.reject(error)
-  }
-  store.dispatch({
-    type: "ADD_NEWS",
-    data,
-  })
-}
 export default Home

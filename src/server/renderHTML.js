@@ -16,14 +16,13 @@ import { getServerStore } from "../store/storeCreator"
 const setInitialDataToStore = async req => {
   const store = getServerStore(req)
   const matchedRoutes = matchRoutes(routes, req.path)
-
   await Promise.all(
     matchedRoutes.map(item =>
       Promise.resolve(item.route?.loadData?.(store) ?? null),
     ),
   ).catch(error => {
     // eslint-disable-next-line no-console
-    console.log("renderHTML 41,", error)
+    console.error("renderHTML 41,", error)
   })
 
   return store
