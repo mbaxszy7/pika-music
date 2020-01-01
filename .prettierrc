@@ -2,5 +2,5 @@
   "trailingComma": "all",
   "semi": false,
   "useTabs": false,
-  "singleQuote": true
+  "singleQuote": false
 }
