@@ -22,7 +22,7 @@ module.exports = {
     path: path.resolve(__dirname, "public/server"),
   },
   resolve: webpackResolve,
-  externals: ["react-loadable", nodeExternals()],
+  externals: [nodeExternals()],
   module: {
     rules: [
       {
