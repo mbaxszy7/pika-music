@@ -1,0 +1,93 @@
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/react-in-jsx-scope */
+import React from "react"
+import path from "path"
+import { Provider } from "react-redux"
+import { StaticRouter } from "react-router-dom"
+import { Reset } from "styled-reset"
+import { matchRoutes, renderRoutes } from "react-router-config"
+import { renderToString } from "react-dom/server"
+import { ChunkExtractor, ChunkExtractorManager } from "@loadable/server"
+import { ServerStyleSheet, StyleSheetManager } from "styled-components"
+import routes from "../routes"
+import { getServerStore } from "../store/storeCreator"
+
+const setInitialDataToStore = async req => {
+  const store = getServerStore(req)
+  const matchedRoutes = matchRoutes(routes, req.path)
+
+  await Promise.all(
+    matchedRoutes.map(item =>
+      Promise.resolve(item.route?.loadData?.(store) ?? null),
+    ),
+  ).catch(error => {
+    console.log("renderHTML 41,", error)
+  })
+
+  return store
+}
+
+const renderHTML = async (req, staticContext) => {
+  const store = await setInitialDataToStore(req)
+  const statsFile = path.resolve(
+    __dirname,
+    "../../dist/client/loadable-stats.json",
+  )
+  const extractor = new ChunkExtractor({
+    statsFile,
+    outputPath: path.resolve(__dirname, "dist/dist/client"),
+  })
+  const sheet = new ServerStyleSheet()
+  let clientContent = ""
+  let styleTags = ""
+  let scriptTags = ""
+  try {
+    clientContent = renderToString(
+      <ChunkExtractorManager extractor={extractor}>
+        <StyleSheetManager sheet={sheet.instance}>
+          <>
+            <Reset />
+            <Provider store={store}>
+              <StaticRouter location={req.path} context={staticContext}>
+                {/* 渲染 / 根路由 */}
+                {renderRoutes(routes)}
+              </StaticRouter>
+            </Provider>
+          </>
+        </StyleSheetManager>
+      </ChunkExtractorManager>,
+    )
+    styleTags = sheet.getStyleTags()
+    scriptTags = extractor.getScriptElements()
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log("renderHTML 70,", error)
+  } finally {
+    sheet.seal()
+  }
+  return `
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>music-motion</title>
+    </head>
+    ${styleTags}
+    <body>
+      <div id="root">${clientContent}</div>
+          <!--数据的注水cdcdc-->
+      <script>
+            window.__INITIAL_STATE__ = {
+              state: ${JSON.stringify(store.getState())}
+            }
+      </script>
+      <script src="/public/client.js"></script>
+      ${scriptTags}
+    </body>
+  </html>
+ `
+}
+
+export default renderHTML

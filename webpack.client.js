@@ -1,35 +1,43 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require("path")
+const LoadablePlugin = require("@loadable/webpack-plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+const webpack = require("webpack")
+const {
+  isDEV,
+  babelPlugins,
+  babelPresets,
+  webpackResolve,
+  getCommandArg,
+} = require("./webpack.common.js")
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/client/index.js'),
+  entry: path.resolve(__dirname, "./src/client/index.js"),
   output: {
-    filename: 'client.js',
-    path: path.resolve(__dirname, 'public'),
+    publicPath: "/dist/client/",
+    // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
+    filename: "client.js",
+    chunkFilename: `[name]-[${isDEV ? "chunkhash" : "contenthash"}].js`,
+    path: path.resolve(__dirname, "dist/client"),
   },
   devServer: {
-    port: 9000,
+    historyApiFallback: true,
+    port: 8010,
     compress: true,
+  },
+  resolve: {
+    ...webpackResolve,
+    alias: {
+      "react-dom": "@hot-loader/react-dom",
+    },
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
+        loader: "babel-loader",
         options: {
-          presets: [
-            [
-              '@babel/preset-env',
-              {
-                useBuiltIns: 'usage',
-                modules: false,
-                debug: true,
-                corejs: { version: 3, proposals: true },
-              },
-            ],
-            '@babel/preset-react',
-          ],
-          plugins: ['@babel/plugin-proposal-class-properties'],
+          presets: [babelPresets(), "@babel/preset-react"],
+          plugins: [...babelPlugins, "react-hot-loader/babel"],
         },
         exclude: /node_modules/,
       },
@@ -37,8 +45,12 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'music-motion',
-      template: path.resolve(__dirname, 'index.html'),
+      title: "music-motion",
+      template: path.resolve(__dirname, "./src/index.html"),
     }),
+    new webpack.DefinePlugin({
+      RENDER_OPTS: JSON.stringify(getCommandArg("render")),
+    }),
+    new LoadablePlugin(),
   ],
 }
