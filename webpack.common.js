@@ -1,5 +1,15 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
+function findPara(param) {
+  let result = ""
+  process.argv.forEach(argv => {
+    if (argv.indexOf(`--${param}`) === -1) return
+    // eslint-disable-next-line prefer-destructuring
+    result = argv.split("=")[1]
+  })
+  return result
+}
+
 exports.isDEV = process.env.NODE_ENV
 exports.babelPlugins = [
   "@babel/plugin-syntax-dynamic-import",
@@ -18,7 +28,7 @@ exports.webpackResolve = {
   extensions: [".jsx", ".js", ".mjs"],
 }
 
-exports.webpackPlugins = [new CleanWebpackPlugin()]
+exports.webpackPlugins = [findPara("render") && new CleanWebpackPlugin()]
 
 exports.babelPresets = env => {
   const common = [
@@ -36,16 +46,6 @@ exports.babelPresets = env => {
     }
   }
   return common
-}
-
-function findPara(param) {
-  let result = ""
-  process.argv.forEach(argv => {
-    if (argv.indexOf(`--${param}`) === -1) return
-    // eslint-disable-next-line prefer-destructuring
-    result = argv.split("=")[1]
-  })
-  return result
 }
 
 exports.getCommandArg = findPara

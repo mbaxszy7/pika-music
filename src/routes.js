@@ -1,6 +1,7 @@
 import { Details, Home } from "./utils/lazyPage"
 import Header from "./client/Header"
 
+
 const routes = [
   {
     component: Header,

@@ -14,7 +14,7 @@ const {
 module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
   output: {
-    publicPath: "public/",
+    publicPath: "/public/",
     // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     filename: "client.js",
     chunkFilename: `[name]-[${isDEV ? "chunkhash" : "contenthash"}].js`,
@@ -24,7 +24,7 @@ module.exports = {
     historyApiFallback: true,
     port: 8010,
     compress: true,
-    contentBase: "public/",
+    contentBase: path.join(__dirname, "./public"),
   },
   resolve: {
     ...webpackResolve,
