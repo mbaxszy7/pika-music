@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable react/react-in-jsx-scope */
 import React from "react"
-// import Loadable from "react-loadable"
-// import { getBundles } from "react-loadable/webpack"
+import Loadable from "react-loadable"
+import { getBundles } from "react-loadable/webpack"
 import { Provider } from "react-redux"
 import { StaticRouter } from "react-router-dom"
 import { Reset } from "styled-reset"
@@ -11,15 +11,21 @@ import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
 import routes from "../routes"
 import { getServerStore } from "../store/storeCreator"
-// import stats from "../../public/react-loadable.json"
+import { isCSR, isDEV } from "../utils"
+import createAxiosInstance from "../utils/axiosInstance"
+import stats from "../../public/react-loadable.json"
 
-const setInitialDataToStore = async req => {
-  const store = getServerStore(req)
-  const matchedRoutes = matchRoutes(routes, req.path)
+const setInitialDataToStore = async ctx => {
+  const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
+  const store = getServerStore(axiosInstance)
+  const matchedRoutes = matchRoutes(routes, ctx.request.path)
+
   await Promise.all(
-    matchedRoutes.map(item =>
-      Promise.resolve(item.route?.loadData?.(store) ?? null),
-    ),
+    matchedRoutes.map(item => {
+      return Promise.resolve(
+        item.route?.loadData?.(store, axiosInstance) ?? null,
+      )
+    }),
   ).catch(error => {
     // eslint-disable-next-line no-console
     console.error("renderHTML 41,", error)
@@ -28,33 +34,33 @@ const setInitialDataToStore = async req => {
   return store
 }
 
-const renderHTML = async (req, staticContext) => {
-  const store = await setInitialDataToStore(req)
+const renderHTML = async (ctx, staticContext) => {
+  const store = await setInitialDataToStore(ctx)
   const sheet = new ServerStyleSheet()
   let clientContent = ""
   let styleTags = ""
-  // let modules = []
-  // let dynamicBundles = []
+  let modules = []
+  let dynamicBundles = []
   try {
     clientContent = renderToString(
-      // <Loadable.Capture report={moduleName => modules.push(moduleName)}>
-      <StyleSheetManager sheet={sheet.instance}>
-        <>
-          <Reset />
-          <Provider store={store}>
-            <StaticRouter location={req.path} context={staticContext}>
-              {/* 渲染 / 根路由 */}
-              {renderRoutes(routes)}
-            </StaticRouter>
-          </Provider>
-        </>
-      </StyleSheetManager>,
-      // </Loadable.Capture>,
+      <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+        <StyleSheetManager sheet={sheet.instance}>
+          <>
+            <Reset />
+            <Provider store={store}>
+              <StaticRouter location={ctx.request.path} context={staticContext}>
+                {/* 渲染 / 根路由 */}
+                {renderRoutes(routes)}
+              </StaticRouter>
+            </Provider>
+          </>
+        </StyleSheetManager>
+      </Loadable.Capture>,
     )
-    // const bundles = getBundles(stats, modules)
-    // dynamicBundles = bundles.map(bundle => {
-    //   return `<script src="/public/${bundle.file}"></script>`
-    // })
+    const bundles = getBundles(stats, modules)
+    dynamicBundles = bundles.map(bundle => {
+      return `<script src="/public/${bundle.file}"></script>`
+    })
 
     styleTags = sheet.getStyleTags()
   } catch (error) {
@@ -81,7 +87,8 @@ const renderHTML = async (req, staticContext) => {
               state: ${JSON.stringify(store.getState())}
             }
       </script>
-      <script src="/public/client.js"></script>
+      ${dynamicBundles.join("\n")}
+      <script scr="/public/client.js"></script>
     </body>
   </html>
  `

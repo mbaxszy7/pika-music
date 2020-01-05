@@ -1,22 +1,28 @@
+/* eslint-disable class-methods-use-this */
+import ConnectCompReducer from "../../utils/connectPageReducer"
 import { awaitWrapper } from "../../utils"
 
-const fetchCompData = async store => {
-  const fakeFetchData = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(["rrrrr", "llllll"])
-    }, 2000)
-  })
-
-  const [error, data] = await awaitWrapper(fakeFetchData)
-
-  if (error) {
-    //  handle error in server setInitialDataToStore
-    return Promise.reject(error)
+class ConnectHomeReducer extends ConnectCompReducer {
+  requestSongs(axiosInstance) {
+    return axiosInstance.get("api/search", {
+      params: {
+        keywords: "大海",
+      },
+    })
   }
-  store.dispatch({
-    type: "ADD_NEWS",
-    data,
-  })
+
+  getInitialData = async (store, axiosInstance) => {
+    const [error, res] = await awaitWrapper(this.requestSongs)(axiosInstance)
+
+    if (error) {
+      //  handle error in server setInitialDataToStore
+      return Promise.reject(error)
+    }
+    store.dispatch({
+      type: "ADD_SONGS",
+      data: res.data.result.songs.slice(0, 10).map(song => song.name),
+    })
+  }
 }
 
-export default fetchCompData
+export default ConnectHomeReducer

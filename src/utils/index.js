@@ -1,11 +1,17 @@
-/* eslint-disable import/prefer-default-export */
-export const awaitWrapper = async pFn => {
-  try {
-    const res = await Promise.resolve(typeof pFn === "function" ? pFn() : pFn)
-    return [null, res]
-  } catch (error) {
-    return [error, null]
+export const awaitWrapper = pFn => {
+  return async (...args) => {
+    try {
+      const res = await Promise.resolve(
+        typeof pFn === "function" ? pFn(...args) : pFn,
+      )
+      return [null, res]
+    } catch (error) {
+      return [error, null]
+    }
   }
 }
 
+// eslint-disable-next-line no-undef
 export const isCSR = RENDER_OPTS === "client"
+
+export const isDEV = process.env.NODE_ENV === "development"

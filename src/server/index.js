@@ -12,7 +12,7 @@ app.use(mount("/public", serve("./public")))
 
 app.use(async ctx => {
   const staticContext = {}
-  const html = await renderHTML(ctx.request, staticContext)
+  const html = await renderHTML(ctx, staticContext)
   ctx.type = "text/html; charset=utf-8"
   ctx.body = html
 })

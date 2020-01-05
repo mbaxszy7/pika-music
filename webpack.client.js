@@ -21,11 +21,17 @@ module.exports = {
     path: path.resolve(__dirname, "public"),
   },
   devServer: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:9000",
+      },
+    },
     historyApiFallback: true,
     port: 8010,
     compress: true,
     contentBase: path.join(__dirname, "./public"),
   },
+  devtool: "cheap-module-eval-source-map",
   resolve: {
     ...webpackResolve,
     alias: {

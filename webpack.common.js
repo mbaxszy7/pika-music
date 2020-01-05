@@ -21,14 +21,10 @@ const setWebpackPlugins = () => {
 exports.isDEV = process.env.NODE_ENV
 exports.babelPlugins = [
   "@babel/plugin-syntax-dynamic-import",
-  "@babel/plugin-proposal-class-properties",
   "@babel/plugin-proposal-optional-chaining",
   "@babel/plugin-proposal-nullish-coalescing-operator",
   "babel-plugin-styled-components",
-  [
-    "@babel/plugin-syntax-decorators",
-    { legacy: false, decoratorsBeforeExport: false },
-  ],
+  "@babel/plugin-proposal-class-properties",
   "react-loadable/babel",
 ]
 

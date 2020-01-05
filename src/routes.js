@@ -1,6 +1,6 @@
 import { Details, Home } from "./utils/lazyPage"
 import Header from "./client/Header"
-import fetchHomeData from "./client/Home/fetchHomeData"
+import WithFetchHomeData from "./client/Home/fetchHomeData"
 
 const routes = [
   {
@@ -9,12 +9,12 @@ const routes = [
       {
         path: "/",
         exact: true,
-        loadData: fetchHomeData,
+        loadData: new WithFetchHomeData().getInitialData,
         component: Home,
       },
       {
         path: "/home",
-        loadData: fetchHomeData,
+        loadData: new WithFetchHomeData().getInitialData,
         component: Home,
       },
       {
