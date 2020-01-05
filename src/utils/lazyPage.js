@@ -27,7 +27,7 @@ export const Home = Loadable({
 
 export const Details = Loadable({
   loader: () =>
-    import(/* webpackChunkName: 'details'  */ "../client/Details.jsx"),
+    import(/* webpackChunkName: 'details'  */ "../client/Details/Details.jsx"),
   loading: Loading,
   delay: 300,
 })
