@@ -10,7 +10,6 @@ const Home = () => {
   const songs = useSelector(state => state.home.songs)
   const dispatch = useDispatch()
   const testDispatch = () => {
-    console.log("clicked")
     dispatch({
       type: "ADD_NEWS",
       data: "ooooo",

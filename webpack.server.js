@@ -1,6 +1,5 @@
 const path = require("path")
 const nodeExternals = require("webpack-node-externals")
-const { ReactLoadablePlugin } = require("react-loadable/webpack")
 const webpack = require("webpack")
 const {
   isDEV,
@@ -41,9 +40,6 @@ module.exports = {
     ...webpackPlugins,
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),
-    }),
-    new ReactLoadablePlugin({
-      filename: "./public/react-loadable.json",
     }),
   ],
   optimization: {

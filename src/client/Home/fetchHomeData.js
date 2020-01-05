@@ -1,9 +1,10 @@
+/* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import ConnectCompReducer from "../../utils/connectPageReducer"
 import { awaitWrapper } from "../../utils"
 
 class ConnectHomeReducer extends ConnectCompReducer {
-  requestSongs(axiosInstance) {
+  requestSongs = axiosInstance => {
     return axiosInstance.get("api/search", {
       params: {
         keywords: "大海",

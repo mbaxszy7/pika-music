@@ -30,7 +30,6 @@ const setInitialDataToStore = async ctx => {
     // eslint-disable-next-line no-console
     console.error("renderHTML 41,", error)
   })
-
   return store
 }
 
@@ -39,7 +38,7 @@ const renderHTML = async (ctx, staticContext) => {
   const sheet = new ServerStyleSheet()
   let clientContent = ""
   let styleTags = ""
-  let modules = []
+  const modules = []
   let dynamicBundles = []
   try {
     clientContent = renderToString(
@@ -87,8 +86,8 @@ const renderHTML = async (ctx, staticContext) => {
               state: ${JSON.stringify(store.getState())}
             }
       </script>
-      ${dynamicBundles.join("\n")}
-      <script scr="/public/client.js"></script>
+     ${dynamicBundles.join("")}
+     <script src="/public/client.js"></script>
     </body>
   </html>
  `
