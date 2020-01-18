@@ -8,10 +8,16 @@ import { Provider } from "react-redux"
 import { renderRoutes } from "react-router-config"
 import routes from "../routes"
 import { isCSR } from "../utils"
+import ReactPlaceholderStyle from "../shared/ReactPlaceholder.style"
 
 const App = ({ store }) => (
   <Provider store={store}>
-    {isCSR && <Reset />}
+    {isCSR && (
+      <>
+        <Reset />
+        <ReactPlaceholderStyle />
+      </>
+    )}
     <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
   </Provider>
 )

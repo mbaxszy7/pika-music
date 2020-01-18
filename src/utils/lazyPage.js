@@ -18,22 +18,11 @@ function Loading(props) {
   return null
 }
 
-export const Home = Loadable({
+export const Discover = Loadable({
   loader: () =>
-    import(/* webpackChunkName: 'home'  */ "../client/Home/Home.jsx"),
-  loading: Loading,
-  delay: 300,
-})
-
-export const Details = Loadable({
-  loader: () =>
-    import(/* webpackChunkName: 'details'  */ "../client/Details/Details.jsx"),
-  loading: Loading,
-  delay: 300,
-})
-export const Header = Loadable({
-  loader: () =>
-    import(/* webpackChunkName: 'header'  */ "../client/Header.jsx"),
+    import(
+      /* webpackChunkName: 'discover',  webpackPrefetch:true  */ "../client/pages/Discover/Discover.jsx"
+    ),
   loading: Loading,
   delay: 300,
 })

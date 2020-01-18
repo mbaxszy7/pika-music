@@ -1,16 +1,8 @@
 import axios from "axios"
 
-const createAxiosInstance = ({ ctx, isSSR, isDEV }) => {
+const createAxiosInstance = ({ isDEV }) => {
+  // [isDEV] in csr development means true
   const baseURL = isDEV ? "/" : "http://localhost:9000"
-  if (typeof window === "undefined") {
-    return axios.create({
-      baseURL,
-      headers: {
-        cookie: ctx?.cookies.get() ?? {},
-      },
-    })
-  }
-
   return axios.create({
     baseURL,
   })

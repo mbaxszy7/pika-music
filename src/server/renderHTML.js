@@ -10,21 +10,20 @@ import { matchRoutes, renderRoutes } from "react-router-config"
 import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
 import routes from "../routes"
-import { getServerStore } from "../store/storeCreator"
-import { isCSR, isDEV } from "../utils"
-import createAxiosInstance from "../utils/axiosInstance"
+import getReduxStore from "../store/storeCreator"
+// import { isCSR, isDEV } from "../utils"
+// import createAxiosInstance from "../utils/axiosInstance"
 import stats from "../../public/react-loadable.json"
+import ReactPlaceholderStyle from "../shared/ReactPlaceholder.style"
 
 const setInitialDataToStore = async ctx => {
-  const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
-  const store = getServerStore(axiosInstance)
+  // const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
+  const store = getReduxStore()
   const matchedRoutes = matchRoutes(routes, ctx.request.path)
 
   await Promise.all(
     matchedRoutes.map(item => {
-      return Promise.resolve(
-        item.route?.loadData?.(store, axiosInstance) ?? null,
-      )
+      return Promise.resolve(item.route?.loadData?.(store) ?? null)
     }),
   ).catch(error => {
     // eslint-disable-next-line no-console
@@ -46,6 +45,7 @@ const renderHTML = async (ctx, staticContext) => {
         <StyleSheetManager sheet={sheet.instance}>
           <>
             <Reset />
+            <ReactPlaceholderStyle />
             <Provider store={store}>
               <StaticRouter location={ctx.request.path} context={staticContext}>
                 {/* 渲染 / 根路由 */}

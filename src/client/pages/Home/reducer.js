@@ -3,7 +3,7 @@ import produce from "immer"
 const defaultState = {
   newsList: ["yyy", "uuu", "ppp"],
   name: "frank",
-  playlists: [],
+  // playlists: [],
 }
 
 const homeReducer = produce((draft, action) => {

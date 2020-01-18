@@ -8,7 +8,7 @@
     "commit": "git-cz",
     "build:client": "webpack --render=server --watch --mode=production --config 'webpack.client.js'",
     "build:server": "webpack --render=server --watch --mode=production --config 'webpack.server.js'",
-    "start:client": "webpack-dev-server --mode=development  --hot --render=client  --config 'webpack.client.js'"
+    "start:client": "webpack-dev-server --host 0.0.0.0 --mode=development  --hot --render=client  --config 'webpack.client.js'"
   },
   "husky": {
     "hooks": {
@@ -92,13 +92,17 @@
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "prop-types": "^15.7.2",
+    "quicklink": "^2.0.0-alpha",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-hot-loader": "^4.12.18",
     "react-loadable": "^5.5.0",
+    "react-placeholder": "^3.0.2",
     "react-redux": "^7.1.3",
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.1.2",
+    "react-spring": "^8.0.27",
+    "react-use-gesture": "^7.0.0-beta.9",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",

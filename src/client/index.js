@@ -4,10 +4,10 @@ import React from "react"
 import ReactDOM from "react-dom"
 import Loadable from "react-loadable"
 import App from "./App.jsx"
-import { getClientStore } from "../store/storeCreator.js"
+import getReduxStore from "../store/storeCreator.js"
 import { isCSR } from "../utils"
 
-const store = getClientStore(
+const store = getReduxStore(
   // eslint-disable-next-line no-underscore-dangle
   window.__INITIAL_STATE__?.state ?? {},
 )

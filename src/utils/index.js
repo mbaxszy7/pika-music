@@ -15,3 +15,9 @@ export const awaitWrapper = pFn => {
 export const isCSR = RENDER_OPTS === "client"
 
 export const isDEV = process.env.NODE_ENV === "development"
+
+export const clamp = (num, min, max) => {
+  if (num < min) return min
+  if (num > max) return max
+  return num
+}

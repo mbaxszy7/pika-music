@@ -1,25 +1,16 @@
-import { Details, Home } from "./utils/lazyPage"
-import Header from "./client/Header"
-import WithFetchHomeData from "./client/Home/fetchHomeData"
+import { Discover } from "./utils/lazyPage"
+import Rooter from "./client/Header"
+import discoverPage from "./client/pages/Discover/connectDiscoverReducer"
 
 const routes = [
   {
-    component: Header,
+    component: Rooter,
     routes: [
       {
         path: "/",
         exact: true,
-        loadData: new WithFetchHomeData().getInitialData,
-        component: Home,
-      },
-      {
-        path: "/home",
-        loadData: new WithFetchHomeData().getInitialData,
-        component: Home,
-      },
-      {
-        path: "/details",
-        component: Details,
+        loadData: discoverPage.getInitialData,
+        component: Discover,
       },
     ],
   },

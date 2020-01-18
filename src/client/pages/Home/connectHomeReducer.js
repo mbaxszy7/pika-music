@@ -5,23 +5,15 @@ import ConnectCompReducer from "../../utils/connectPageReducer"
 import { awaitWrapper } from "../../utils"
 
 class ConnectHomeReducer extends ConnectCompReducer {
-  requestPlayLists = axiosInstance => {
-    return url =>
-      axiosInstance
-        .get(url, {
-          params: {
-            limit: 10,
-            order: "new",
-          },
-        })
-        .then(res => res.data.playlists)
+  requestPlayLists = url => {
+    return this.fetcher.get(url).then(res => res.data.playlists)
   }
 
-  getInitialData = async (store, axiosInstance) => {
-    const [error, playlists] = await awaitWrapper(
-      this.requestPlayLists(axiosInstance).bind(null, "/api/top/playlist"),
-    )()
-    console.log("playlists", playlists)
+  getInitialData = async store => {
+    const [error, playlists] = await awaitWrapper(this.requestPlayLists)(
+      "/api/top/playlist?limit=5&order=new",
+    )
+
     if (error) {
       //  handle error in server setInitialDataToStore
       return Promise.reject(error)

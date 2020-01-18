@@ -22,7 +22,7 @@ app.on("error", err => {
   console.error("server error", err)
 })
 
-app.listen(7002, () => {
+app.listen(7004, () => {
   // eslint-disable-next-line no-console
-  console.log("music-motion server is listening on 7002")
+  console.log("music-motion server is listening on 7004")
 })
