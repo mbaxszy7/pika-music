@@ -5,9 +5,9 @@ module.exports = {
     node: true,
   },
   extends: [
+    "prettier",
     "plugin:react/recommended",
     "airbnb",
-    "prettier",
     "plugin:prettier/recommended",
   ],
   globals: {
@@ -22,6 +22,9 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["react", "prettier"],
-  rules: {},
+  plugins: ["prettier", "react-hooks", "react"],
+  rules: {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+  },
 }

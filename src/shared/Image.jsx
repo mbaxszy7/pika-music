@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from "react"
+import { memo, useState, useEffect } from "react"
 
 const ImageLoader = memo(({ url, children }) => {
   const [isLoaded, setLoaded] = useState(false)
@@ -13,7 +13,7 @@ const ImageLoader = memo(({ url, children }) => {
       setLoaded(false)
     }
     image.src = url
-  }, [])
+  }, [url])
 
   return children(isLoaded, url)
 })

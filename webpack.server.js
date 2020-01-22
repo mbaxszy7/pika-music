@@ -8,6 +8,7 @@ const {
   webpackResolve,
   getCommandArg,
   webpackPlugins,
+  commonRules,
 } = require("./webpack.common.js")
 
 module.exports = {
@@ -34,6 +35,7 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
+      ...commonRules(),
     ],
   },
   plugins: [

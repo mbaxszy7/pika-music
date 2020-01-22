@@ -14,7 +14,8 @@ import getReduxStore from "../store/storeCreator"
 // import { isCSR, isDEV } from "../utils"
 // import createAxiosInstance from "../utils/axiosInstance"
 import stats from "../../public/react-loadable.json"
-import ReactPlaceholderStyle from "../shared/ReactPlaceholder.style"
+import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
+import AppTheme from "../shared/AppTheme"
 
 const setInitialDataToStore = async ctx => {
   // const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
@@ -46,12 +47,17 @@ const renderHTML = async (ctx, staticContext) => {
           <>
             <Reset />
             <ReactPlaceholderStyle />
-            <Provider store={store}>
-              <StaticRouter location={ctx.request.path} context={staticContext}>
-                {/* 渲染 / 根路由 */}
-                {renderRoutes(routes)}
-              </StaticRouter>
-            </Provider>
+            <AppTheme>
+              <Provider store={store}>
+                <StaticRouter
+                  location={ctx.request.path}
+                  context={staticContext}
+                >
+                  {/* 渲染 / 根路由 */}
+                  {renderRoutes(routes)}
+                </StaticRouter>
+              </Provider>
+            </AppTheme>
           </>
         </StyleSheetManager>
       </Loadable.Capture>,
@@ -80,7 +86,8 @@ const renderHTML = async (ctx, staticContext) => {
     ${styleTags}
     <body>
       <div id="root">${clientContent}</div>
-          <!--数据的注水cdcdc-->
+      <div id="modal_root"></div>
+          <!--数据的注水-->
       <script>
             window.__INITIAL_STATE__ = {
               state: ${JSON.stringify(store.getState())}

@@ -9,6 +9,7 @@ const {
   babelPresets,
   webpackResolve,
   getCommandArg,
+  commonRules,
 } = require("./webpack.common.js")
 
 module.exports = {
@@ -49,6 +50,7 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
+      ...commonRules(),
     ],
   },
   plugins: [

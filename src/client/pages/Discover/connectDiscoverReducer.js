@@ -17,6 +17,24 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
       )
   }
 
+  requestSearchSuggest = url => {
+    return this.fetcher.get(url).then(res => res.data.result)
+  }
+
+  requestSearchBestMatch = async url => {
+    const result = await this.fetcher.get(url).then(res => res.data.result)
+    if (result) {
+      if (result.orders?.length) {
+        const type = result.orders[0]
+        return { data: result[type], type }
+      }
+    }
+  }
+
+  requestSearch = async url => {
+    return this.fetcher.get(url).then(res => res.data.result)
+  }
+
   getInitialData = async store => {
     const [error, bannerList] = await awaitWrapper(this.requestBannerList)(
       "/api/banner?type=2",

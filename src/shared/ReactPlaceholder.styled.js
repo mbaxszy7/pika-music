@@ -26,18 +26,4 @@ const ReactPlaceholderStyle = createGlobalStyle`
 }
 `
 
-{
-  /* <ReactPlaceholder
-type="text"
-ready={!!playlists}
-rows={6}
-color="#E0E0E0"
-showLoadingAnimation
->
-{playlists
-  ? playlists.map((song, index) => <li key={index}>{song.name}</li>)
-  : ""}
-</ReactPlaceholder> */
-}
-
 export default ReactPlaceholderStyle
