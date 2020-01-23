@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
@@ -14,89 +13,6 @@ import searchIcon from "../../assets/search.png"
 import clearIcon from "../../assets/clear.png"
 import Dialog from "../../shared/Dialog"
 import Spinner from "../../shared/Spinner"
-
-const BEST_SEARCH_SELECTOR = {
-  artist: {
-    selector: data => {
-      return {
-        imgUrl: data.img1v1Url || data.picUrl,
-        title: `艺人：${data.name}`,
-        desc: `歌曲：${data.musicSize} 专辑：${data.albumSize}`,
-      }
-    },
-  },
-  mv: {
-    selector: data => {
-      return {
-        imgUrl: data.cover,
-        title: `MV：${data.name}`,
-        desc: `歌手：${data.artistName} 播放量：${data.playCount}`,
-      }
-    },
-  },
-  album: {
-    selector: data => {
-      return {
-        imgUrl: data.picUrl,
-        title: `专辑：${data.name}`,
-        desc: `歌手：${data.artist.name}`,
-      }
-    },
-  },
-}
-
-const SEARCH_RESULT_SELECTOR = {
-  playList: {
-    desc: "歌单",
-    selector: data => {
-      return {
-        imgUrl: data.coverImgUrl,
-        title: `${data.name}`,
-        desc: `${data.trackCount}首`,
-      }
-    },
-  },
-  song: {
-    desc: "歌曲",
-    selector: data => {
-      return {
-        imgUrl: data.al.picUrl,
-        title: `${data.name}`,
-        desc: `${data.ar[0].name} · ${data.al.name}`,
-      }
-    },
-  },
-  artist: {
-    desc: "艺人",
-    selector: data => {
-      return {
-        imgUrl: data.img1v1Url || data.picUrl,
-        title: `艺人：${data.name}`,
-        desc: `mv:${data.mvSize}  专辑:${data.albumSize}`,
-      }
-    },
-  },
-  video: {
-    desc: "视频",
-    selector: data => {
-      return {
-        imgUrl: data.coverUrl,
-        title: `${data.title}`,
-        desc: `${data.creator[0].userName}`,
-      }
-    },
-  },
-  album: {
-    desc: "专辑",
-    selector: data => {
-      return {
-        imgUrl: data.picUrl,
-        title: `${data.name}`,
-        desc: `${data.artist.name}`,
-      }
-    },
-  },
-}
 
 const InputWrapper = styled.div`
   display: ${props => (props.isFocus ? "flex" : "block")};
@@ -208,36 +124,12 @@ const SearchResultList = styled.div`
   position: relative;
   z-index: 999;
 `
-const ResultItemDefaultImg = styled.img`
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 50%;
-`
-
-const ResultItemAlbumImg = styled.img`
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  border-radius: 4px;
-`
-
-const ResultItemSongImg = styled.img`
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 4px;
-`
-
-const ResultItemVideoImg = styled.img`
-  width: 89px;
-  height: 50px;
-  min-width: 89px;
-  min-height: 50px;
-  border-radius: 4px;
+const ResultItemImage = styled.img`
+  width: ${props => props.width || 44}px;
+  height: ${props => props.height || 44}px;
+  min-width: ${props => props.width || 44}px;
+  min-height: ${props => props.height || 44}px;
+  border-radius: ${props => props.borderRadius};
 `
 
 const ResultItem = styled.div`
@@ -247,7 +139,8 @@ const ResultItem = styled.div`
   img {
     background-color: ${props => props.theme.dg};
     margin-right: 16px;
-
+  }
+  img[data-loaded="false"] {
     @keyframes react-placeholder-pulse {
       0% {
         opacity: 0.6;
@@ -290,46 +183,40 @@ const ResultItemImg = memo(({ type, imgUrl }) => {
   const imageOnLoad = useCallback(() => {
     setImageLoaded(true)
   }, [])
-  let img = (
-    <ResultItemDefaultImg
-      src={imgUrl}
-      alt=""
-      onLoaded={imageOnLoad}
-      isImageLoaded
-    />
-  )
+  let imgConfig = {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+  }
   if (type === "album" || type === "playList") {
-    img = (
-      <ResultItemAlbumImg
-        src={imgUrl}
-        alt=""
-        onLoaded={imageOnLoad}
-        isImageLoaded
-      />
-    )
+    imgConfig = {
+      width: 48,
+      height: 48,
+      borderRadius: "4px",
+    }
   }
   if (type === "song") {
-    img = (
-      <ResultItemSongImg
-        src={imgUrl}
-        alt=""
-        onLoaded={imageOnLoad}
-        isImageLoaded
-      />
-    )
+    imgConfig = { ...imgConfig, borderRadius: "4px" }
   }
 
   if (type === "video") {
-    img = (
-      <ResultItemVideoImg
-        src={imgUrl}
-        alt=""
-        onLoaded={imageOnLoad}
-        isImageLoaded
-      />
-    )
+    imgConfig = {
+      width: 89,
+      height: 50,
+      borderRadius: "4px",
+    }
   }
-  return img
+  return (
+    <ResultItemImage
+      width={imgConfig.width}
+      height={imgConfig.height}
+      borderRadius={imgConfig.borderRadius}
+      src={imgUrl}
+      alt=""
+      data-loaded={isImageLoaded}
+      onLoad={imageOnLoad}
+    />
+  )
 })
 
 const ResultItemContainer = memo(({ imgUrl, title, desc, type }) => {
@@ -465,9 +352,85 @@ SearchSuggestList.propTypes = {
   isFocus: PropTypes.bool,
 }
 
-// const SearchResultList = memo(({  }) => {
+const SearchResult = memo(
+  ({
+    keyword,
+    value,
+    isFocus,
+    setValue,
+    onSearchSuggest,
+    lastSearchHistory,
+    setLastSuggestsHistory,
+    onSearchBestMatch,
+    onSearch,
+    onClearSuggestHistoryClick,
+    setKeyword,
+  }) => {
+    const { data: bestMatchData } = useSWR(
+      keyword ? `/api/search/multimatch?keywords=${keyword}` : "",
+      onSearchBestMatch,
+    )
 
-// })
+    const { data: searchResultList, isValidating: isLoadSearchData } = useSWR(
+      keyword ? `/api/search?keywords=${keyword}&type=1018` : "",
+      onSearch,
+    )
+
+    if (isLoadSearchData) {
+      return <Spinner style={{ marginTop: 40 }} />
+    }
+
+    if (!bestMatchData && !searchResultList) {
+      return (
+        <>
+          <SearchSuggestList
+            setKeyword={setKeyword}
+            setValue={setValue}
+            inputValue={value}
+            onSearchSuggest={onSearchSuggest}
+            setLastSuggestsHistory={setLastSuggestsHistory}
+            isFocus={isFocus}
+          />
+
+          <SuggestHistory
+            setKeyword={setKeyword}
+            setValue={setValue}
+            lastSearchHistory={lastSearchHistory.reverse()}
+            onClearSuggestHistoryClick={onClearSuggestHistoryClick}
+            isFocus={isFocus}
+          />
+        </>
+      )
+    }
+
+    return (
+      <SearchResultList>
+        {bestMatchData && (
+          <BestMatchContainer>
+            <SearchResultTypeTitle>最佳匹配</SearchResultTypeTitle>
+            <ResultItemContainer {...bestMatchData} />
+          </BestMatchContainer>
+        )}
+        {searchResultList &&
+          searchResultList.map((typeData, index) => {
+            const { type, getDesc, dataList, title } = typeData
+            return (
+              <React.Fragment key={index}>
+                <SearchResultTypeTitle>{title}</SearchResultTypeTitle>
+                {dataList.map((data, idx) => (
+                  <ResultItemContainer
+                    {...getDesc(data)}
+                    key={idx}
+                    type={type}
+                  />
+                ))}
+              </React.Fragment>
+            )
+          })}
+      </SearchResultList>
+    )
+  },
+)
 
 const Search = memo(
   ({ onSearch, onSearchSuggest, onSearchBestMatch, defaultValue }) => {
@@ -481,16 +444,6 @@ const Search = memo(
       setValue: setLastSuggestsHistory,
       clearValue: clearLastSuggestsHistory,
     } = useLocalStorage("searchSuggest")
-
-    const { data: searchBestMatch } = useSWR(
-      keyword ? `/api/search/multimatch?keywords=${keyword}` : "",
-      onSearchBestMatch,
-    )
-
-    const { data: searchResultList, isValidating: isLoadSearchData } = useSWR(
-      keyword ? `/api/search?keywords=${keyword}&type=1018` : "",
-      onSearch,
-    )
 
     const onFocus = useCallback(() => {
       setIsFocus(true)
@@ -545,66 +498,19 @@ const Search = memo(
             取消
           </CancelSearchText>
         </InputWrapper>
-        {!isLoadSearchData &&
-        (searchBestMatch?.type || searchResultList?.order.length > 0) ? (
-          <SearchResultList>
-            {searchBestMatch?.type && (
-              <BestMatchContainer>
-                <SearchResultTypeTitle>最佳匹配</SearchResultTypeTitle>
-                <ResultItemContainer
-                  {...BEST_SEARCH_SELECTOR[searchBestMatch.type].selector(
-                    searchBestMatch.data[0],
-                  )}
-                />
-              </BestMatchContainer>
-            )}
-            {searchResultList?.order.length > 0 &&
-              searchResultList.order.map((type, index) => {
-                const typeData = SEARCH_RESULT_SELECTOR[type]
-                let dataList = searchResultList[type][`${type}s`]
-                if (type === "song") {
-                  dataList = dataList.slice(0, 5)
-                }
-                return (
-                  typeData && (
-                    <React.Fragment key={index}>
-                      <SearchResultTypeTitle>
-                        {typeData.desc}
-                      </SearchResultTypeTitle>
-                      {dataList.map((data, idx) => (
-                        <ResultItemContainer
-                          {...typeData.selector(data)}
-                          key={idx}
-                          type={type}
-                        />
-                      ))}
-                    </React.Fragment>
-                  )
-                )
-              })}
-          </SearchResultList>
-        ) : isLoadSearchData ? (
-          <Spinner style={{ marginTop: 40 }} />
-        ) : (
-          <>
-            <SearchSuggestList
-              setKeyword={setKeyword}
-              setValue={setValue}
-              inputValue={value}
-              onSearchSuggest={onSearchSuggest}
-              setLastSuggestsHistory={setLastSuggestsHistory}
-              isFocus={isFocus}
-            />
-
-            <SuggestHistory
-              setKeyword={setKeyword}
-              setValue={setValue}
-              lastSearchHistory={lastSearchHistory.reverse()}
-              onClearSuggestHistoryClick={onClearSuggestHistoryClick}
-              isFocus={isFocus}
-            />
-          </>
-        )}
+        <SearchResult
+          isFocus={isFocus}
+          value={value}
+          setValue={setValue}
+          keyword={keyword}
+          setKeyword={setKeyword}
+          onSearchSuggest={onSearchSuggest}
+          lastSearchHistory={lastSearchHistory}
+          setLastSuggestsHistory={setLastSuggestsHistory}
+          onSearchBestMatch={onSearchBestMatch}
+          onSearch={onSearch}
+          onClearSuggestHistoryClick={onClearSuggestHistoryClick}
+        />
       </>
     )
   },

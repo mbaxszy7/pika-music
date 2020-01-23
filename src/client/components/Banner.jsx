@@ -40,8 +40,9 @@ const BannerImgContainer = styled(animated.div)`
 
 const DotsContainer = styled.ul`
   position: absolute;
-  top: 1px;
-  right: 3px;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
 `
 
 const Dot = styled.li`
