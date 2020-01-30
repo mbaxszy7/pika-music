@@ -52,6 +52,8 @@ const SEARCH_RESULT_SELECTOR = {
         imgUrl: data.al.picUrl,
         title: `${data.name}`,
         desc: `${data.ar[0].name} · ${data.al.name}`,
+        artistId: data.ar[0].id,
+        albumId: data.al.id,
       }
     },
   },

@@ -1,14 +1,13 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/no-array-index-key */
-import React, { useRef, useState, memo, useMemo } from "react"
-import ReactPlaceholder from "react-placeholder"
+import React, { useRef, useState, memo, useMemo, useEffect } from "react"
 import { animated, useSprings } from "react-spring"
 import { useDrag } from "react-use-gesture"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import Label from "./Label"
-import Image from "../../shared/Image"
+import { ImageLoader } from "../../shared/Image"
 import { clamp } from "../../utils"
 
 const BannerList = styled.div`
@@ -69,30 +68,23 @@ const BannerListItem = memo(
           ),
         }}
       >
-        <Image url={imgUrl}>
-          {(isLoaded, url) => (
-            <ReactPlaceholder
-              type="rect"
-              ready={isLoaded}
-              color="#E0E0E0"
-              showLoadingAnimation
-              style={{
-                position: "absolute",
-                top: 0,
-                width: "100%",
-                height: "100%",
-                borderRadius: 10,
-              }}
-            >
-              <BannerImgContainer
-                style={{
-                  transform: scale.interpolate(s => `scale(${s})`),
-                  backgroundImage: `url(${url})`,
-                }}
-              />
-            </ReactPlaceholder>
-          )}
-        </Image>
+        <ImageLoader
+          url={imgUrl}
+          placeHolderStyle={{
+            position: "absolute",
+            top: 0,
+            width: "100%",
+            height: "100%",
+            borderRadius: 10,
+          }}
+        >
+          <BannerImgContainer
+            style={{
+              transform: scale.interpolate(s => `scale(${s})`),
+              backgroundImage: `url(${imgUrl})`,
+            }}
+          />
+        </ImageLoader>
         <Label text={labelText} />
       </BannerItem>
     )
@@ -111,9 +103,11 @@ BannerListItem.propTypes = {
 const BannerListContainer = memo(({ bannerList }) => {
   const [activeBanner, setActiveBanner] = useState(0)
   const index = useRef(0)
+  const [bannerWidth, setBannerWidth] = useState(768)
+  useEffect(() => setBannerWidth(window.innerWidth), [])
 
   const [banners, set] = useSprings(bannerList.length, i => ({
-    x: i * window.innerWidth,
+    x: i * bannerWidth,
     sc: 1,
     display: "block",
   }))
@@ -132,8 +126,8 @@ const BannerListContainer = memo(({ bannerList }) => {
         if (i < index.current - 1 || i > index.current + 1)
           return { display: "none" }
         setActiveBanner(index.current)
-        const x = (i - index.current) * window.innerWidth + (down ? xDelta : 0)
-        const sc = down ? 1 - distance / window.innerWidth / 2 : 1
+        const x = (i - index.current) * bannerWidth + (down ? xDelta : 0)
+        const sc = down ? 1 - distance / bannerWidth / 2 : 1
         return { x, sc, display: "block" }
       })
     },

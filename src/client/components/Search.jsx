@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
@@ -13,6 +14,7 @@ import searchIcon from "../../assets/search.png"
 import clearIcon from "../../assets/clear.png"
 import Dialog from "../../shared/Dialog"
 import Spinner from "../../shared/Spinner"
+import MediaItem from "./MediaItem"
 
 const InputWrapper = styled.div`
   display: ${props => (props.isFocus ? "flex" : "block")};
@@ -124,112 +126,6 @@ const SearchResultList = styled.div`
   position: relative;
   z-index: 999;
 `
-const ResultItemImage = styled.img`
-  width: ${props => props.width || 44}px;
-  height: ${props => props.height || 44}px;
-  min-width: ${props => props.width || 44}px;
-  min-height: ${props => props.height || 44}px;
-  border-radius: ${props => props.borderRadius};
-`
-
-const ResultItem = styled.div`
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-  img {
-    background-color: ${props => props.theme.dg};
-    margin-right: 16px;
-  }
-  img[data-loaded="false"] {
-    @keyframes react-placeholder-pulse {
-      0% {
-        opacity: 0.6;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0.6;
-      }
-    }
-    animation: react-placeholder-pulse 1.5s infinite;
-  }
-  dl {
-    font-size: 14px;
-    dt {
-      color: ${props => props.theme.fg};
-      margin-bottom: 6px;
-      padding-right: 15px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      word-break: break-all;
-      line-height: 1.3;
-    }
-    dd {
-      padding-right: 15px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      word-break: break-all;
-      font-size: 12px;
-      color: ${props => props.theme.dg};
-    }
-  }
-`
-
-const ResultItemImg = memo(({ type, imgUrl }) => {
-  const [isImageLoaded, setImageLoaded] = useState(false)
-  const imageOnLoad = useCallback(() => {
-    setImageLoaded(true)
-  }, [])
-  let imgConfig = {
-    width: 44,
-    height: 44,
-    borderRadius: "50%",
-  }
-  if (type === "album" || type === "playList") {
-    imgConfig = {
-      width: 48,
-      height: 48,
-      borderRadius: "4px",
-    }
-  }
-  if (type === "song") {
-    imgConfig = { ...imgConfig, borderRadius: "4px" }
-  }
-
-  if (type === "video") {
-    imgConfig = {
-      width: 89,
-      height: 50,
-      borderRadius: "4px",
-    }
-  }
-  return (
-    <ResultItemImage
-      width={imgConfig.width}
-      height={imgConfig.height}
-      borderRadius={imgConfig.borderRadius}
-      src={imgUrl}
-      alt=""
-      data-loaded={isImageLoaded}
-      onLoad={imageOnLoad}
-    />
-  )
-})
-
-const ResultItemContainer = memo(({ imgUrl, title, desc, type }) => {
-  return (
-    <ResultItem>
-      <ResultItemImg type={type} imgUrl={imgUrl} />
-      <dl style={{ width: type === "video" ? "70%" : "85%" }}>
-        <dt>{title}</dt>
-        <dd>{desc}</dd>
-      </dl>
-    </ResultItem>
-  )
-})
 
 const SearchItem = memo(({ keyword, setKeyword, setValue }) => {
   const onSetKeyword = useCallback(() => {
@@ -256,14 +152,14 @@ const SuggestHistory = ({
   setKeyword,
   setValue,
 }) => {
-  if (!lastSearchHistory.length) {
+  if (!lastSearchHistory?.length) {
     return null
   }
   return (
     <LastSuggestContainer isFocus={isFocus}>
       <span className="title">最近搜索</span>
       <List
-        list={lastSearchHistory}
+        list={[...lastSearchHistory].reverse()}
         listItem={({ item, index }) => (
           <SearchItem
             key={index}
@@ -369,11 +265,17 @@ const SearchResult = memo(
     const { data: bestMatchData } = useSWR(
       keyword ? `/api/search/multimatch?keywords=${keyword}` : "",
       onSearchBestMatch,
+      {
+        revalidateOnFocus: false,
+      },
     )
 
     const { data: searchResultList, isValidating: isLoadSearchData } = useSWR(
       keyword ? `/api/search?keywords=${keyword}&type=1018` : "",
       onSearch,
+      {
+        revalidateOnFocus: false,
+      },
     )
 
     if (isLoadSearchData) {
@@ -395,7 +297,7 @@ const SearchResult = memo(
           <SuggestHistory
             setKeyword={setKeyword}
             setValue={setValue}
-            lastSearchHistory={lastSearchHistory.reverse()}
+            lastSearchHistory={lastSearchHistory}
             onClearSuggestHistoryClick={onClearSuggestHistoryClick}
             isFocus={isFocus}
           />
@@ -408,7 +310,12 @@ const SearchResult = memo(
         {bestMatchData && (
           <BestMatchContainer>
             <SearchResultTypeTitle>最佳匹配</SearchResultTypeTitle>
-            <ResultItemContainer {...bestMatchData} />
+            <MediaItem
+              imgUrl={bestMatchData.imgUrl}
+              title={bestMatchData.title}
+              desc={bestMatchData.desc}
+              type={bestMatchData.type}
+            />
           </BestMatchContainer>
         )}
         {searchResultList &&
@@ -417,13 +324,10 @@ const SearchResult = memo(
             return (
               <React.Fragment key={index}>
                 <SearchResultTypeTitle>{title}</SearchResultTypeTitle>
-                {dataList.map((data, idx) => (
-                  <ResultItemContainer
-                    {...getDesc(data)}
-                    key={idx}
-                    type={type}
-                  />
-                ))}
+                {dataList.map((data, idx) => {
+                  const media = getDesc(data)
+                  return <MediaItem {...media} key={idx} type={type} />
+                })}
               </React.Fragment>
             )
           })}
@@ -453,6 +357,7 @@ const Search = memo(
       setIsFocus(false)
       setValue("")
       setKeyword("")
+      setShowDialog(false)
     }, [])
 
     const onChange = useCallback(e => {
@@ -498,19 +403,21 @@ const Search = memo(
             取消
           </CancelSearchText>
         </InputWrapper>
-        <SearchResult
-          isFocus={isFocus}
-          value={value}
-          setValue={setValue}
-          keyword={keyword}
-          setKeyword={setKeyword}
-          onSearchSuggest={onSearchSuggest}
-          lastSearchHistory={lastSearchHistory}
-          setLastSuggestsHistory={setLastSuggestsHistory}
-          onSearchBestMatch={onSearchBestMatch}
-          onSearch={onSearch}
-          onClearSuggestHistoryClick={onClearSuggestHistoryClick}
-        />
+        {isFocus && (
+          <SearchResult
+            isFocus={isFocus}
+            value={value}
+            setValue={setValue}
+            keyword={keyword}
+            setKeyword={setKeyword}
+            onSearchSuggest={onSearchSuggest}
+            lastSearchHistory={lastSearchHistory}
+            setLastSuggestsHistory={setLastSuggestsHistory}
+            onSearchBestMatch={onSearchBestMatch}
+            onSearch={onSearch}
+            onClearSuggestHistoryClick={onClearSuggestHistoryClick}
+          />
+        )}
       </>
     )
   },

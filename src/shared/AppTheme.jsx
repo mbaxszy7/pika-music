@@ -16,6 +16,7 @@ const AppBgTheme = createGlobalStyle`
  }
 `
 const theme = {
+  // 主背景
   mg: "#212121",
   fg: "rgb(245,245,245)",
   dg: "grey",

@@ -4,7 +4,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
-import InnerModal from "./InnerModal"
+import InnerModal, { ModalMask } from "./InnerModal"
 
 const DialogContainer = styled.div`
   margin: 0 auto;
@@ -38,16 +38,6 @@ const DialogContainer = styled.div`
   }
 `
 
-const DialogMask = styled.div`
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-`
-
 const Dialog = ({
   title,
   dialogText,
@@ -58,7 +48,7 @@ const Dialog = ({
 }) => {
   return (
     <InnerModal>
-      <DialogMask>
+      <ModalMask>
         <DialogContainer>
           {title && <p className="title">搜索历史</p>}
           {dialogText && <p className="alert_text">确认清空搜索历史？</p>}
@@ -75,7 +65,7 @@ const Dialog = ({
             )}
           </div>
         </DialogContainer>
-      </DialogMask>
+      </ModalMask>
     </InnerModal>
   )
 }

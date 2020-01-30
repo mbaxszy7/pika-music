@@ -24,7 +24,7 @@ const setInitialDataToStore = async ctx => {
 
   await Promise.all(
     matchedRoutes.map(item => {
-      return Promise.resolve(item.route?.loadData?.(store) ?? null)
+      return Promise.resolve(item.route?.loadData?.(store, ctx) ?? null)
     }),
   ).catch(error => {
     // eslint-disable-next-line no-console
