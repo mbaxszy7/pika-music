@@ -5,8 +5,6 @@ import PropTypes from "prop-types"
 import styled from "styled-components"
 import ReactPlaceholder from "react-placeholder"
 
-import UserAvatar from "../assets/user.png"
-
 const ImageLoader = memo(
   ({
     url,
@@ -59,9 +57,6 @@ ImageLoader.defaultProps = {
 
 const StyledImage = styled.img`
   background-color: ${props => props.theme.dg};
-  &[data-url="false"] {
-    padding: 20px;
-  }
   &[data-loaded="false"] {
     @keyframes react-placeholder-pulse {
       0% {
@@ -85,10 +80,9 @@ const MyImage = memo(({ url, styledCss }) => {
 
   return (
     <StyledImage
-      src={url || UserAvatar}
+      src={url}
       styledCss={styledCss}
-      data-url={!!url}
-      data-loaded={isLoaded}
+      data-loaded={isLoaded || !url}
       alt=""
       onLoad={onImageLoaded}
     />

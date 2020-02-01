@@ -3,6 +3,7 @@
 import React from "react"
 import styled, { css } from "styled-components"
 import useSWR from "swr"
+import ReactPlaceholder from "react-placeholder"
 import { useLocation } from "react-router-dom"
 import queryString from "query-string"
 import { useSelector } from "react-redux"
@@ -113,8 +114,31 @@ const ArtistDetails = () => {
         </InnerModal>
       )}
       <MyImage url={artistInfo?.img1v1Url} styledCss={avatarStyle} />
-      <StyledName>{`${artistName}(${artistInfo?.alia?.[0]})`}</StyledName>
-      <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+
+      <ReactPlaceholder
+        type="text"
+        ready={!!artistName}
+        rows={1}
+        showLoadingAnimation
+        style={{ width: 100, borderRadius: 200, height: 30, marginTop: 30 }}
+      >
+        <StyledName>
+          {`${artistName}${
+            artistInfo?.alia?.[0] ? ` (${artistInfo.alia[0]})` : ""
+          }`}
+        </StyledName>
+      </ReactPlaceholder>
+      <ReactPlaceholder
+        delay={300}
+        type="text"
+        ready={!!artistDesc}
+        rows={2}
+        color="grey"
+        showLoadingAnimation
+        style={{ width: "90%", borderRadius: 200, height: 30, marginTop: 15 }}
+      >
+        <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+      </ReactPlaceholder>
     </ArtistDetailsPage>
   )
 }
