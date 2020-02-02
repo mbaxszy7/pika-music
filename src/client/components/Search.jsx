@@ -14,7 +14,7 @@ import searchIcon from "../../assets/search.png"
 import clearIcon from "../../assets/clear.png"
 import Dialog from "../../shared/Dialog"
 import Spinner from "../../shared/Spinner"
-import MediaItem from "./MediaItem"
+import MediaItemList from "./MediaItemList"
 
 const InputWrapper = styled.div`
   display: ${props => (props.isFocus ? "flex" : "block")};
@@ -107,14 +107,6 @@ const ClearSuggestsHistory = styled.span`
   background-color: black;
   border-radius: 200px;
   text-indent: 20px;
-`
-
-const SearchResultTypeTitle = styled.p`
-  padding-left: 4px;
-  font-weight: bold;
-  margin-top: 40px;
-  color: ${props => props.theme.dg};
-  font-size: 14px;
 `
 
 const BestMatchContainer = styled.div`
@@ -309,12 +301,13 @@ const SearchResult = memo(
       <SearchResultList>
         {bestMatchData && (
           <BestMatchContainer>
-            <SearchResultTypeTitle>最佳匹配</SearchResultTypeTitle>
-            <MediaItem
-              imgUrl={bestMatchData.imgUrl}
-              title={bestMatchData.title}
-              desc={bestMatchData.desc}
-              type={bestMatchData.type}
+            <MediaItemList
+              title="最佳匹配"
+              list={[
+                {
+                  ...bestMatchData,
+                },
+              ]}
             />
           </BestMatchContainer>
         )}
@@ -323,11 +316,13 @@ const SearchResult = memo(
             const { type, getDesc, dataList, title } = typeData
             return (
               <React.Fragment key={index}>
-                <SearchResultTypeTitle>{title}</SearchResultTypeTitle>
-                {dataList.map((data, idx) => {
-                  const media = getDesc(data)
-                  return <MediaItem {...media} key={idx} type={type} />
-                })}
+                <MediaItemList
+                  title={title}
+                  list={dataList.map(data => {
+                    const media = getDesc(data)
+                    return { ...media, type }
+                  })}
+                />
               </React.Fragment>
             )
           })}

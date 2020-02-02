@@ -61,6 +61,7 @@ const StyledModalContainer = styled.div`
     background-image: url(${nextSong});
   }
   .artist {
+    ${SingleLineTexts}
     a {
       color: ${props => props.theme.fg};
     }
@@ -68,6 +69,7 @@ const StyledModalContainer = styled.div`
   }
   .album {
     background-image: url(${album});
+    ${SingleLineTexts}
   }
   .song_name {
     color: ${props => props.theme.fg};
@@ -123,7 +125,12 @@ const SongMore = memo(
                   <li className="next_song">下一首播放</li>
                   {artistName && (
                     <li className="artist">
-                      <Link to={`/artist?id=${artistId}&name=${artistName}`}>
+                      <Link
+                        to={`/artist?id=${artistId}&name=${
+                          artistName?.split(" ")?.[0]
+                        }`}
+                        onClick={onClose}
+                      >
                         {`歌手 ${artistName}`}
                       </Link>
                     </li>

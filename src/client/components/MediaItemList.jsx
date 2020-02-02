@@ -1,10 +1,21 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
 import React, { memo } from "react"
+import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
+import List from "../../shared/List"
 import SingleLineTexts from "../../shared/LinesTexts.styled"
+
+const MediaItemTitle = styled.p`
+  padding-left: 4px;
+  font-weight: bold;
+  margin-top: 40px;
+  color: ${props => props.theme.dg};
+  font-size: 14px;
+`
 
 export const MediaItemTypes = {
   ALBUM: "album",
@@ -78,35 +89,67 @@ ItemImg.propTypes = {
   imgUrl: PropTypes.string,
 }
 
-const MediaItem = memo(({ imgUrl, title, desc, type, artistId, albumId }) => {
-  const [artistName, albumName] = desc?.split(" · ") ?? ["", ""]
-  return (
-    <StyledResultItem>
-      <ItemImg type={type} imgUrl={imgUrl} />
-      <dl style={{ width: type === MediaItemTypes.VIDEO ? "70%" : "70%" }}>
-        <dt>{title}</dt>
-        <dd>{desc}</dd>
-      </dl>
-      {type === MediaItemTypes.SONG && (
-        <SongMore
-          songName={title}
-          artistName={artistName}
-          albumName={albumName}
-          artistId={artistId}
-          albumId={albumId}
-        />
-      )}
-    </StyledResultItem>
-  )
-})
+const MediaItem = memo(
+  ({ imgUrl, title, desc, type, artistId, albumId, artistName, albumName }) => {
+    const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
+    return (
+      <StyledResultItem>
+        <ItemImg type={type} imgUrl={imgUrl} />
+        <ReactPlaceholder
+          ready={!!title}
+          rows={2}
+          color="grey"
+          showLoadingAnimation
+          style={{ width: "40%", borderRadius: 200, height: 30 }}
+        >
+          <dl style={{ width: type === MediaItemTypes.VIDEO ? "70%" : "70%" }}>
+            <dt>{title}</dt>
+            <dd>{desc}</dd>
+          </dl>
+        </ReactPlaceholder>
+
+        {type === MediaItemTypes.SONG && (
+          <SongMore
+            songName={title}
+            artistName={artistName || artistNameDesc}
+            albumName={albumName || albumNameDesc}
+            artistId={artistId}
+            albumId={albumId}
+          />
+        )}
+      </StyledResultItem>
+    )
+  },
+)
 
 MediaItem.propTypes = {
   imgUrl: PropTypes.string,
   title: PropTypes.string,
+  artistName: PropTypes.string,
+  albumName: PropTypes.string,
   desc: PropTypes.string,
   type: PropTypes.string,
   albumId: PropTypes.number,
   artistId: PropTypes.number,
 }
 
-export default MediaItem
+const MediaItemList = ({ list, title, placeHolderCount }) => {
+  return (
+    <>
+      <MediaItemTitle>{title}</MediaItemTitle>
+      <List
+        list={list || new Array(placeHolderCount || 1).fill({})}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        listItem={({ item, index }) => <MediaItem {...item} key={index} />}
+      />
+    </>
+  )
+}
+
+MediaItemList.propTypes = {
+  placeHolderCount: PropTypes.number,
+  list: PropTypes.array,
+  title: PropTypes.string,
+}
+
+export default MediaItemList

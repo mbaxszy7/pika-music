@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react"
-import styled, { css } from "styled-components"
+import styled from "styled-components"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
 import { useLocation } from "react-router-dom"
@@ -11,11 +11,11 @@ import artistDetailsPage from "./connectArtistDetailsReducer"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../../shared/LinesTexts.styled"
-import { MyImage } from "../../../shared/Image"
 import InnerModal from "../../../shared/InnerModal"
 import { useEffectShowModal } from "../../../utils/hooks"
+import MediaItemList from "../../components/MediaItemList"
 
-const avatarStyle = css`
+const StyledAvatar = styled.img`
   width: 134px;
   height: 134px;
   max-width: 134px;
@@ -79,9 +79,11 @@ const ArtistDetails = () => {
   } = useEffectShowModal()
 
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
+  const initArtistSongs = useSelector(state => state.artistDetails.songs)
+
   const location = useLocation().search
   const { id: artistId, name: artistName } = queryString.parse(location)
-
+  const realArtistName = artistName?.split(" ")?.[0]
   const { data: artistDesc } = useSWR(
     `/api/artist/desc?id=${artistId}`,
     artistDetailsPage.requestArtistDesc,
@@ -92,10 +94,21 @@ const ArtistDetails = () => {
       revalidateOnFocus: false,
     },
   )
-
+  console.log(artistDesc)
   const { data: artistInfo } = useSWR(
-    [`/api/search?keywords=${artistName}&type=100`, artistId],
+    [`/api/search?keywords=${realArtistName}&type=100`, artistId],
     artistDetailsPage.requestArtistInfo,
+    {
+      revalidateOnFocus: false,
+    },
+  )
+
+  const { data: artistSongs } = useSWR(
+    `/api/artists?id=${artistId}`,
+    artistDetailsPage.requestArtistSongs,
+    {
+      initialData: initArtistSongs,
+    },
     {
       revalidateOnFocus: false,
     },
@@ -113,7 +126,13 @@ const ArtistDetails = () => {
           </StyledDescModal>
         </InnerModal>
       )}
-      <MyImage url={artistInfo?.img1v1Url} styledCss={avatarStyle} />
+      <ReactPlaceholder
+        type="round"
+        ready={!!artistInfo?.img1v1Url}
+        style={{ width: 134, height: 134, margin: "0 auto" }}
+      >
+        <StyledAvatar src={artistInfo?.img1v1Url} />
+      </ReactPlaceholder>
 
       <ReactPlaceholder
         type="text"
@@ -123,7 +142,7 @@ const ArtistDetails = () => {
         style={{ width: 100, borderRadius: 200, height: 30, marginTop: 30 }}
       >
         <StyledName>
-          {`${artistName}${
+          {`${realArtistName}${
             artistInfo?.alia?.[0] ? ` (${artistInfo.alia[0]})` : ""
           }`}
         </StyledName>
@@ -139,6 +158,12 @@ const ArtistDetails = () => {
       >
         <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
       </ReactPlaceholder>
+
+      <MediaItemList
+        title="歌曲"
+        list={artistSongs?.slice(0, 5)}
+        placeHolderCount={5}
+      />
     </ArtistDetailsPage>
   )
 }
