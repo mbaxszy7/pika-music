@@ -1,18 +1,22 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
 import React, { memo } from "react"
+import moment from "moment"
 import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
 import List from "../../shared/List"
-import SingleLineTexts from "../../shared/LinesTexts.styled"
+import SingleLineTexts, {
+  MultipleLineTexts,
+} from "../../shared/LinesTexts.styled"
 
 const MediaItemTitle = styled.p`
   padding-left: 4px;
   font-weight: bold;
   margin-top: 40px;
+  margin-bottom: 20px;
   color: ${props => props.theme.dg};
   font-size: 14px;
 `
@@ -23,21 +27,28 @@ export const MediaItemTypes = {
   SONG: "song",
   VIDEO: "video",
   ARTIST: "artist",
+  BIG_ALBUM: "bigAlbum",
+  BIG_MV: "bigMV",
 }
 
 const StyledResultItem = styled.div`
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
+  width: ${props => (props.isColumItem ? "48%" : "100%")};
+  margin-bottom: ${props => (props.isColumItem ? "10px" : "20px")};
+  display: ${props => (props.isColumItem ? "inline-flex" : "flex")};
+  flex-direction: ${props => (props.isColumItem ? "column" : "row")};
+  align-items: ${props => (props.isColumItem ? "flex-start" : "center")};
   overflow: hidden;
   margin-left: 5px;
+
   dl {
     font-size: 14px;
+    width: ${props => (props.isColumItem ? "100%" : "70%")};
+
     dt {
       color: ${props => props.theme.fg};
       margin-bottom: 6px;
       padding-right: 15px;
-      ${SingleLineTexts}
+      ${props => (props.isColumItem ? MultipleLineTexts(2) : SingleLineTexts)};
       line-height: 1.3;
     }
     dd {
@@ -73,6 +84,22 @@ const ItemImg = memo(({ type, imgUrl }) => {
       borderRadius: "4px",
     }
   }
+  if (type === MediaItemTypes.BIG_ALBUM) {
+    imgConfig = {
+      width: 130,
+      height: 130,
+      borderRadius: "4px",
+      marginBottom: "10px",
+    }
+  }
+  if (type === MediaItemTypes.BIG_MV) {
+    imgConfig = {
+      width: 130,
+      height: 98,
+      borderRadius: "4px",
+      marginBottom: "10px",
+    }
+  }
 
   const extraCss = css`
     width: ${imgConfig.width}px;
@@ -80,6 +107,7 @@ const ItemImg = memo(({ type, imgUrl }) => {
     min-width: ${imgConfig.width}px;
     min-height: ${imgConfig.height}px;
     border-radius: ${imgConfig.borderRadius};
+    margin-bottom: ${imgConfig.marginBottom || 0};
     margin-right: 16px;
   `
   return <MyImage styledCss={extraCss} url={imgUrl} />
@@ -91,10 +119,24 @@ ItemImg.propTypes = {
 }
 
 const MediaItem = memo(
-  ({ imgUrl, title, desc, type, artistId, albumId, artistName, albumName }) => {
+  ({
+    imgUrl,
+    title,
+    desc,
+    type,
+    artistId,
+    albumId,
+    artistName,
+    albumName,
+    publishTime,
+  }) => {
     const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
     return (
-      <StyledResultItem>
+      <StyledResultItem
+        isColumItem={
+          type === MediaItemTypes.BIG_ALBUM || type === MediaItemTypes.BIG_MV
+        }
+      >
         <ItemImg type={type} imgUrl={imgUrl} />
         <ReactPlaceholder
           ready={!!title}
@@ -103,9 +145,16 @@ const MediaItem = memo(
           showLoadingAnimation
           style={{ width: "40%", borderRadius: 200, height: 30 }}
         >
-          <dl style={{ width: type === MediaItemTypes.VIDEO ? "70%" : "70%" }}>
+          <dl>
             <dt>{title}</dt>
-            <dd>{desc}</dd>
+            <dd>
+              {desc ||
+                (publishTime
+                  ? moment(new Date(publishTime), "YYYY-MM-DD").format(
+                      "YYYY-MM-DD",
+                    )
+                  : "")}
+            </dd>
           </dl>
         </ReactPlaceholder>
 
@@ -134,6 +183,7 @@ MediaItem.propTypes = {
   type: PropTypes.string,
   albumId: PropTypes.number,
   artistId: PropTypes.number,
+  publishTime: PropTypes.number,
 }
 
 const MediaItemList = ({ list, title, placeHolderCount }) => {

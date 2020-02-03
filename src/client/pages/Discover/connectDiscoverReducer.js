@@ -87,8 +87,8 @@ const SEARCH_RESULT_SELECTOR = {
     selector: data => {
       return {
         imgUrl: data.picUrl,
-        title: `${data.name}`,
-        desc: `${data.artist.name}`,
+        title: data.name,
+        desc: data.artist.name,
       }
     },
   },

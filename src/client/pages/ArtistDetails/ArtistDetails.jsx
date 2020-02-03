@@ -14,6 +14,7 @@ import SingleLineTexts, {
 import InnerModal from "../../../shared/InnerModal"
 import { useEffectShowModal } from "../../../utils/hooks"
 import MediaItemList from "../../components/MediaItemList"
+import PlaceHolderTextAnimation from "../../../shared/PlaceHolderAnimation.styled"
 
 const StyledAvatar = styled.img`
   width: 134px;
@@ -30,12 +31,14 @@ const ArtistDetailsPage = styled.div`
 `
 
 const StyledDesc = styled.div`
+  min-height: 36px;
   max-height: 70vh;
   overflow-y: scroll;
   margin-top: 15px;
   font-size: 14px;
   line-height: 1.3;
   color: ${props => props.theme.dg};
+  ${PlaceHolderTextAnimation};
   ${props => (props.isWhole ? "line-height:1.5" : MultipleLineTexts(2))}
 `
 const StyledName = styled.p`
@@ -80,6 +83,8 @@ const ArtistDetails = () => {
 
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
+  const initArtistAlbums = useSelector(state => state.artistDetails.albums)
+  const initMVs = useSelector(state => state.artistDetails.mvs)
 
   const location = useLocation().search
   const { id: artistId, name: artistName } = queryString.parse(location)
@@ -114,6 +119,28 @@ const ArtistDetails = () => {
     },
   )
 
+  const { data: artistAlbums } = useSWR(
+    `/api/artist/album?id=${artistId}&offset=0&limit=4`,
+    artistDetailsPage.requestArtistAlbums,
+    {
+      initialData: initArtistAlbums,
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  )
+
+  const { data: artistMVs } = useSWR(
+    `/api/artist/mv?id=${artistId}&offset=0&limit=4`,
+    artistDetailsPage.requestArtistMVs,
+    {
+      initialData: initMVs,
+    },
+    {
+      revalidateOnFocus: false,
+    },
+  )
+
   return (
     <ArtistDetailsPage>
       {isShowModal && (
@@ -133,7 +160,6 @@ const ArtistDetails = () => {
       >
         <StyledAvatar src={artistInfo?.img1v1Url} />
       </ReactPlaceholder>
-
       <ReactPlaceholder
         type="text"
         ready={!!artistName}
@@ -147,20 +173,21 @@ const ArtistDetails = () => {
           }`}
         </StyledName>
       </ReactPlaceholder>
-      <ReactPlaceholder
-        type="text"
-        ready={!!artistDesc}
-        rows={2}
-        color="grey"
-        showLoadingAnimation
-        style={{ width: "90%", borderRadius: 200, height: 30, marginTop: 15 }}
-      >
-        <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
-      </ReactPlaceholder>
+      <StyledDesc onClick={onModalOpen} data-loaded={!!artistDesc}>
+        {artistDesc}
+      </StyledDesc>
 
       <MediaItemList
         title="歌曲"
         list={artistSongs?.slice(0, 5) ?? new Array(5).fill({ type: "song" })}
+      />
+      <MediaItemList
+        title="专辑"
+        list={artistAlbums ?? new Array(4).fill({ type: "bigAlbum" })}
+      />
+      <MediaItemList
+        title="视频"
+        list={artistMVs ?? new Array(4).fill({ type: "bigMV" })}
       />
     </ArtistDetailsPage>
   )
