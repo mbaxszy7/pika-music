@@ -30,6 +30,7 @@ const StyledResultItem = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+  margin-left: 5px;
   dl {
     font-size: 14px;
     dt {
@@ -121,6 +122,8 @@ const MediaItem = memo(
     )
   },
 )
+
+MediaItem.displayName = "MediaItem"
 
 MediaItem.propTypes = {
   imgUrl: PropTypes.string,

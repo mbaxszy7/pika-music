@@ -87,71 +87,75 @@ const StyledModalContainer = styled.div`
   }
 `
 
-const SongMore = memo(
-  ({ songName, artistName, albumName, albumId, artistId }) => {
-    const {
-      isShowModal,
-      isShowContent,
-      onModalOpen: onMoreClick,
-      onModalClose: onClose,
-    } = useEffectShowModal()
+const SongMore = memo(function SongMore({
+  songName,
+  artistName,
+  albumName,
+  albumId,
+  artistId,
+}) {
+  const {
+    isShowModal,
+    isShowContent,
+    onModalOpen: onMoreClick,
+    onModalClose: onClose,
+  } = useEffectShowModal()
 
-    const onModalContainerClick = useCallback(e => {
-      if (!e.target.getAttribute("data-close")) {
-        e.stopPropagation()
-      }
-    }, [])
+  const onModalContainerClick = useCallback(e => {
+    if (!e.target.getAttribute("data-close")) {
+      e.stopPropagation()
+    }
+  }, [])
 
-    const onAlbumNameClick = useCallback(() => {
-      console.log(albumId)
-    }, [artistId])
+  const onAlbumNameClick = useCallback(() => {
+    console.log(albumId)
+  }, [artistId])
 
-    return (
-      <>
-        <StyledMoreIcon onClick={onMoreClick}>
-          <li />
-          <li />
-          <li />
-        </StyledMoreIcon>
-        {isShowModal && (
-          <InnerModal>
-            <ModalMask onClick={onClose}>
-              <StyledModalContainer
-                isShow={isShowContent}
-                onClick={onModalContainerClick}
-              >
-                <div className="song_name">{songName}</div>
-                <ul className="contents">
-                  <li className="next_song">下一首播放</li>
-                  {artistName && (
-                    <li className="artist">
-                      <Link
-                        to={`/artist?id=${artistId}&name=${
-                          artistName?.split(" ")?.[0]
-                        }`}
-                        onClick={onClose}
-                      >
-                        {`歌手 ${artistName}`}
-                      </Link>
-                    </li>
-                  )}
-                  {albumName && (
-                    <li className="album" onClick={onAlbumNameClick}>
-                      {`专辑 ${albumName}`}
-                    </li>
-                  )}
-                </ul>
-                <div className="close" data-close="true">
-                  &times;
-                </div>
-              </StyledModalContainer>
-            </ModalMask>
-          </InnerModal>
-        )}
-      </>
-    )
-  },
-)
+  return (
+    <>
+      <StyledMoreIcon onClick={onMoreClick}>
+        <li />
+        <li />
+        <li />
+      </StyledMoreIcon>
+      {isShowModal && (
+        <InnerModal>
+          <ModalMask onClick={onClose}>
+            <StyledModalContainer
+              isShow={isShowContent}
+              onClick={onModalContainerClick}
+            >
+              <div className="song_name">{songName}</div>
+              <ul className="contents">
+                <li className="next_song">下一首播放</li>
+                {artistName && (
+                  <li className="artist">
+                    <Link
+                      to={`/artist?id=${artistId}&name=${
+                        artistName?.split(" ")?.[0]
+                      }`}
+                      onClick={onClose}
+                    >
+                      {`歌手 ${artistName}`}
+                    </Link>
+                  </li>
+                )}
+                {albumName && (
+                  <li className="album" onClick={onAlbumNameClick}>
+                    {`专辑 ${albumName}`}
+                  </li>
+                )}
+              </ul>
+              <div className="close" data-close="true">
+                &times;
+              </div>
+            </StyledModalContainer>
+          </ModalMask>
+        </InnerModal>
+      )}
+    </>
+  )
+})
 
 SongMore.propTypes = {
   songName: PropTypes.string,

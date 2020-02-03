@@ -94,7 +94,7 @@ const ArtistDetails = () => {
       revalidateOnFocus: false,
     },
   )
-  console.log(artistDesc)
+
   const { data: artistInfo } = useSWR(
     [`/api/search?keywords=${realArtistName}&type=100`, artistId],
     artistDetailsPage.requestArtistInfo,
@@ -148,7 +148,6 @@ const ArtistDetails = () => {
         </StyledName>
       </ReactPlaceholder>
       <ReactPlaceholder
-        delay={300}
         type="text"
         ready={!!artistDesc}
         rows={2}
@@ -161,8 +160,7 @@ const ArtistDetails = () => {
 
       <MediaItemList
         title="歌曲"
-        list={artistSongs?.slice(0, 5)}
-        placeHolderCount={5}
+        list={artistSongs?.slice(0, 5) ?? new Array(5).fill({ type: "song" })}
       />
     </ArtistDetailsPage>
   )

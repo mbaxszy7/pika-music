@@ -208,7 +208,6 @@ const SearchSuggestList = memo(
           ready={!isValidating || (isValidating && !inputValue)}
           color="grey"
           rows={3}
-          delay={500}
           showLoadingAnimation
           style={{
             width: "60%",

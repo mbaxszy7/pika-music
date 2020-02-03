@@ -63,10 +63,19 @@ export const useLocalStorage = key => {
 export const useEffectShowModal = () => {
   const [isShowModal, setIsShowModal] = useState(false)
   const [isShowContent, setIsShowContent] = useState(false)
+  const onModalCloseTimeoutId = useRef(null)
 
   const onModalClose = useCallback(() => {
     setIsShowContent(false)
-    setTimeout(() => setIsShowModal(false), 100)
+
+    const id = setTimeout(() => {
+      setIsShowModal(false)
+    }, 100)
+    onModalCloseTimeoutId.current = id
+  }, [])
+
+  useEffect(() => {
+    return () => clearTimeout(onModalCloseTimeoutId.current)
   }, [])
 
   const onModalOpen = useCallback(() => {
@@ -74,9 +83,11 @@ export const useEffectShowModal = () => {
   }, [])
 
   useEffect(() => {
+    let id
     if (isShowModal) {
-      setTimeout(() => setIsShowContent(true), 0)
+      id = setTimeout(() => setIsShowContent(true), 0)
     }
+    return () => clearTimeout(id)
   }, [isShowModal])
 
   return { isShowModal, isShowContent, onModalOpen, onModalClose }

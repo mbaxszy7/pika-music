@@ -48,12 +48,17 @@ const SEARCH_RESULT_SELECTOR = {
   song: {
     desc: "歌曲",
     selector: data => {
+      const artistNames = data.ar.length
+        ? [...data.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
+        : ""
       return {
         imgUrl: data.al.picUrl,
         title: `${data.name}`,
-        desc: `${data.ar[0].name} · ${data.al.name}`,
+        desc: `${artistNames} · ${data.al.name}`,
         artistId: data.ar[0].id,
         albumId: data.al.id,
+        artistName: artistNames,
+        albumName: data.al.name,
       }
     },
   },
