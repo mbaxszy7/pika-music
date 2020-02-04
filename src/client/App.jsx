@@ -11,17 +11,19 @@ import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
 
-const App = ({ store }) => (
-  <>
-    <AppCss />
-    <ReactPlaceholderStyle />
-    <AppTheme>
-      <Provider store={store}>
-        <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
-      </Provider>
-    </AppTheme>
-  </>
-)
+const App = ({ store }) => {
+  return (
+    <>
+      <AppCss />
+      <ReactPlaceholderStyle />
+      <AppTheme>
+        <Provider store={store}>
+          <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
+        </Provider>
+      </AppTheme>
+    </>
+  )
+}
 
 App.propTypes = {
   store: PropTypes.object.isRequired,

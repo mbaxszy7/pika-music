@@ -41,7 +41,6 @@ export const Discover = Loadable({
       /* webpackChunkName: 'discover',  webpackPrefetch:true  */ "../client/pages/Discover/Discover.jsx"
     ),
   loading: Loading,
-  delay: 300,
 })
 
 export const ArtistDetails = Loadable({
@@ -50,5 +49,12 @@ export const ArtistDetails = Loadable({
       /* webpackChunkName: 'artist-details',  webpackPrefetch:true  */ "../client/pages/ArtistDetails/ArtistDetails"
     ),
   loading: Loading,
-  delay: 300,
+})
+
+export const ArtistMediaDetails = Loadable({
+  loader: () =>
+    import(
+      /* webpackChunkName: 'artist-media-details',  webpackPrefetch:true  */ "../client/pages/ArtistMediaDetails/ArtistMediaDetails"
+    ),
+  loading: Loading,
 })

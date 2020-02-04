@@ -301,6 +301,7 @@ const SearchResult = memo(
         {bestMatchData && (
           <BestMatchContainer>
             <MediaItemList
+              moreUrl=""
               title="最佳匹配"
               list={[
                 {
@@ -316,6 +317,8 @@ const SearchResult = memo(
             return (
               <React.Fragment key={index}>
                 <MediaItemList
+                  moreUrl={`/artist/media?type=${type}`}
+                  type={type}
                   title={title}
                   list={dataList.map(data => {
                     const media = getDesc(data)

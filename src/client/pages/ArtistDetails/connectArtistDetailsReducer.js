@@ -1,3 +1,4 @@
+import moment from "moment"
 import ConnectCompReducer from "../../../utils/connectPageReducer"
 import { awaitWrapper } from "../../../utils"
 import {
@@ -37,25 +38,35 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
 
   requestArtistAlbums = async url => {
     const res = await this.fetcher.get(url)
-    return res.data.hotAlbums.map(album => {
-      return {
-        imgUrl: album.picUrl,
-        title: album.name,
-        publishTime: album.publishTime,
-        type: "bigAlbum",
-        albumId: album.id,
-      }
-    })
+    return [
+      res.data.hotAlbums.map(album => {
+        return {
+          imgUrl: album.picUrl,
+          title: album.name,
+          publishTime: album.publishTime
+            ? moment(new Date(album.publishTime), "YYYY-MM-DD").format(
+                "YYYY-MM-DD",
+              )
+            : null,
+          type: "bigAlbum",
+          albumId: album.id,
+        }
+      }),
+      res.data.more,
+    ]
   }
 
   requestArtistMVs = async url => {
     const res = await this.fetcher.get(url)
-    return res.data.mvs.map(mv => ({
-      imgUrl: mv.imgurl,
-      title: mv.name,
-      id: mv.id,
-      type: "bigMV",
-    }))
+    return [
+      res.data.mvs.map(mv => ({
+        imgUrl: mv.imgurl,
+        title: mv.name,
+        id: mv.id,
+        type: "bigMV",
+      })),
+      res.data.hasMore,
+    ]
   }
 
   getInitialData = async (store, ctx) => {
@@ -90,11 +101,11 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
     })
     store.dispatch({
       type: ADD_ARTIST_ALBUMS,
-      data: result[2],
+      data: result[2][0],
     })
     store.dispatch({
       type: ADD_ARTIST_MVS,
-      data: result[3],
+      data: result[3][0],
     })
   }
 }

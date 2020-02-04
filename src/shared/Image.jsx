@@ -1,7 +1,15 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useState, useEffect, useCallback } from "react"
+import React, {
+  memo,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react"
 import PropTypes from "prop-types"
+import lozad from "lozad"
 import styled from "styled-components"
 import ReactPlaceholder from "react-placeholder"
 
@@ -75,12 +83,19 @@ const StyledImage = styled.img`
 `
 
 const MyImage = memo(({ url, styledCss }) => {
+  const imgRef = useRef()
   const [isLoaded, setLoaded] = useState(false)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const observer = useMemo(() => lozad(imgRef.current), [url])
+  useEffect(() => {
+    observer.observe()
+  }, [observer])
   return (
     <StyledImage
-      src={url}
+      ref={imgRef}
+      className="lozad"
+      data-src={url}
       styledCss={styledCss}
       data-loaded={isLoaded || !url}
       alt=""

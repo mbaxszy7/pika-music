@@ -35,7 +35,7 @@ const StyledDesc = styled.div`
   max-height: 70vh;
   overflow-y: scroll;
   margin-top: 15px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.3;
   color: ${props => props.theme.dg};
   ${PlaceHolderTextAnimation};
@@ -178,16 +178,19 @@ const ArtistDetails = () => {
       </StyledDesc>
 
       <MediaItemList
+        moreUrl={`/artist/media?type=song&artistId=${artistId}`}
         title="歌曲"
         list={artistSongs?.slice(0, 5) ?? new Array(5).fill({ type: "song" })}
       />
       <MediaItemList
+        moreUrl={`/artist/media?type=bigAlbum&artistId=${artistId}`}
         title="专辑"
-        list={artistAlbums ?? new Array(4).fill({ type: "bigAlbum" })}
+        list={artistAlbums?.[0] ?? new Array(4).fill({ type: "bigAlbum" })}
       />
       <MediaItemList
+        moreUrl={`/artist/media?type=biggerMV&artistId=${artistId}`}
         title="视频"
-        list={artistMVs ?? new Array(4).fill({ type: "bigMV" })}
+        list={artistMVs?.[0] ?? new Array(4).fill({ type: "bigMV" })}
       />
     </ArtistDetailsPage>
   )
