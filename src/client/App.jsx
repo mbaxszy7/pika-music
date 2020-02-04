@@ -1,7 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import { hot } from "react-hot-loader/root"
 import React from "react"
-import { Reset } from "styled-reset"
 import PropTypes from "prop-types"
 import { BrowserRouter } from "react-router-dom"
 import { Provider } from "react-redux"
@@ -10,10 +9,11 @@ import routes from "../routes"
 import { isCSR } from "../utils"
 import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
+import AppCss from "../shared/AppCss.styled"
 
 const App = ({ store }) => (
   <>
-    <Reset />
+    <AppCss />
     <ReactPlaceholderStyle />
     <AppTheme>
       <Provider store={store}>

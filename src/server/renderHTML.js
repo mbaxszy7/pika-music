@@ -5,7 +5,6 @@ import Loadable from "react-loadable"
 import { getBundles } from "react-loadable/webpack"
 import { Provider } from "react-redux"
 import { StaticRouter } from "react-router-dom"
-import { Reset } from "styled-reset"
 import { matchRoutes, renderRoutes } from "react-router-config"
 import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
@@ -16,10 +15,11 @@ import getReduxStore from "../store/storeCreator"
 import stats from "../../public/react-loadable.json"
 import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
+import AppCss from "../shared/AppCss.styled"
 
 const setInitialDataToStore = async ctx => {
   // const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
-  const store = getReduxStore()
+  const store = getReduxStore({ ua: ctx.state.ua })
   const matchedRoutes = matchRoutes(routes, ctx.request.path)
 
   await Promise.all(
@@ -30,6 +30,7 @@ const setInitialDataToStore = async ctx => {
     // eslint-disable-next-line no-console
     console.error("renderHTML 41,", error)
   })
+
   return store
 }
 
@@ -45,7 +46,7 @@ const renderHTML = async (ctx, staticContext) => {
       <Loadable.Capture report={moduleName => modules.push(moduleName)}>
         <StyleSheetManager sheet={sheet.instance}>
           <>
-            <Reset />
+            <AppCss />
             <ReactPlaceholderStyle />
             <AppTheme>
               <Provider store={store}>

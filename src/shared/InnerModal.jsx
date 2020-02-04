@@ -25,11 +25,13 @@ class InnerModal extends PureComponent {
   }
 
   componentDidMount() {
+    document.querySelector("html, body").classList.add("no_scroll")
     this.modalRoot.appendChild(this.el)
     window.addEventListener("beforeunload", this.modalCleanup)
   }
 
   componentWillUnmount() {
+    document.querySelector("html, body").classList.remove("no_scroll")
     try {
       this.modalRoot.removeChild(this.el)
     } catch (e) {
@@ -39,6 +41,7 @@ class InnerModal extends PureComponent {
   }
 
   modalCleanup = () => {
+    document.querySelector("html, body").classList.remove("no_scroll")
     try {
       this.modalRoot.removeChild(this.el)
     } catch (e) {

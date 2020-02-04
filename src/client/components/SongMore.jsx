@@ -16,7 +16,7 @@ import album from "../../assets/album.png"
 const StyledMoreIcon = styled.ul`
   display: flex;
   margin-left: auto;
-
+  position: relative;
   li {
     width: 4px;
     height: 4px;
@@ -25,6 +25,15 @@ const StyledMoreIcon = styled.ul`
   }
   li:nth-of-type(2) {
     margin: 0 4px;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 `
 

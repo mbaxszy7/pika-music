@@ -10,15 +10,14 @@ const rootReducer = {
   artistDetails: artistDetailsReducer,
   discover: discoverReducer,
   home: homeReducer,
-  config: () => ({
-    isSSR: !isCSR,
-  }),
 }
 
 const getReduxStore = defaultState => {
   const store = createStore(
-    combineReducers({ ...rootReducer }),
-    defaultState || {},
+    combineReducers({
+      ...rootReducer,
+      config: () => ({ ua: defaultState?.ua, isSSR: !isCSR }),
+    }),
     composeWithDevTools(applyMiddleware(thunk)),
   )
   return store

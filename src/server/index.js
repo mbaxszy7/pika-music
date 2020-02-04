@@ -5,10 +5,12 @@ import serve from "koa-static"
 import mount from "koa-mount"
 import logger from "koa-logger"
 import renderHTML from "./renderHTML"
+import uaParser from "./ua"
 
 const app = new Koa()
 app.use(logger())
 app.use(mount("/public", serve("./public")))
+app.use(uaParser)
 
 app.use(async ctx => {
   const staticContext = {}

@@ -6,14 +6,20 @@ import VConsole from "vconsole"
 import Loadable from "react-loadable"
 import App from "./App.jsx"
 import getReduxStore from "../store/storeCreator.js"
-import { isCSR } from "../utils"
+import { isCSR, isDEV } from "../utils"
 
-const vConsole = new VConsole()
+// eslint-disable-next-line no-underscore-dangle
+const payloadData = window.__INITIAL_STATE__?.state ?? {}
 
-const store = getReduxStore(
-  // eslint-disable-next-line no-underscore-dangle
-  window.__INITIAL_STATE__?.state ?? {},
-)
+if (
+  (payloadData.config?.ua.device.type === "mobile" && isDEV) ||
+  window.location.hash === "#test"
+) {
+  // eslint-disable-next-line no-unused-vars
+  const vConsole = new VConsole()
+}
+
+const store = getReduxStore(payloadData)
 
 const render = isCSR ? ReactDOM.render : ReactDOM.hydrate
 
