@@ -6,7 +6,7 @@ import PropTypes from "prop-types"
 const List = memo(({ list, fallBack, listItem }) => {
   return list && list.length > 0
     ? list.map((item, index) => listItem({ item, index }))
-    : fallBack
+    : fallBack || null
 })
 
 List.propTypes = {

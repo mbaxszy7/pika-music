@@ -9,7 +9,7 @@ import styled from "styled-components"
 import InnerModal, { ModalMask } from "../../shared/InnerModal"
 import SingleLineTexts from "../../shared/LinesTexts.styled"
 import { useEffectShowModal } from "../../utils/hooks"
-import nextSong from "../../assets/next_song.png"
+import nextSong from "../../assets/nextSong.png"
 import artist from "../../assets/artist.png"
 import album from "../../assets/album.png"
 
