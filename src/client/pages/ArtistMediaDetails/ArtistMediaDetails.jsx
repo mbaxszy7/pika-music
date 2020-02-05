@@ -9,13 +9,13 @@ import React, {
 import { useLocation } from "react-router-dom"
 import styled from "styled-components"
 import useSWR, { useSWRPages } from "swr"
-import ReactPlaceholder from "react-placeholder"
 import queryString from "query-string"
 import MediaItemList from "../../components/MediaItemList"
 import artistMediaDetailsPage from "./connectArtistMediaDetailsReducer"
 import PageBack from "../../components/PageBack"
 
 const ArtistMediaDetailsPage = styled.div`
+  min-height: 100vh;
   padding: 30px 15px 40px 15px;
 `
 

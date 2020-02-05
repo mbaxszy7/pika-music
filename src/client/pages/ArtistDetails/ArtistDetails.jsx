@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
@@ -14,7 +14,6 @@ import SingleLineTexts, {
 import InnerModal from "../../../shared/InnerModal"
 import { useEffectShowModal } from "../../../utils/hooks"
 import MediaItemList from "../../components/MediaItemList"
-import PlaceHolderTextAnimation from "../../../shared/PlaceHolderAnimation.styled"
 
 const StyledAvatar = styled.img`
   width: 134px;
@@ -38,7 +37,6 @@ const StyledDesc = styled.div`
   font-size: 16px;
   line-height: 1.3;
   color: ${props => props.theme.dg};
-  ${PlaceHolderTextAnimation};
   ${props => (props.isWhole ? "line-height:1.5" : MultipleLineTexts(2))}
 `
 const StyledName = styled.p`
@@ -88,7 +86,15 @@ const ArtistDetails = () => {
 
   const location = useLocation().search
   const { id: artistId, name: artistName } = queryString.parse(location)
-  const realArtistName = artistName?.split(" ")?.[0]
+  const [realArtistName, setRealArtistName] = useState(
+    () => artistName?.split(" ")?.[0],
+  )
+
+  useEffect(() => {
+    const { name } = queryString.parse(window.location.search)
+    setRealArtistName(name)
+  }, [])
+
   const { data: artistDesc } = useSWR(
     `/api/artist/desc?id=${artistId}`,
     artistDetailsPage.requestArtistDesc,
@@ -160,12 +166,18 @@ const ArtistDetails = () => {
       >
         <StyledAvatar src={artistInfo?.img1v1Url} />
       </ReactPlaceholder>
+
       <ReactPlaceholder
         type="text"
-        ready={!!artistName}
+        ready={!!realArtistName}
         rows={1}
         showLoadingAnimation
-        style={{ width: 100, borderRadius: 200, height: 30, marginTop: 30 }}
+        style={{
+          width: 120,
+          borderRadius: 200,
+          fontSize: "1.5em",
+          marginTop: 30,
+        }}
       >
         <StyledName>
           {`${realArtistName}${
@@ -173,9 +185,16 @@ const ArtistDetails = () => {
           }`}
         </StyledName>
       </ReactPlaceholder>
-      <StyledDesc onClick={onModalOpen} data-loaded={!!artistDesc}>
-        {artistDesc}
-      </StyledDesc>
+
+      <ReactPlaceholder
+        type="text"
+        ready={!!artistDesc}
+        rows={2}
+        showLoadingAnimation
+        style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
+      >
+        <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+      </ReactPlaceholder>
 
       <MediaItemList
         moreUrl={`/artist/media?type=song&artistId=${artistId}`}
