@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
 import styled from "styled-components"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
@@ -14,6 +14,18 @@ import SingleLineTexts, {
 import InnerModal from "../../../shared/InnerModal"
 import { useEffectShowModal } from "../../../utils/hooks"
 import MediaItemList from "../../components/MediaItemList"
+import PageBack from "../../components/PageBack"
+
+const PageBackWrapper = styled.div`
+  position: fixed;
+  padding: 25px 15px 15px 15px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 501;
+  opacity: ${props => props.opacity};
+  background-color: ${props => props.theme.mg};
+`
 
 const StyledAvatar = styled.img`
   width: 134px;
@@ -23,6 +35,10 @@ const StyledAvatar = styled.img`
   margin: 0 auto;
   border-radius: 50%;
   display: block;
+  margin-top: 35px;
+  position: sticky;
+  z-index: 0;
+  top: 15px;
 `
 
 const ArtistDetailsPage = styled.div`
@@ -40,7 +56,6 @@ const StyledDesc = styled.div`
   ${props => (props.isWhole ? "line-height:1.5" : MultipleLineTexts(2))}
 `
 const StyledName = styled.p`
-  margin-top: 30px;
   font-size: 18px;
   line-height: 1.3;
   color: ${props => props.theme.fg};
@@ -60,6 +75,7 @@ const StyledDescModal = styled.div`
   padding-bottom: 70px;
   transition: opacity 0.2s;
   opacity: ${props => (props.isShow ? "1" : "0")};
+  z-index: 1000;
   .close {
     position: absolute;
     bottom: 40px;
@@ -71,6 +87,14 @@ const StyledDescModal = styled.div`
   }
 `
 
+const ScrollContainer = styled.div`
+  position: sticky;
+  padding-top: 30px;
+  background-color: ${props => props.theme.mg};
+  z-index: 5;
+  overflow: hidden;
+`
+
 const ArtistDetails = () => {
   const {
     isShowModal,
@@ -78,7 +102,8 @@ const ArtistDetails = () => {
     onModalOpen,
     onModalClose,
   } = useEffectShowModal()
-
+  const scrollContainerRef = useRef()
+  const [headerOpacity, setHeaderOpacity] = useState(2)
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
   const initArtistAlbums = useSelector(state => state.artistDetails.albums)
@@ -89,6 +114,10 @@ const ArtistDetails = () => {
   const [realArtistName, setRealArtistName] = useState(
     () => artistName?.split(" ")?.[0],
   )
+
+  useLayoutEffect(() => {
+    window.scroll(0, 0)
+  }, [])
 
   useEffect(() => {
     const { name } = queryString.parse(window.location.search)
@@ -147,8 +176,24 @@ const ArtistDetails = () => {
     },
   )
 
+  useEffect(() => {
+    const onWindowScroll = () => {
+      const { top } = scrollContainerRef.current.getBoundingClientRect()
+      const opacityV = (184 - top) / 184
+      // eslint-disable-next-line no-nested-ternary
+      const op = opacityV < 0 ? 0 : opacityV > 1 ? 1 : opacityV
+      setHeaderOpacity(op.toFixed(2) === "0.00" ? 2 : op.toFixed(2))
+    }
+    window.addEventListener("scroll", onWindowScroll)
+    return () => window.removeEventListener("scroll", onWindowScroll)
+  }, [])
+
   return (
     <ArtistDetailsPage>
+      <PageBackWrapper opacity={headerOpacity}>
+        <PageBack title={headerOpacity !== 2 ? realArtistName : ""} />
+      </PageBackWrapper>
+
       {isShowModal && (
         <InnerModal>
           <StyledDescModal isShow={isShowContent}>
@@ -162,55 +207,59 @@ const ArtistDetails = () => {
       <ReactPlaceholder
         type="round"
         ready={!!artistInfo?.img1v1Url}
-        style={{ width: 134, height: 134, margin: "0 auto" }}
+        style={{ width: 134, height: 134, margin: "20px  auto 0 auto" }}
       >
         <StyledAvatar src={artistInfo?.img1v1Url} />
       </ReactPlaceholder>
 
-      <ReactPlaceholder
-        type="text"
-        ready={!!realArtistName}
-        rows={1}
-        showLoadingAnimation
-        style={{
-          width: 120,
-          borderRadius: 200,
-          fontSize: "1.5em",
-          marginTop: 30,
-        }}
-      >
-        <StyledName>
-          {`${realArtistName}${
-            artistInfo?.alia?.[0] ? ` (${artistInfo.alia[0]})` : ""
-          }`}
-        </StyledName>
-      </ReactPlaceholder>
+      <ScrollContainer ref={scrollContainerRef}>
+        <ReactPlaceholder
+          type="text"
+          ready={!!realArtistName}
+          rows={1}
+          showLoadingAnimation
+          style={{
+            width: 120,
+            borderRadius: 200,
+            fontSize: "1.5em",
+            marginTop: 30,
+          }}
+        >
+          <StyledName>
+            {`${realArtistName}${
+              artistInfo?.alia?.[0] ? ` (${artistInfo.alia[0]})` : ""
+            }`}
+          </StyledName>
+        </ReactPlaceholder>
 
-      <ReactPlaceholder
-        type="text"
-        ready={!!artistDesc}
-        rows={2}
-        showLoadingAnimation
-        style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
-      >
-        <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
-      </ReactPlaceholder>
+        <ReactPlaceholder
+          type="text"
+          ready={!!artistDesc}
+          rows={2}
+          showLoadingAnimation
+          style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
+        >
+          <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+        </ReactPlaceholder>
 
-      <MediaItemList
-        moreUrl={`/artist/media?type=song&artistId=${artistId}`}
-        title="歌曲"
-        list={artistSongs?.slice(0, 5) ?? new Array(5).fill({ type: "song" })}
-      />
-      <MediaItemList
-        moreUrl={`/artist/media?type=bigAlbum&artistId=${artistId}`}
-        title="专辑"
-        list={artistAlbums?.[0] ?? new Array(4).fill({ type: "bigAlbum" })}
-      />
-      <MediaItemList
-        moreUrl={`/artist/media?type=biggerMV&artistId=${artistId}`}
-        title="视频"
-        list={artistMVs?.[0] ?? new Array(4).fill({ type: "bigMV" })}
-      />
+        <MediaItemList
+          moreUrl={`/artist/media?type=song&artistId=${artistId}`}
+          title="歌曲"
+          list={
+            artistSongs?.[0].slice(0, 5) ?? new Array(5).fill({ type: "song" })
+          }
+        />
+        <MediaItemList
+          moreUrl={`/artist/media?type=bigAlbum&artistId=${artistId}`}
+          title="专辑"
+          list={artistAlbums?.[0] ?? new Array(4).fill({ type: "bigAlbum" })}
+        />
+        <MediaItemList
+          moreUrl={`/artist/media?type=biggerMV&artistId=${artistId}`}
+          title="视频"
+          list={artistMVs?.[0] ?? new Array(4).fill({ type: "bigMV" })}
+        />
+      </ScrollContainer>
     </ArtistDetailsPage>
   )
 }

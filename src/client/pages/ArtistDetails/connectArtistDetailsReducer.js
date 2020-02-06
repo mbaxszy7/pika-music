@@ -22,18 +22,21 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
 
   requestArtistSongs = async url => {
     const res = await this.fetcher.get(url)
-    return res.data.hotSongs.map(song => ({
-      imgUrl: song.al.picUrl,
-      title: `${song.name}`,
-      desc: `${song.al.name}`,
-      artistName: song.ar.length
-        ? [...song.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
-        : "",
-      albumName: song.al.name,
-      artistId: song.ar[0].id,
-      albumId: song.al.id,
-      type: "song",
-    }))
+    return [
+      res.data.hotSongs.map(song => ({
+        imgUrl: song.al.picUrl,
+        title: `${song.name}`,
+        desc: `${song.al.name}`,
+        artistName: song.ar.length
+          ? [...song.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
+          : "",
+        albumName: song.al.name,
+        artistId: song.ar[0].id,
+        albumId: song.al.id,
+        type: "song",
+      })),
+      false,
+    ]
   }
 
   requestArtistAlbums = async url => {
@@ -97,7 +100,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
     })
     store.dispatch({
       type: ADD_ARTIST_SONGS,
-      data: result[1],
+      data: result[1][0],
     })
     store.dispatch({
       type: ADD_ARTIST_ALBUMS,

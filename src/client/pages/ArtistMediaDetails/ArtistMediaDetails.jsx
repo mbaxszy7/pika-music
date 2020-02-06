@@ -14,9 +14,24 @@ import MediaItemList from "../../components/MediaItemList"
 import artistMediaDetailsPage from "./connectArtistMediaDetailsReducer"
 import PageBack from "../../components/PageBack"
 
+const PageBackWrapper = styled.div`
+  position: fixed;
+  padding: 25px 15px 15px 15px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 501;
+  background-color: ${props => props.theme.mg};
+`
+
 const ArtistMediaDetailsPage = styled.div`
   min-height: 100vh;
   padding: 30px 15px 40px 15px;
+`
+
+const ListWrapper = styled.div`
+  margin-top: 55px;
+  width: 100%;
 `
 
 const MediaTypeToRequest = {
@@ -29,6 +44,11 @@ const MediaTypeToRequest = {
     title: "视频",
     getUrl: (id, offset) => `/api/artist/mv?id=${id}&offset=${offset}`,
     fetch: artistMediaDetailsPage.requestBigMVs,
+  },
+  song: {
+    title: "热曲",
+    getUrl: (id, offset) => `/api/artists?id=${id}&offset=${offset}`,
+    fetch: artistMediaDetailsPage.requestSongs,
   },
 }
 
@@ -62,7 +82,6 @@ const ArtistMediaDetails = () => {
         }),
       )
       setPageOffset(offset)
-
       return <MediaItemList list={data?.[0] ?? new Array(8).fill({ type })} />
     },
     // one page's SWR => offset of next page
@@ -95,8 +114,10 @@ const ArtistMediaDetails = () => {
 
   return (
     <ArtistMediaDetailsPage ref={pageContainerRef}>
-      <PageBack title={title} />
-      {pages}
+      <PageBackWrapper>
+        <PageBack title={title} />
+      </PageBackWrapper>
+      <ListWrapper>{pages}</ListWrapper>
     </ArtistMediaDetailsPage>
   )
 }

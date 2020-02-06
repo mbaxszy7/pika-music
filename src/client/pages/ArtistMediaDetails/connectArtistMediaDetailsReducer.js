@@ -24,6 +24,10 @@ class ConnectArtistMediaDetails extends ConnectCompReducer {
     ]
   }
 
+  requestSongs = url => {
+    return connectArtistDetailsReducer.requestArtistSongs(url)
+  }
+
   getInitialData = async () => {}
 }
 
