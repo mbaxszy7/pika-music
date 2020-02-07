@@ -1,6 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react"
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+  memo,
+} from "react"
 import styled from "styled-components"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
@@ -12,9 +19,11 @@ import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../../shared/LinesTexts.styled"
 import InnerModal from "../../../shared/InnerModal"
-import { useEffectShowModal } from "../../../utils/hooks"
+import { useEffectShowModal, useEleScrollValue } from "../../../utils/hooks"
 import MediaItemList from "../../components/MediaItemList"
 import PageBack from "../../components/PageBack"
+import { clamp } from "../../../utils"
+import Avatar from "../../../shared/Avatar"
 
 const PageBackWrapper = styled.div`
   position: fixed;
@@ -27,18 +36,14 @@ const PageBackWrapper = styled.div`
   background-color: ${props => props.theme.mg};
 `
 
-const StyledAvatar = styled.img`
-  width: 134px;
-  height: 134px;
-  max-width: 134px;
-  max-height: 134px;
+const StyledAvatar = styled.div`
   margin: 0 auto;
-  border-radius: 50%;
-  display: block;
   margin-top: 35px;
   position: sticky;
   z-index: 0;
   top: 15px;
+  display: flex;
+  justify-content: center;
 `
 
 const ArtistDetailsPage = styled.div`
@@ -95,15 +100,71 @@ const ScrollContainer = styled.div`
   overflow: hidden;
 `
 
+const ArtistNameAndBrief = memo(
+  ({ realArtistName, artistInfo, artistDesc }) => {
+    const {
+      isShowModal,
+      isShowContent,
+      onModalOpen,
+      onModalClose,
+    } = useEffectShowModal()
+
+    return (
+      <>
+        {isShowModal && (
+          <InnerModal>
+            <StyledDescModal isShow={isShowContent}>
+              <StyledDesc isWhole>{artistDesc}</StyledDesc>
+              <div className="close" onClick={onModalClose} data-close="true">
+                &times;
+              </div>
+            </StyledDescModal>
+          </InnerModal>
+        )}
+        <ReactPlaceholder
+          type="text"
+          ready={!!realArtistName}
+          rows={1}
+          showLoadingAnimation
+          style={{
+            width: 120,
+            borderRadius: 200,
+            fontSize: "1.5em",
+            marginTop: 30,
+          }}
+        >
+          <StyledName>
+            {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
+          </StyledName>
+        </ReactPlaceholder>
+
+        <ReactPlaceholder
+          type="text"
+          ready={!!artistDesc}
+          rows={2}
+          showLoadingAnimation
+          style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
+        >
+          <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+        </ReactPlaceholder>
+      </>
+    )
+  },
+)
+
 const ArtistDetails = () => {
-  const {
-    isShowModal,
-    isShowContent,
-    onModalOpen,
-    onModalClose,
-  } = useEffectShowModal()
   const scrollContainerRef = useRef()
-  const [headerOpacity, setHeaderOpacity] = useState(2)
+  const scrollValueFormatter = useCallback(scrollValue => {
+    // eslint-disable-next-line no-nested-ternary
+    const op = clamp(scrollValue, 0, 1)
+    return op === 0 ? 2 : op.toFixed(2)
+  }, [])
+
+  const headerOpacity = useEleScrollValue(
+    scrollContainerRef.current,
+    scrollValueFormatter,
+  )
+
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
   const initArtistAlbums = useSelector(state => state.artistDetails.albums)
@@ -176,72 +237,22 @@ const ArtistDetails = () => {
     },
   )
 
-  useEffect(() => {
-    const onWindowScroll = () => {
-      const { top } = scrollContainerRef.current.getBoundingClientRect()
-      const opacityV = (184 - top) / 184
-      // eslint-disable-next-line no-nested-ternary
-      const op = opacityV < 0 ? 0 : opacityV > 1 ? 1 : opacityV
-      setHeaderOpacity(op.toFixed(2) === "0.00" ? 2 : op.toFixed(2))
-    }
-    window.addEventListener("scroll", onWindowScroll)
-    return () => window.removeEventListener("scroll", onWindowScroll)
-  }, [])
-
   return (
     <ArtistDetailsPage>
       <PageBackWrapper opacity={headerOpacity}>
         <PageBack title={headerOpacity !== 2 ? realArtistName : ""} />
       </PageBackWrapper>
 
-      {isShowModal && (
-        <InnerModal>
-          <StyledDescModal isShow={isShowContent}>
-            <StyledDesc isWhole>{artistDesc}</StyledDesc>
-            <div className="close" onClick={onModalClose} data-close="true">
-              &times;
-            </div>
-          </StyledDescModal>
-        </InnerModal>
-      )}
-      <ReactPlaceholder
-        type="round"
-        ready={!!artistInfo?.img1v1Url}
-        style={{ width: 134, height: 134, margin: "20px  auto 0 auto" }}
-      >
-        <StyledAvatar src={artistInfo?.img1v1Url} />
-      </ReactPlaceholder>
+      <StyledAvatar>
+        <Avatar url={artistInfo?.img1v1Url} size="large" />
+      </StyledAvatar>
 
       <ScrollContainer ref={scrollContainerRef}>
-        <ReactPlaceholder
-          type="text"
-          ready={!!realArtistName}
-          rows={1}
-          showLoadingAnimation
-          style={{
-            width: 120,
-            borderRadius: 200,
-            fontSize: "1.5em",
-            marginTop: 30,
-          }}
-        >
-          <StyledName>
-            {`${realArtistName}${
-              artistInfo?.alia?.[0] ? ` (${artistInfo.alia[0]})` : ""
-            }`}
-          </StyledName>
-        </ReactPlaceholder>
-
-        <ReactPlaceholder
-          type="text"
-          ready={!!artistDesc}
-          rows={2}
-          showLoadingAnimation
-          style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
-        >
-          <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
-        </ReactPlaceholder>
-
+        <ArtistNameAndBrief
+          realArtistName={realArtistName}
+          artistInfo={artistInfo?.alia?.[0]}
+          artistDesc={artistDesc}
+        />
         <MediaItemList
           moreUrl={`/artist/media?type=song&artistId=${artistId}`}
           title="歌曲"

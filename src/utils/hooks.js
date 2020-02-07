@@ -92,3 +92,27 @@ export const useEffectShowModal = () => {
 
   return { isShowModal, isShowContent, onModalOpen, onModalClose }
 }
+
+export const useEleScrollValue = (ele, formatter) => {
+  const [headerOpacity, setHeaderOpacity] = useState(0)
+  const isScrolled = useRef({
+    tag: false,
+    value: 0,
+  })
+  useEffect(() => {
+    const onWindowScroll = () => {
+      const { top } = ele.getBoundingClientRect()
+      if (!isScrolled.current.tag) {
+        isScrolled.current.value = top
+        isScrolled.current.tag = true
+      }
+
+      const opacityV =
+        (isScrolled.current.value - top) / isScrolled.current.value
+      setHeaderOpacity(opacityV)
+    }
+    window.addEventListener("scroll", onWindowScroll)
+    return () => window.removeEventListener("scroll", onWindowScroll)
+  }, [ele, formatter])
+  return formatter(headerOpacity)
+}

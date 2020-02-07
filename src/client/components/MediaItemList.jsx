@@ -222,7 +222,7 @@ MediaItem.propTypes = {
   publishTime: PropTypes.string,
 }
 
-const MediaItemList = ({ list, title, placeHolderCount, moreUrl }) => {
+const MediaItemList = memo(({ list, title, placeHolderCount, moreUrl }) => {
   return (
     <>
       {moreUrl && title ? (
@@ -239,7 +239,7 @@ const MediaItemList = ({ list, title, placeHolderCount, moreUrl }) => {
       />
     </>
   )
-}
+})
 
 MediaItemList.propTypes = {
   moreUrl: PropTypes.string,

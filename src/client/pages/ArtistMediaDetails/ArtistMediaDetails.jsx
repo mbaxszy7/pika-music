@@ -5,6 +5,7 @@ import React, {
   useLayoutEffect,
   useCallback,
   useRef,
+  memo,
 } from "react"
 import { useLocation } from "react-router-dom"
 import styled from "styled-components"
@@ -52,9 +53,9 @@ const MediaTypeToRequest = {
   },
 }
 
-const ArtistMediaDetails = () => {
+const ArtistMediaDetails = memo(() => {
   const pageContainerRef = useRef()
-  const [page, setPageOffset] = useState(0)
+  const page = useRef(0)
   const location = useLocation().search
   const { type, artistId } = useMemo(() => queryString.parse(location), [
     location,
@@ -81,13 +82,13 @@ const ArtistMediaDetails = () => {
           revalidateOnFocus: false,
         }),
       )
-      setPageOffset(offset)
+      page.current = offset
       return <MediaItemList list={data?.[0] ?? new Array(8).fill({ type })} />
     },
     // one page's SWR => offset of next page
     ({ data: projects }) => {
       if (projects?.[1]) {
-        return page + 1
+        return page.current + 1
       }
       return null
     },
@@ -120,6 +121,6 @@ const ArtistMediaDetails = () => {
       <ListWrapper>{pages}</ListWrapper>
     </ArtistMediaDetailsPage>
   )
-}
+})
 
 export default ArtistMediaDetails

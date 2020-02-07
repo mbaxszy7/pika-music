@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useCallback } from "react"
+import React, { useCallback, memo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 
@@ -25,7 +25,7 @@ const StyledPageBack = styled.div`
   }
 `
 
-const PageBack = ({ title, style }) => {
+const PageBack = memo(({ title, style }) => {
   const onPageBack = useCallback(() => {
     window.history.back()
   }, [])
@@ -35,7 +35,7 @@ const PageBack = ({ title, style }) => {
       {title && <p>{title}</p>}
     </StyledPageBack>
   )
-}
+})
 
 PageBack.propTypes = {
   style: PropTypes.object,
