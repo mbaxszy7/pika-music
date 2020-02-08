@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
 import React, { memo } from "react"
@@ -47,7 +48,7 @@ const DurationTag = styled.span`
 
 export const MediaItemTypes = {
   ALBUM: "album",
-  PLAY_LIST: "playList",
+  PLAY_LIST: "playlist",
   SONG: "song",
   VIDEO: "video",
   ARTIST: "artist",
@@ -96,6 +97,13 @@ const StyledResultItem = styled.div`
       color: ${props => props.theme.dg};
     }
   }
+`
+
+const ItemIndex = styled.span`
+  font-weight: bold;
+  color: ${props => props.theme.fg};
+  display: block;
+  margin-right: 26px;
 `
 
 const ItemImg = memo(({ type, imgUrl }) => {
@@ -168,6 +176,9 @@ const MediaItem = memo(
     albumName,
     publishTime,
     duration,
+    index,
+    noImg,
+    noIndex,
   }) => {
     const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
     const innerDD = desc || publishTime
@@ -179,7 +190,14 @@ const MediaItem = memo(
         isSingleColumItem={type === MediaItemTypes.BIGGER_MV}
       >
         {duration && <DurationTag>{duration}</DurationTag>}
-        <ItemImg type={type} imgUrl={imgUrl} />
+
+        {!noImg ? (
+          <ItemImg type={type} imgUrl={imgUrl} />
+        ) : !noIndex ? (
+          <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
+        ) : (
+          ""
+        )}
         <ReactPlaceholder
           ready={!!title}
           rows={2}
@@ -210,6 +228,9 @@ const MediaItem = memo(
 MediaItem.displayName = "MediaItem"
 
 MediaItem.propTypes = {
+  noIndex: PropTypes.bool,
+  noImg: PropTypes.bool,
+  index: PropTypes.number,
   duration: PropTypes.string,
   imgUrl: PropTypes.string,
   title: PropTypes.string,
@@ -223,6 +244,9 @@ MediaItem.propTypes = {
 }
 
 const MediaItemList = memo(({ list, title, placeHolderCount, moreUrl }) => {
+  if (!list?.length) {
+    return null
+  }
   return (
     <>
       {moreUrl && title ? (
@@ -234,8 +258,10 @@ const MediaItemList = memo(({ list, title, placeHolderCount, moreUrl }) => {
       )}
       <List
         list={list || new Array(placeHolderCount || 1).fill({})}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        listItem={({ item, index }) => <MediaItem {...item} key={index} />}
+        listItem={({ item, index }) => (
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          <MediaItem index={index} {...item} key={index} />
+        )}
       />
     </>
   )

@@ -1,19 +1,22 @@
 import React, {
   useMemo,
-  useState,
   useEffect,
   useLayoutEffect,
-  useCallback,
   useRef,
   memo,
+  useCallback,
 } from "react"
 import { useLocation } from "react-router-dom"
 import styled from "styled-components"
-import useSWR, { useSWRPages } from "swr"
 import queryString from "query-string"
-import MediaItemList from "../../components/MediaItemList"
+import ScrollPaginationMediaItems from "../../components/ScrollPaginationMediaItems"
 import artistMediaDetailsPage from "./connectArtistMediaDetailsReducer"
 import PageBack from "../../components/PageBack"
+
+const ListWrapper = styled.div`
+  margin-top: 60px;
+  width: 100%;
+`
 
 const PageBackWrapper = styled.div`
   position: fixed;
@@ -28,11 +31,6 @@ const PageBackWrapper = styled.div`
 const ArtistMediaDetailsPage = styled.div`
   min-height: 100vh;
   padding: 30px 15px 40px 15px;
-`
-
-const ListWrapper = styled.div`
-  margin-top: 55px;
-  width: 100%;
 `
 
 const MediaTypeToRequest = {
@@ -55,7 +53,7 @@ const MediaTypeToRequest = {
 
 const ArtistMediaDetails = memo(() => {
   const pageContainerRef = useRef()
-  const page = useRef(0)
+
   const location = useLocation().search
   const { type, artistId } = useMemo(() => queryString.parse(location), [
     location,
@@ -73,52 +71,28 @@ const ArtistMediaDetails = memo(() => {
     window.title = title
   }, [title])
 
-  const { pages, isLoadingMore, isReachingEnd, loadMore } = useSWRPages(
-    "test-page",
-    ({ offset, withSWR }) => {
-      const { data } = withSWR(
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSWR(getUrl(artistId, offset || 0), pageFetch, {
-          revalidateOnFocus: false,
-        }),
-      )
-      page.current = offset
-      return <MediaItemList list={data?.[0] ?? new Array(8).fill({ type })} />
-    },
-    // one page's SWR => offset of next page
-    ({ data: projects }) => {
-      if (projects?.[1]) {
-        return page.current + 1
-      }
-      return null
-    },
-  )
-
-  const onScroll = useCallback(() => {
-    const isBottom =
-      window.scrollY + 30 >
-      pageContainerRef.current.clientHeight - window.innerHeight
-
-    if (isBottom && !isReachingEnd && !isLoadingMore) {
-      loadMore()
-    }
-  }, [isReachingEnd, loadMore, isLoadingMore])
-
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [onScroll])
-
-  useEffect(() => {
-    window.title = title
-  }, [title])
+  const scrollRef = useCallback(() => pageContainerRef.current, [])
+  const getFetchUrl = useCallback(getUrl.bind(null, artistId), [
+    artistId,
+    getUrl,
+  ])
 
   return (
     <ArtistMediaDetailsPage ref={pageContainerRef}>
       <PageBackWrapper>
         <PageBack title={title} />
       </PageBackWrapper>
-      <ListWrapper>{pages}</ListWrapper>
+      <ListWrapper>
+        <ScrollPaginationMediaItems
+          keyPage="artist-media-details"
+          getScrollRef={scrollRef}
+          pageFetch={pageFetch}
+          getUrl={getFetchUrl}
+          mockLoadingOption={{
+            type,
+          }}
+        />
+      </ListWrapper>
     </ArtistMediaDetailsPage>
   )
 })

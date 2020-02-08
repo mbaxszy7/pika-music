@@ -3,7 +3,9 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-indent */
-import React, { memo, useState, useCallback } from "react"
+import React, { memo, useState, useCallback, useEffect, useRef } from "react"
+import Hotkeys from "react-hot-keys"
+import { useDispatch } from "react-redux"
 import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import useSWR from "swr"
@@ -201,6 +203,7 @@ const SearchSuggestList = memo(
       },
       [setLastSuggestsHistory],
     )
+
     return (
       <SuggestList isFocus={isFocus} onClick={onSuggestItemClick}>
         <ReactPlaceholder
@@ -314,10 +317,11 @@ const SearchResult = memo(
         {searchResultList &&
           searchResultList.map((typeData, index) => {
             const { type, getDesc, dataList, title } = typeData
+
             return (
               <React.Fragment key={index}>
                 <MediaItemList
-                  moreUrl={`/artist/media?type=${type}`}
+                  moreUrl={`/more?type=${type}&keyword=${keyword}`}
                   type={type}
                   title={title}
                   list={dataList.map(data => {
@@ -334,11 +338,19 @@ const SearchResult = memo(
 )
 
 const Search = memo(
-  ({ onSearch, onSearchSuggest, onSearchBestMatch, defaultValue }) => {
+  ({
+    onSearch,
+    onSearchSuggest,
+    onSearchBestMatch,
+    defaultValue,
+    setLastSearchWord,
+  }) => {
+    const inputRef = useRef()
     const [isShowDialog, setShowDialog] = useState(false)
     const [isFocus, setIsFocus] = useState(!!defaultValue)
     const [value, setValue] = useState(defaultValue)
-    const [keyword, setKeyword] = useState("")
+    const [keyword, setKeyword] = useState(defaultValue)
+    const dispatch = useDispatch()
 
     const {
       lastValue: lastSearchHistory,
@@ -375,8 +387,29 @@ const Search = memo(
       setShowDialog(false)
     }, [])
 
+    const onEnterKeyDown = useCallback(() => {
+      inputRef.current.blur()
+      setKeyword(value)
+    }, [value])
+
+    useEffect(() => {
+      dispatch(setLastSearchWord(keyword))
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [keyword])
+
+    // useEffect(() => {
+    //   if (defaultValue) {
+    //     setKeyword(defaultValue)
+    //   }
+    // }, [defaultValue])
+
     return (
       <>
+        <Hotkeys
+          keyName="enter"
+          onKeyDown={onEnterKeyDown}
+          filter={() => true}
+        />
         {isShowDialog && (
           <Dialog
             title="搜索历史"
@@ -389,6 +422,7 @@ const Search = memo(
         )}
         <InputWrapper isFocus={isFocus}>
           <Input
+            ref={inputRef}
             value={value}
             type="text"
             onFocus={onFocus}
@@ -421,6 +455,7 @@ const Search = memo(
 )
 
 Search.propTypes = {
+  setLastSearchWord: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   onSearchBestMatch: PropTypes.func.isRequired,
   onSearchSuggest: PropTypes.func.isRequired,

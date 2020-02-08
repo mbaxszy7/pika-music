@@ -58,3 +58,11 @@ export const ArtistMediaDetails = Loadable({
     ),
   loading: Loading,
 })
+
+export const AlbumDetails = Loadable({
+  loader: () =>
+    import(
+      /* webpackChunkName: 'album-details',  webpackPrefetch:true  */ "../client/pages/AlbumDetails/AlbumDetails"
+    ),
+  loading: Loading,
+})

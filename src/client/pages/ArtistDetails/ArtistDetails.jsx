@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable react/require-default-props */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, {
@@ -8,6 +10,7 @@ import React, {
   useCallback,
   memo,
 } from "react"
+import PropTypes from "prop-types"
 import styled from "styled-components"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
@@ -64,6 +67,7 @@ const StyledName = styled.p`
   font-size: 18px;
   line-height: 1.3;
   color: ${props => props.theme.fg};
+
   ${SingleLineTexts}
 `
 
@@ -121,36 +125,45 @@ const ArtistNameAndBrief = memo(
             </StyledDescModal>
           </InnerModal>
         )}
+
         <ReactPlaceholder
           type="text"
-          ready={!!realArtistName}
-          rows={1}
+          ready={!!(realArtistName && artistDesc)}
+          style={{ marginTop: 0 }}
+          customPlaceholder={
+            <>
+              <ReactPlaceholder
+                type="textRow"
+                ready={false}
+                style={{ width: 120, margin: "0 0 20px 0", height: "1.5em" }}
+              >
+                {" "}
+              </ReactPlaceholder>
+              <ReactPlaceholder type="textRow" ready={false}>
+                {" "}
+              </ReactPlaceholder>
+              <ReactPlaceholder type="textRow" ready={false}>
+                {" "}
+              </ReactPlaceholder>
+            </>
+          }
           showLoadingAnimation
-          style={{
-            width: 120,
-            borderRadius: 200,
-            fontSize: "1.5em",
-            marginTop: 30,
-          }}
         >
           <StyledName>
             {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
           </StyledName>
-        </ReactPlaceholder>
-
-        <ReactPlaceholder
-          type="text"
-          ready={!!artistDesc}
-          rows={2}
-          showLoadingAnimation
-          style={{ borderRadius: 200, height: "2.5em", marginTop: 20 }}
-        >
           <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
         </ReactPlaceholder>
       </>
     )
   },
 )
+
+ArtistNameAndBrief.propTypes = {
+  realArtistName: PropTypes.string,
+  artistInfo: PropTypes.string,
+  artistDesc: PropTypes.string,
+}
 
 const ArtistDetails = () => {
   const scrollContainerRef = useRef()
@@ -160,8 +173,13 @@ const ArtistDetails = () => {
     return op === 0 ? 2 : op.toFixed(2)
   }, [])
 
+  const callScrollContainerRef = useCallback(
+    () => scrollContainerRef.current,
+    [],
+  )
+
   const headerOpacity = useEleScrollValue(
-    scrollContainerRef.current,
+    callScrollContainerRef,
     scrollValueFormatter,
   )
 
@@ -249,15 +267,16 @@ const ArtistDetails = () => {
 
       <ScrollContainer ref={scrollContainerRef}>
         <ArtistNameAndBrief
-          realArtistName={realArtistName}
-          artistInfo={artistInfo?.alia?.[0]}
-          artistDesc={artistDesc}
+          realArtistName={realArtistName ?? ""}
+          artistInfo={artistInfo?.alia?.[0] ?? ""}
+          artistDesc={artistDesc ?? ""}
         />
         <MediaItemList
           moreUrl={`/artist/media?type=song&artistId=${artistId}`}
           title="歌曲"
           list={
-            artistSongs?.[0].slice(0, 5) ?? new Array(5).fill({ type: "song" })
+            artistSongs?.[0].slice?.(0, 5) ??
+            new Array(5).fill({ type: "song" })
           }
         />
         <MediaItemList

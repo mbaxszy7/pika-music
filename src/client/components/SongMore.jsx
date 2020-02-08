@@ -79,6 +79,9 @@ const StyledModalContainer = styled.div`
   .album {
     background-image: url(${album});
     ${SingleLineTexts}
+    a {
+      color: ${props => props.theme.fg};
+    }
   }
   .song_name {
     color: ${props => props.theme.fg};
@@ -116,10 +119,6 @@ const SongMore = memo(function SongMore({
     }
   }, [])
 
-  const onAlbumNameClick = useCallback(() => {
-    console.log(albumId)
-  }, [artistId])
-
   return (
     <>
       <StyledMoreIcon onClick={onMoreClick}>
@@ -150,8 +149,10 @@ const SongMore = memo(function SongMore({
                   </li>
                 )}
                 {albumName && (
-                  <li className="album" onClick={onAlbumNameClick}>
-                    {`专辑 ${albumName}`}
+                  <li className="album">
+                    <Link to={`/album?id=${albumId}`}>
+                      {`专辑 ${albumName}`}
+                    </Link>
                   </li>
                 )}
               </ul>

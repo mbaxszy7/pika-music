@@ -21,3 +21,6 @@ export const clamp = (num, min, max) => {
   if (num > max) return max
   return num
 }
+
+export const lazyMoment = () =>
+  import(/* webpackChunkName: 'moment',  webpackPrefetch:true  */ "moment")

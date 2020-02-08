@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import ConnectCompReducer from "../../../utils/connectPageReducer"
 import { awaitWrapper } from "../../../utils"
-import { ADD_BANNER_LIST } from "./constants"
+import { ADD_BANNER_LIST, SET_LAST_SEARCH_WORD } from "./constants"
 
 const BEST_SEARCH_SELECTOR = {
   artist: {
@@ -34,8 +34,8 @@ const BEST_SEARCH_SELECTOR = {
   },
 }
 
-const SEARCH_RESULT_SELECTOR = {
-  playList: {
+export const SEARCH_RESULT_SELECTOR = {
+  playlist: {
     desc: "歌单",
     selector: data => {
       return {
@@ -95,6 +95,13 @@ const SEARCH_RESULT_SELECTOR = {
 }
 
 class ConnectDiscoverReducer extends ConnectCompReducer {
+  setLastSearchKeyword = data => {
+    return {
+      type: SET_LAST_SEARCH_WORD,
+      data,
+    }
+  }
+
   requestBannerList = url => {
     return this.fetcher
       .get(url)
@@ -127,14 +134,15 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
       if (result.order?.length) {
         return result.order
           .map(type => {
-            const typeData = SEARCH_RESULT_SELECTOR[type]
+            const lowerCaseType = type.toLowerCase()
+            const typeData = SEARCH_RESULT_SELECTOR[lowerCaseType]
             let dataList = result[type][`${type}s`]
-            if (type === "song") {
+            if (lowerCaseType === "song") {
               dataList = dataList.slice(0, 5)
             }
             if (typeData) {
               return {
-                type,
+                type: lowerCaseType,
                 title: typeData.desc,
                 getDesc: typeData.selector,
                 dataList,

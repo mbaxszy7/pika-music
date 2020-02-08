@@ -29,6 +29,7 @@ const Discover = memo(() => {
       initialData: initialBannerList,
     },
   )
+  const lastSearchWord = useSelector(state => state.discover.lastSearchWord)
 
   return (
     <DiscoverPage>
@@ -37,6 +38,8 @@ const Discover = memo(() => {
         onSearchSuggest={discoverPage.requestSearchSuggest}
         onSearchBestMatch={discoverPage.requestSearchBestMatch}
         onSearch={discoverPage.requestSearch}
+        defaultValue={lastSearchWord}
+        setLastSearchWord={discoverPage.setLastSearchKeyword}
       />
       <BannersSection>
         <BannerListContainer bannerList={bannerList ?? []} />

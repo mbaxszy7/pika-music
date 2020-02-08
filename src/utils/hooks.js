@@ -101,7 +101,7 @@ export const useEleScrollValue = (ele, formatter) => {
   })
   useEffect(() => {
     const onWindowScroll = () => {
-      const { top } = ele.getBoundingClientRect()
+      const { top } = ele().getBoundingClientRect()
       if (!isScrolled.current.tag) {
         isScrolled.current.value = top
         isScrolled.current.tag = true

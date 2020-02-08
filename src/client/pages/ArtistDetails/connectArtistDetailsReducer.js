@@ -1,6 +1,5 @@
-import moment from "moment"
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { awaitWrapper } from "../../../utils"
+import { awaitWrapper, lazyMoment } from "../../../utils"
 import {
   ADD_ARTIST_DESC,
   ADD_ARTIST_SONGS,
@@ -40,7 +39,11 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
   }
 
   requestArtistAlbums = async url => {
-    const res = await this.fetcher.get(url)
+    const [res, { default: moment }] = await Promise.all([
+      this.fetcher.get(url),
+      lazyMoment(),
+    ])
+
     return [
       res.data.hotAlbums.map(album => {
         return {
