@@ -87,10 +87,17 @@ const MyImage = memo(({ url, styledCss }) => {
   const [isLoaded, setLoaded] = useState(false)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const observer = useMemo(() => lozad(imgRef.current), [url])
+  // const observer = useMemo(() => {
+
+  //   return
+  // }, [url])
+
   useEffect(() => {
+    setLoaded(false)
+    const observer = lozad(imgRef.current)
     observer.observe()
-  }, [observer])
+  }, [url])
+
   return (
     <StyledImage
       ref={imgRef}

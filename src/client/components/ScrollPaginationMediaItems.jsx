@@ -33,13 +33,15 @@ const ScrollPaginationMediaItems = memo(
         }
         return (
           <MediaItemList
-            list={data?.[0] ?? new Array(4).fill({ ...mockLoadingOption })}
+            list={data?.[0] ?? new Array(2).fill({ ...mockLoadingOption })}
           />
         )
       },
       // one page's SWR => offset of next page
       ({ data: projects }) => {
-        setItemsCount(projects?.[2])
+        if (setItemsCount) {
+          setItemsCount(projects?.[2])
+        }
         if (projects?.[1]) {
           return page.current + 1
         }

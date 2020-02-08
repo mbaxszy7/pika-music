@@ -97,22 +97,38 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
       //  handle error in server setInitialDataToStore
       return Promise.reject(error)
     }
-    store.dispatch({
+    store.dispatch(this.setDesc(result[0]))
+    store.dispatch(this.setSONGS(result[1][0]))
+    store.dispatch(this.setAlbums(result[2][0]))
+    store.dispatch(this.setMVS(result[3][0]))
+  }
+
+  setDesc = data => {
+    return {
       type: ADD_ARTIST_DESC,
-      data: result[0],
-    })
-    store.dispatch({
+      data,
+    }
+  }
+
+  setSONGS = data => {
+    return {
       type: ADD_ARTIST_SONGS,
-      data: result[1][0],
-    })
-    store.dispatch({
-      type: ADD_ARTIST_ALBUMS,
-      data: result[2][0],
-    })
-    store.dispatch({
+      data,
+    }
+  }
+
+  setMVS = data => {
+    return {
       type: ADD_ARTIST_MVS,
-      data: result[3][0],
-    })
+      data,
+    }
+  }
+
+  setAlbums = data => {
+    return {
+      type: ADD_ARTIST_SONGS,
+      data,
+    }
   }
 }
 

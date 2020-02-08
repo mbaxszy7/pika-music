@@ -16,7 +16,7 @@ import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
 import { useLocation } from "react-router-dom"
 import queryString from "query-string"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import artistDetailsPage from "./connectArtistDetailsReducer"
 import SingleLineTexts, {
   MultipleLineTexts,
@@ -128,7 +128,7 @@ const ArtistNameAndBrief = memo(
 
         <ReactPlaceholder
           type="text"
-          ready={!!(realArtistName && artistDesc)}
+          ready={!!(realArtistName != null && artistDesc != null)}
           style={{ marginTop: 0 }}
           customPlaceholder={
             <>
@@ -149,10 +149,14 @@ const ArtistNameAndBrief = memo(
           }
           showLoadingAnimation
         >
-          <StyledName>
-            {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
-          </StyledName>
-          <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+          {realArtistName && (
+            <StyledName>
+              {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
+            </StyledName>
+          )}
+          {artistDesc && (
+            <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+          )}
         </ReactPlaceholder>
       </>
     )
@@ -187,9 +191,10 @@ const ArtistDetails = () => {
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
   const initArtistAlbums = useSelector(state => state.artistDetails.albums)
   const initMVs = useSelector(state => state.artistDetails.mvs)
+  const storeDispatch = useDispatch()
+  const location = useLocation()
+  const { id: artistId, name: artistName } = queryString.parse(location.search)
 
-  const location = useLocation().search
-  const { id: artistId, name: artistName } = queryString.parse(location)
   const [realArtistName, setRealArtistName] = useState(
     () => artistName?.split(" ")?.[0],
   )
@@ -201,7 +206,12 @@ const ArtistDetails = () => {
   useEffect(() => {
     const { name } = queryString.parse(window.location.search)
     setRealArtistName(name)
-  }, [])
+
+    storeDispatch(artistDetailsPage.setAlbums(null))
+    storeDispatch(artistDetailsPage.setSONGS(null))
+    storeDispatch(artistDetailsPage.setDesc(null))
+    storeDispatch(artistDetailsPage.setMVS(null))
+  }, [artistId, storeDispatch])
 
   const { data: artistDesc } = useSWR(
     `/api/artist/desc?id=${artistId}`,
@@ -267,9 +277,9 @@ const ArtistDetails = () => {
 
       <ScrollContainer ref={scrollContainerRef}>
         <ArtistNameAndBrief
-          realArtistName={realArtistName ?? ""}
-          artistInfo={artistInfo?.alia?.[0] ?? ""}
-          artistDesc={artistDesc ?? ""}
+          realArtistName={realArtistName}
+          artistInfo={artistInfo?.alia?.[0]}
+          artistDesc={artistDesc}
         />
         <MediaItemList
           moreUrl={`/artist/media?type=song&artistId=${artistId}`}
