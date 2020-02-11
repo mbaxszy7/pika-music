@@ -47,7 +47,10 @@ const MediaTypeToRequest = {
   song: {
     title: "热曲",
     getUrl: (id, offset) => `/api/artists?id=${id}&offset=${offset}`,
-    fetch: artistMediaDetailsPage.requestSongs,
+    fetch: async url => {
+      const data = await artistMediaDetailsPage.requestSongs(url)
+      return data[0]
+    },
   },
 }
 
