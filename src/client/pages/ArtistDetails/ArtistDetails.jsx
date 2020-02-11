@@ -2,14 +2,7 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, {
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useCallback,
-  memo,
-} from "react"
+import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import useSWR from "swr"
@@ -199,18 +192,18 @@ const ArtistDetails = () => {
     () => artistName?.split(" ")?.[0],
   )
 
-  useLayoutEffect(() => {
-    window.scroll(0, 0)
-  }, [])
-
   useEffect(() => {
     const { name } = queryString.parse(window.location.search)
     setRealArtistName(name)
+  }, [artistId, storeDispatch])
 
-    storeDispatch(artistDetailsPage.setAlbums(null))
-    storeDispatch(artistDetailsPage.setSONGS(null))
-    storeDispatch(artistDetailsPage.setDesc(null))
-    storeDispatch(artistDetailsPage.setMVS(null))
+  useEffect(() => {
+    if (artistId) {
+      storeDispatch(artistDetailsPage.setAlbums(null))
+      storeDispatch(artistDetailsPage.setSONGS(null))
+      storeDispatch(artistDetailsPage.setDesc(null))
+      storeDispatch(artistDetailsPage.setMVS(null))
+    }
   }, [artistId, storeDispatch])
 
   const { data: artistDesc } = useSWR(
@@ -219,14 +212,6 @@ const ArtistDetails = () => {
     {
       initialData: initArtistDesc,
     },
-    {
-      revalidateOnFocus: false,
-    },
-  )
-
-  const { data: artistInfo } = useSWR(
-    [`/api/search?keywords=${realArtistName}&type=100`, artistId],
-    artistDetailsPage.requestArtistInfo,
     {
       revalidateOnFocus: false,
     },
@@ -272,20 +257,20 @@ const ArtistDetails = () => {
       </PageBackWrapper>
 
       <StyledAvatar>
-        <Avatar url={artistInfo?.img1v1Url} size="large" />
+        <Avatar url={artistSongs?.[0][1]?.img1v1Url} size="large" />
       </StyledAvatar>
 
       <ScrollContainer ref={scrollContainerRef}>
         <ArtistNameAndBrief
           realArtistName={realArtistName}
-          artistInfo={artistInfo?.alia?.[0]}
+          artistInfo={artistSongs?.[0][1]?.alias?.[0]}
           artistDesc={artistDesc}
         />
         <MediaItemList
           moreUrl={`/artist/media?type=song&artistId=${artistId}`}
           title="歌曲"
           list={
-            artistSongs?.[0].slice?.(0, 5) ??
+            artistSongs?.[0][0].slice?.(0, 5) ??
             new Array(5).fill({ type: "song" })
           }
         />

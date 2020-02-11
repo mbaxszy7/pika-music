@@ -117,7 +117,8 @@ const BestMatchContainer = styled.div`
 
 const SearchResultList = styled.div`
   padding: 5px 0 0 4px;
-  position: relative;
+  position: absolute;
+  width: calc(100% - 30px);
   z-index: 999;
 `
 

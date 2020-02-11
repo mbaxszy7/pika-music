@@ -5,7 +5,7 @@
 import React, { useCallback, memo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
-
+import SingleLineTexts from "../../shared/LinesTexts.styled"
 import pageBackIcon from "../../assets/pageBack.png"
 
 const StyledPageBack = styled.div`
@@ -14,6 +14,7 @@ const StyledPageBack = styled.div`
   img {
     width: 18px;
     height: 18px;
+    margin-right: 20px;
   }
   p {
     font-weight: bold;
@@ -22,6 +23,7 @@ const StyledPageBack = styled.div`
     color: ${props => props.theme.fg};
     text-align: center;
     text-indent: -20px;
+    ${SingleLineTexts}
   }
 `
 

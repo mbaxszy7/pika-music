@@ -11,6 +11,7 @@ import artistDetails from "./client/pages/ArtistDetails/connectArtistDetailsRedu
 import artistMediaDetails from "./client/pages/ArtistMediaDetails/connectArtistMediaDetailsReducer"
 import albumDetails from "./client/pages/AlbumDetails/connectAlbumDetailsReducer"
 import SearchMore from "./client/pages/SearchMore/SearchMore"
+import PlayListDetails from "./client/pages/PlayListDetails/PlayListDetails"
 
 const routes = [
   {
@@ -44,6 +45,11 @@ const routes = [
         path: "/more",
         exact: true,
         component: SearchMore,
+      },
+      {
+        path: "/playlist/:id",
+        exact: true,
+        component: PlayListDetails,
       },
     ],
   },

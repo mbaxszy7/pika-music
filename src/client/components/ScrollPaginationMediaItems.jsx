@@ -33,7 +33,11 @@ const ScrollPaginationMediaItems = memo(
         }
         return (
           <MediaItemList
-            list={data?.[0] ?? new Array(2).fill({ ...mockLoadingOption })}
+            list={
+              (mockLoadingOption.type === "song"
+                ? data?.[0]?.[0]
+                : data?.[0]) ?? new Array(2).fill({ ...mockLoadingOption })
+            }
           />
         )
       },

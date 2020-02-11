@@ -1,13 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, {
-  memo,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react"
+import React, { memo, useState, useEffect, useCallback, useRef } from "react"
 import PropTypes from "prop-types"
 import lozad from "lozad"
 import styled from "styled-components"
@@ -65,7 +58,7 @@ ImageLoader.defaultProps = {
 
 const StyledImage = styled.img`
   background-color: ${props => props.theme.dg};
-  &[data-loaded="false"] {
+  &[data-settled="false"] {
     @keyframes react-placeholder-pulse {
       0% {
         opacity: 0.6;
@@ -82,29 +75,23 @@ const StyledImage = styled.img`
   ${props => props.styledCss}
 `
 
-const MyImage = memo(({ url, styledCss }) => {
+const MyImage = memo(({ url, styledCss, className }) => {
   const imgRef = useRef()
   const [isLoaded, setLoaded] = useState(false)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const observer = useMemo(() => {
-
-  //   return
-  // }, [url])
 
   useEffect(() => {
-    setLoaded(false)
-    const observer = lozad(imgRef.current)
+    const observer = lozad()
     observer.observe()
   }, [url])
 
   return (
     <StyledImage
       ref={imgRef}
-      className="lozad"
+      className={` ${className} ${url ? "lozad" : ""}`}
       data-src={url}
       styledCss={styledCss}
-      data-loaded={isLoaded || !url}
+      data-settled={isLoaded}
       alt=""
       onLoad={onImageLoaded}
     />
@@ -112,6 +99,7 @@ const MyImage = memo(({ url, styledCss }) => {
 })
 
 MyImage.propTypes = {
+  className: PropTypes.string,
   styledCss: PropTypes.array,
   url: PropTypes.string,
 }

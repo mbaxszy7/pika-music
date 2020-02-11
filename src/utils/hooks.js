@@ -1,5 +1,14 @@
 /* eslint-disable import/prefer-default-export */
-import { useEffect, useState, useRef, useCallback } from "react"
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from "react"
+
+export const useIsomorphicEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect
 
 export const useOrientationChange = fn => {
   const [, setIsPortrait] = useState(true)
@@ -99,20 +108,23 @@ export const useEleScrollValue = (ele, formatter) => {
     tag: false,
     value: 0,
   })
+
   useEffect(() => {
     const onWindowScroll = () => {
       const { top } = ele().getBoundingClientRect()
       if (!isScrolled.current.tag) {
-        isScrolled.current.value = top
+        const scrolledValue =
+          document.documentElement.scrollTop || document.body.scrollTop
+        isScrolled.current.value = scrolledValue + top
         isScrolled.current.tag = true
       }
-
       const opacityV =
-        (isScrolled.current.value - top) / isScrolled.current.value
+        (top - isScrolled.current.value) / -isScrolled.current.value
       setHeaderOpacity(opacityV)
     }
     window.addEventListener("scroll", onWindowScroll)
     return () => window.removeEventListener("scroll", onWindowScroll)
   }, [ele, formatter])
+
   return formatter(headerOpacity)
 }

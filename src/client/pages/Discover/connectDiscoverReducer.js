@@ -1,8 +1,16 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { awaitWrapper } from "../../../utils"
-import { ADD_BANNER_LIST, SET_LAST_SEARCH_WORD } from "./constants"
+import { awaitWrapper, lazyMoment } from "../../../utils"
+import {
+  ADD_BANNER_LIST,
+  SET_LAST_SEARCH_WORD,
+  ADD_PERSONALIZED_SONGS,
+  ADD_PLAY_LIST,
+  ADD_NEW_SONGS,
+  ADD_ALBUMS,
+  ADD_MVS,
+} from "./constants"
 
 const BEST_SEARCH_SELECTOR = {
   artist: {
@@ -155,20 +163,163 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
     }
   }
 
-  getInitialData = async store => {
-    const [error, bannerList] = await awaitWrapper(this.requestBannerList)(
-      "/api/banner?type=2",
-    )
+  requestPersonalizedSongs = async url => {
+    const [error, res] = await awaitWrapper(this.fetcher.get)(url)
+    const { result } = res.data
 
+    return result.map(item => ({
+      picUrl: item.picUrl,
+      id: item.song.id,
+      name: item.song.name,
+    }))
+  }
+
+  requestPlaylist = async url => {
+    const [error, res] = await awaitWrapper(this.fetcher.get)(url)
+
+    const { playlists } = res.data
+    return playlists.map(list => ({
+      id: list.id,
+      description: list.description,
+      imgUrl: list.coverImgUrl,
+      title: `${list.name}`,
+      tags: list.tags,
+      tag: list.tags[0],
+      type: "big_playlist",
+    }))
+  }
+
+  requestNewSongs = async url => {
+    const [error, res] = await awaitWrapper(this.fetcher.get)(url)
+    const songs = res.data.data
+    return songs.map(song => {
+      const names = song.artists.length
+        ? [...song.artists].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
+        : ""
+
+      return {
+        imgUrl: song.album.picUrl,
+        title: `${song.name}`,
+        desc: names,
+        artistId: song.artists[0].id,
+        albumId: song.album.id,
+        artistName: names,
+        albumName: song.album.name,
+        type: "song",
+      }
+    })
+  }
+
+  requestAlbums = async url => {
+    const [res, { default: moment }] = await Promise.all([
+      this.fetcher.get(url),
+      lazyMoment(),
+    ])
+    const { albums } = res.data
+    return albums.map(album => ({
+      imgUrl: album.picUrl,
+      title: album.name,
+      publishTime: album.publishTime
+        ? moment(new Date(album.publishTime), "YYYY-MM-DD").format("YYYY-MM-DD")
+        : null,
+      type: "bigAlbum",
+      albumId: album.id,
+    }))
+  }
+
+  requestPrivateMVs = async url => {
+    const [error, res] = await awaitWrapper(this.fetcher.get)(url)
+    const mvs = res.data.result
+    return mvs.map(mv => ({
+      imgUrl: mv.picUrl,
+      title: mv.name,
+      id: mv.id,
+      type: "privateMV",
+    }))
+  }
+
+  getInitialData = async store => {
+    const [
+      error,
+      res,
+    ] = await awaitWrapper(
+      (
+        bannerUrl,
+        personalizedSongUrl,
+        playlistUrl,
+        newSongUrl,
+        albumUrl,
+        mvUrl,
+      ) =>
+        Promise.allSettled([
+          this.requestBannerList(bannerUrl),
+          this.requestPersonalizedSongs(personalizedSongUrl),
+          this.requestPlaylist(playlistUrl),
+          this.requestNewSongs(newSongUrl),
+          this.requestAlbums(albumUrl),
+          this.requestPrivateMV(mvUrl),
+        ]),
+    )(
+      "/api/banner?type=2",
+      "/api/personalized/newsong",
+      "/api/top/playlist?limit=8&order=hot",
+      "/api/top/song?type=0",
+      "/api/album/newest",
+      "/api/personalized/privatecontent",
+    )
     if (error) {
       //  handle error in server setInitialDataToStore
       return Promise.reject(error)
     }
-    store.dispatch({
-      type: ADD_BANNER_LIST,
-      data: bannerList,
-    })
+    if (res[0].status === "fulfilled") {
+      store.dispatch(this.setBannerList(res[0].value))
+    }
+    if (res[1].status === "fulfilled") {
+      store.dispatch(this.setPersonalizedSongs(res[1].value))
+    }
+    if (res[2].status === "fulfilled") {
+      store.dispatch(this.setPlayLists(res[2].value))
+    }
+    if (res[3].status === "fulfilled") {
+      store.dispatch(this.setNewSongs(res[3].value))
+    }
+    if (res[4].status === "fulfilled") {
+      store.dispatch(this.setAlbums(res[4].value))
+    }
+    if (res[5].status === "fulfilled") {
+      store.dispatch(this.setMVs(res[5].value))
+    }
   }
+
+  setBannerList = data => ({
+    type: ADD_BANNER_LIST,
+    data,
+  })
+
+  setPersonalizedSongs = data => ({
+    type: ADD_PERSONALIZED_SONGS,
+    data,
+  })
+
+  setPlayLists = data => ({
+    type: ADD_PLAY_LIST,
+    data,
+  })
+
+  setNewSongs = data => ({
+    type: ADD_NEW_SONGS,
+    data,
+  })
+
+  setAlbums = data => ({
+    type: ADD_ALBUMS,
+    data,
+  })
+
+  setMVs = data => ({
+    type: ADD_MVS,
+    data,
+  })
 }
 
 export default new ConnectDiscoverReducer()

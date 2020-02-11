@@ -9,7 +9,7 @@ import {
 
 class ConnectArtistDetailsReducer extends ConnectCompReducer {
   requestArtistDesc = url => {
-    return this.fetcher.get(url).then(res => res.data.briefDesc)
+    return this.fetcher.get(url).then(res => res.data.briefDesc ?? "")
   }
 
   requestArtistInfo = (url, id) => {
@@ -22,18 +22,21 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
   requestArtistSongs = async url => {
     const res = await this.fetcher.get(url)
     return [
-      res.data.hotSongs.map(song => ({
-        imgUrl: song.al.picUrl,
-        title: `${song.name}`,
-        desc: `${song.al.name}`,
-        artistName: song.ar.length
-          ? [...song.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
-          : "",
-        albumName: song.al.name,
-        artistId: song.ar[0].id,
-        albumId: song.al.id,
-        type: "song",
-      })),
+      [
+        res.data.hotSongs.map(song => ({
+          imgUrl: song.al.picUrl,
+          title: `${song.name}`,
+          desc: `${song.al.name}`,
+          artistName: song.ar.length
+            ? [...song.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
+            : "",
+          albumName: song.al.name,
+          artistId: song.ar[0].id,
+          albumId: song.al.id,
+          type: "song",
+        })),
+        res.data.artist,
+      ],
       false,
     ]
   }
@@ -126,7 +129,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
 
   setAlbums = data => {
     return {
-      type: ADD_ARTIST_SONGS,
+      type: ADD_ARTIST_ALBUMS,
       data,
     }
   }

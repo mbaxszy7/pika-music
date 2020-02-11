@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
@@ -14,12 +15,13 @@ const BannerLabel = styled.span`
   font-weight: bold;
 `
 
-const Label = ({ text }) => {
-  return <BannerLabel>{`#${text}`}</BannerLabel>
+const Label = ({ text, className }) => {
+  return <BannerLabel className={className}>{`#${text}`}</BannerLabel>
 }
 
 Label.propTypes = {
   text: PropTypes.string.isRequired,
+  className: PropTypes.string,
 }
 
 export default Label

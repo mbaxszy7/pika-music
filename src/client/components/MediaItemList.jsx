@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo } from "react"
+import React, { memo, useCallback } from "react"
 import { Link } from "react-router-dom"
 import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
@@ -9,13 +9,14 @@ import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
 import List from "../../shared/List"
+import Label from "../components/Label"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../shared/LinesTexts.styled"
 
 import moreIcon from "../../assets/more.png"
 
-const MediaItemTitle = styled.p`
+export const MediaItemTitle = styled.p`
   height: 16px;
   line-height: 16px;
   padding-left: 4px;
@@ -38,12 +39,13 @@ const DurationTag = styled.span`
   font-size: 14px;
   font-weight: bold;
   position: absolute;
-  bottom: 50px;
+  bottom: 0;
   right: 0;
   padding: 5px 12px;
   border-radius: 200px;
   color: ${props => props.theme.fg};
   background-color: black;
+  z-index: 4;
 `
 
 export const MediaItemTypes = {
@@ -55,9 +57,12 @@ export const MediaItemTypes = {
   BIG_ALBUM: "bigAlbum",
   BIG_MV: "bigMV",
   BIGGER_MV: "biggerMV",
+  BIG_PLAY_LIST: "big_playlist",
+  PRIVATE_MV: "privateMV",
 }
 
 const StyledResultItem = styled.div`
+  vertical-align:top;
   position: relative;
   width: ${props => (props.isMultipColumItem ? "48%" : "100%")};
   margin-bottom: ${props =>
@@ -72,9 +77,12 @@ const StyledResultItem = styled.div`
     props.isMultipColumItem || props.isSingleColumItem
       ? "flex-start"
       : "center"};
-  overflow: hidden;
-
+  width: ${props => (props.isHalfItem ? "50%" : "")};
   dl {
+    /* align-items: ${props =>
+      props.isMultipColumItem || props.isSingleColumItem
+        ? "flex-start"
+        : ""}; */
     font-size: 16px;
     width: ${props =>
       props.isMultipColumItem || props.isSingleColumItem ? "100%" : "70%"};
@@ -98,6 +106,25 @@ const StyledResultItem = styled.div`
     }
   }
 `
+const StyledMyImage = styled(MyImage)`
+  & {
+    width: 100%;
+    height: 100%;
+  }
+`
+const StyledLabel = styled(Label)`
+  & {
+    bottom: 0;
+    right: inherit;
+    left: -5px;
+    z-index: 4;
+  }
+`
+
+const ItemImgWrapper = styled.div`
+  position: relative;
+  font-size: 0;
+`
 
 const ItemIndex = styled.span`
   font-weight: bold;
@@ -106,16 +133,16 @@ const ItemIndex = styled.span`
   margin-right: 26px;
 `
 
-const ItemImg = memo(({ type, imgUrl }) => {
+const ItemImg = memo(({ type, imgUrl, renderTag }) => {
   let imgConfig = {
+    paddingBottom: "44px",
     width: "44px",
-    height: "44px",
     borderRadius: "50%",
   }
   if (type === MediaItemTypes.ALBUM || type === MediaItemTypes.PLAY_LIST) {
     imgConfig = {
+      paddingBottom: "48px",
       width: "48px",
-      height: "48px",
       borderRadius: "4px",
     }
   }
@@ -125,23 +152,44 @@ const ItemImg = memo(({ type, imgUrl }) => {
 
   if (type === MediaItemTypes.VIDEO) {
     imgConfig = {
-      width: "89px",
-      height: "50px",
+      paddingBottom: `${25 / 1.8}%`,
+      width: "25%",
       borderRadius: "4px",
     }
   }
-  if (type === MediaItemTypes.BIG_ALBUM) {
+  if (
+    type === MediaItemTypes.BIG_ALBUM ||
+    type === MediaItemTypes.BIG_PLAY_LIST
+  ) {
     imgConfig = {
+      paddingBottom: "85%",
       width: "85%",
-      "min-height": "130px",
       borderRadius: "4px",
       marginBottom: "10px",
     }
   }
-  if (type === MediaItemTypes.BIG_MV || type === MediaItemTypes.BIGGER_MV) {
+
+  if (type === MediaItemTypes.BIG_MV) {
     imgConfig = {
-      width: type === MediaItemTypes.BIGGER_MV ? "100%" : "85%",
-      "min-height": type === MediaItemTypes.BIGGER_MV ? "256px" : "98px",
+      paddingBottom: `${85 / 1.33}%`,
+      width: "85%",
+      borderRadius: "4px",
+      marginBottom: "10px",
+    }
+  }
+  if (type === MediaItemTypes.BIGGER_MV) {
+    imgConfig = {
+      paddingBottom: `${100 / 1.3}%`,
+      width: "100%",
+      borderRadius: "4px",
+      marginBottom: "10px",
+    }
+  }
+
+  if (type === MediaItemTypes.PRIVATE_MV) {
+    imgConfig = {
+      paddingBottom: `${100 / 2.7}%`,
+      width: "100%",
       borderRadius: "4px",
       marginBottom: "10px",
     }
@@ -149,23 +197,34 @@ const ItemImg = memo(({ type, imgUrl }) => {
 
   const extraCss = css`
     width: ${imgConfig.width};
-    height: ${imgConfig.height};
-    min-width: ${imgConfig.width};
-    min-height: ${imgConfig.height || imgConfig["min-height"]};
+    padding-bottom: ${imgConfig.paddingBottom};
     border-radius: ${imgConfig.borderRadius};
     margin-bottom: ${imgConfig.marginBottom || 0};
     margin-right: 16px;
+    position: relative;
   `
-  return <MyImage styledCss={extraCss} url={imgUrl} />
+  return (
+    <ItemImgWrapper css={extraCss}>
+      {renderTag && renderTag()}
+      <StyledMyImage
+        url={imgUrl}
+        css={css`
+          border-radius: ${imgConfig.borderRadius};
+          position: absolute;
+        `}
+      />
+    </ItemImgWrapper>
+  )
 })
 
 ItemImg.propTypes = {
   type: PropTypes.string,
   imgUrl: PropTypes.string,
+  renderTag: PropTypes.func,
 }
 
-const MediaItem = memo(
-  ({
+const MediaItem = memo(props => {
+  const {
     imgUrl,
     title,
     desc,
@@ -176,54 +235,80 @@ const MediaItem = memo(
     albumName,
     publishTime,
     duration,
+    tag,
     index,
     noImg,
     noIndex,
-  }) => {
-    const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
-    const innerDD = desc || publishTime
-    return (
-      <StyledResultItem
-        isMultipColumItem={
-          type === MediaItemTypes.BIG_ALBUM || type === MediaItemTypes.BIG_MV
-        }
-        isSingleColumItem={type === MediaItemTypes.BIGGER_MV}
+    onItemClick,
+    id,
+  } = props
+  const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
+  const innerDD = desc || publishTime
+  const onResultItemClick = useCallback(() => {
+    if (typeof onItemClick === "function") {
+      onItemClick({
+        id,
+      })
+    }
+  }, [onItemClick, id])
+  return (
+    <StyledResultItem
+      onClick={onResultItemClick}
+      isMultipColumItem={
+        type === MediaItemTypes.BIG_ALBUM ||
+        type === MediaItemTypes.BIG_MV ||
+        type === MediaItemTypes.BIG_PLAY_LIST
+      }
+      isSingleColumItem={
+        type === MediaItemTypes.BIGGER_MV || type === MediaItemTypes.PRIVATE_MV
+      }
+      isHalfItem={type === MediaItemTypes.BIG_PLAY_LIST}
+    >
+      {!noImg ? (
+        <ItemImg
+          type={type}
+          imgUrl={imgUrl}
+          renderTag={() => (
+            <>
+              {duration && <DurationTag>{duration}</DurationTag>}
+              {tag && <StyledLabel text={tag} />}
+            </>
+          )}
+        />
+      ) : !noIndex ? (
+        <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
+      ) : (
+        ""
+      )}
+      <ReactPlaceholder
+        ready={!!title}
+        rows={2}
+        color="grey"
+        showLoadingAnimation
+        style={{
+          width: "40%",
+          borderRadius: 200,
+          height: 30,
+        }}
       >
-        {duration && <DurationTag>{duration}</DurationTag>}
+        <dl>
+          <dt>{title}</dt>
+          <dd>{innerDD}</dd>
+        </dl>
+      </ReactPlaceholder>
 
-        {!noImg ? (
-          <ItemImg type={type} imgUrl={imgUrl} />
-        ) : !noIndex ? (
-          <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
-        ) : (
-          ""
-        )}
-        <ReactPlaceholder
-          ready={!!title}
-          rows={2}
-          color="grey"
-          showLoadingAnimation
-          style={{ width: "40%", borderRadius: 200, height: 30 }}
-        >
-          <dl>
-            <dt>{title}</dt>
-            <dd>{innerDD}</dd>
-          </dl>
-        </ReactPlaceholder>
-
-        {type === MediaItemTypes.SONG && (
-          <SongMore
-            songName={title}
-            artistName={artistName || artistNameDesc}
-            albumName={albumName || albumNameDesc}
-            artistId={artistId}
-            albumId={albumId}
-          />
-        )}
-      </StyledResultItem>
-    )
-  },
-)
+      {type === MediaItemTypes.SONG && (
+        <SongMore
+          songName={title}
+          artistName={artistName || artistNameDesc}
+          albumName={albumName || albumNameDesc}
+          artistId={artistId}
+          albumId={albumId}
+        />
+      )}
+    </StyledResultItem>
+  )
+})
 
 MediaItem.displayName = "MediaItem"
 
@@ -241,33 +326,46 @@ MediaItem.propTypes = {
   albumId: PropTypes.number,
   artistId: PropTypes.number,
   publishTime: PropTypes.string,
+  tag: PropTypes.string,
+  onItemClick: PropTypes.func,
+  id: PropTypes.number,
 }
 
-const MediaItemList = memo(({ list, title, placeHolderCount, moreUrl }) => {
-  if (!list?.length) {
-    return null
-  }
-  return (
-    <>
-      {moreUrl && title ? (
-        <Link to={moreUrl}>
-          <MediaItemTitle withoutMore={!moreUrl}>{title}</MediaItemTitle>
-        </Link>
-      ) : (
-        title && <MediaItemTitle withoutMore={!moreUrl}>{title}</MediaItemTitle>
-      )}
-      <List
-        list={list || new Array(placeHolderCount || 1).fill({})}
-        listItem={({ item, index }) => (
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          <MediaItem index={index} {...item} key={index} />
+const MediaItemList = memo(
+  ({ list, title, placeHolderCount, moreUrl, onItemClick }) => {
+    if (!list?.length) {
+      return null
+    }
+    return (
+      <>
+        {moreUrl && title ? (
+          <Link to={moreUrl}>
+            <MediaItemTitle withoutMore={!moreUrl}>{title}</MediaItemTitle>
+          </Link>
+        ) : (
+          title && (
+            <MediaItemTitle withoutMore={!moreUrl}>{title}</MediaItemTitle>
+          )
         )}
-      />
-    </>
-  )
-})
+        <List
+          list={list || new Array(placeHolderCount || 1).fill({})}
+          listItem={({ item, index }) => (
+            <MediaItem
+              index={index}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...item}
+              key={index}
+              onItemClick={onItemClick}
+            />
+          )}
+        />
+      </>
+    )
+  },
+)
 
 MediaItemList.propTypes = {
+  onItemClick: PropTypes.func,
   moreUrl: PropTypes.string,
   placeHolderCount: PropTypes.number,
   list: PropTypes.array,

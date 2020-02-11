@@ -18,6 +18,7 @@ const PagePlaceHolder = styled.div`
 
 function Loading(props) {
   if (props.error) {
+    console.log(props.error)
     return (
       <div>
         Error!
