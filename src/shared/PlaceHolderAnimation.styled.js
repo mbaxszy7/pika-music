@@ -1,4 +1,4 @@
-import { css } from "styled-components"
+import { css, keyframes } from "styled-components"
 
 const PlaceHolderTextAnimation = css`
   &[data-loaded="false"] {
@@ -16,6 +16,18 @@ const PlaceHolderTextAnimation = css`
     }
     animation: react-placeholder-pulse 1.5s infinite;
   }
+`
+
+export const PlaceHolderKeyframes = keyframes`
+    0% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.6;
+    }
 `
 
 export default PlaceHolderTextAnimation

@@ -1,4 +1,5 @@
 import React, { memo } from "react"
+import PropTypes from "prop-types"
 import styled from "styled-components"
 
 const SpinnerContainer = styled.div`
@@ -34,6 +35,42 @@ const DebounceDiv = styled.div`
   animation: bounce 2s infinite ease-in-out;
 `
 
+const LoadingRing = styled.div`
+  display: inline-block;
+  position: relative;
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    border: 3px solid white;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+  }
+  div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  div {
+    ${props => ({ ...props.styleRing })}
+  }
+`
+
 // eslint-disable-next-line react/prop-types
 const Spinner = memo(({ style }) => {
   return (
@@ -43,5 +80,20 @@ const Spinner = memo(({ style }) => {
     </SpinnerContainer>
   )
 })
+
+export const SpinnerLoading = memo(({ className }) => {
+  return (
+    <LoadingRing className={className}>
+      <div />
+      <div />
+      <div />
+      <div />
+    </LoadingRing>
+  )
+})
+
+SpinnerLoading.propsTypes = {
+  className: PropTypes.string,
+}
 
 export default Spinner

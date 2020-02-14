@@ -81,6 +81,8 @@ const MyImage = memo(({ url, styledCss, className }) => {
   const onImageLoaded = useCallback(() => setLoaded(true), [])
 
   useEffect(() => {
+    imgRef.current.setAttribute("data-loaded", false)
+    imgRef.current.src = ""
     const observer = lozad()
     observer.observe()
   }, [url])

@@ -68,4 +68,40 @@ const ScrollPaginationMediaItems = memo(
   },
 )
 
+export const usePaginationMediaItems = ({
+  keyPage,
+  pageFetch,
+  getUrl,
+  mockLoadingOption,
+}) => {
+  const page = useRef(0)
+  const { pages, isLoadingMore, isReachingEnd, loadMore } = useSWRPages(
+    keyPage,
+    ({ offset, withSWR }) => {
+      const { data } = withSWR(
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useSWR(getUrl(offset || 0), pageFetch, {
+          revalidateOnFocus: false,
+        }),
+      )
+
+      page.current = offset
+      if (data?.list === null) {
+        return <NoData>无结果</NoData>
+      }
+      return (
+        <MediaItemList
+          list={data?.list ?? new Array(2).fill({ ...mockLoadingOption })}
+        />
+      )
+    },
+    // one page's SWR => offset of next page
+    SWR => {
+      if (SWR.data.more) return page.current + 1
+    },
+    [getUrl],
+  )
+  return { pages, isLoadingMore, isReachingEnd, loadMore }
+}
+
 export default ScrollPaginationMediaItems

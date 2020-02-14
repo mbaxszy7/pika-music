@@ -9,7 +9,7 @@ import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
 import List from "../../shared/List"
-import Label from "../components/Label"
+import Label from "./Label"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../shared/LinesTexts.styled"

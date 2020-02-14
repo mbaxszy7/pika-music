@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/require-default-props */
 import React from "react"
 import PropTypes from "prop-types"
@@ -15,8 +16,10 @@ const BannerLabel = styled.span`
   font-weight: bold;
 `
 
-const Label = ({ text, className }) => {
-  return <BannerLabel className={className}>{`#${text}`}</BannerLabel>
+const Label = ({ text, className, ...props }) => {
+  return (
+    <BannerLabel className={className} {...props}>{`#${text}`}</BannerLabel>
+  )
 }
 
 Label.propTypes = {

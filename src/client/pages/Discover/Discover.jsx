@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react"
 import styled from "styled-components"
-import { useHistory } from "react-router-dom"
+import { useHistory, Link } from "react-router-dom"
 import { useSelector } from "react-redux"
 import useSWR from "swr"
 import discoverPage from "./connectDiscoverReducer"
@@ -231,7 +231,10 @@ const Discover = memo(() => {
         </PersonalizedSongsContainer>
       </PersonalizedSongsSection>
 
-      <StyledMediaItemTitle>Playlist_歌单</StyledMediaItemTitle>
+      <Link to="/discover_more/playlist">
+        <StyledMediaItemTitle>Playlist_歌单</StyledMediaItemTitle>
+      </Link>
+
       <SectionScroll>
         <PlayListSection>
           <MediaItemList
