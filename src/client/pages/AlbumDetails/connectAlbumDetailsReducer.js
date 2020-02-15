@@ -25,7 +25,7 @@ class ConnectAlbumDetailsReducer extends ConnectCompReducer {
           },
           shareCount: info.shareCount,
           likedCount: info.likedCount,
-          desc: description,
+          desc: description ?? "",
           songs: songs.map(song => ({
             title: song.name,
             id: song.id,

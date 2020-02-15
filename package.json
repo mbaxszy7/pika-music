@@ -80,7 +80,6 @@
     "nodemon": "^2.0.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "react-hot-keys": "^2.4.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
   },
@@ -101,6 +100,7 @@
     "quicklink": "^2.0.0-alpha",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-hot-keys": "^2.4.5",
     "react-hot-loader": "^4.12.18",
     "react-loadable": "^5.5.0",
     "react-placeholder": "^3.0.2",

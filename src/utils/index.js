@@ -27,3 +27,25 @@ export const lazyMoment = () =>
 
 export const shuffle = arr =>
   arr.slice().sort(() => (Math.random() > 0.5 ? 1 : -1))
+
+export const throttle = (fn, wait) => {
+  let timer = null
+  let isFirstInvoked = false
+  function throttled(...args) {
+    const context = this
+    if (!isFirstInvoked) {
+      fn.apply(context, args)
+      isFirstInvoked = true
+      return
+    }
+    if (timer) {
+      return
+    }
+    timer = setTimeout(() => {
+      clearTimeout(timer)
+      timer = null
+      fn.apply(context, args)
+    }, wait)
+  }
+  return throttled
+}

@@ -1,21 +1,22 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useMemo, useCallback, useState, useRef, useEffect } from "react"
-import useSWR, { useSWRPages } from "swr"
+import useSWR from "swr"
+import axios from "axios"
 import ReactPlaceholder from "react-placeholder"
 import styled from "styled-components"
-import { useParams } from "react-router-dom"
+import { useParams, useHistory } from "react-router-dom"
 import discoverMorePage from "./connecDiscoverMoreReducer"
-import { shuffle } from "../../../utils"
 import { PlaceHolderKeyframes } from "../../../shared/PlaceHolderAnimation.styled"
 import Label from "../../components/Label"
 import PlaySongsBar from "../../components/PlaySongsBar"
 import { SpinnerLoading } from "../../../shared/Spinner"
 import MediaItemList from "../../components/MediaItemList"
-import { usePaginationMediaItems } from "../../components/ScrollPaginationMediaItems"
+import { awaitWrapper, throttle, shuffle } from "../../../utils"
 
 const NoData = styled.div`
   text-align: center;
   color: ${props => props.theme.fg};
+  margin-top: 40px;
 `
 
 const StyledSpinnerLoading = styled(SpinnerLoading)`
@@ -40,6 +41,8 @@ const DiscoverMorePage = styled.div`
 const LabelWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  min-height: 160px;
+  align-content: flex-start;
 `
 
 const StyledLabel = styled(Label)`
@@ -68,14 +71,14 @@ const StyledLoadingLabel = styled.div`
   display: flex;
   align-items: center;
   font-size: 12px;
-  font-weight: bold;
   padding: 6px 12px;
   border-radius: 200px;
   line-height: 1em;
   transition: all 0.3s;
   background-color: ${props => props.theme.secondary};
+  font-weight: 400;
   &[data-selected="true"] {
-    transform: scale(1.3);
+    transform: scale(1.2);
     margin-left: 10px;
     margin-right: 20px;
     display: block;
@@ -128,10 +131,16 @@ const PAGE_REQUEST = {
 }
 
 const DiscoverMore = () => {
+  const page = useRef(0)
   const pageContainerRef = useRef()
   const params = useParams()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isMore, setIsMore] = useState(false)
   const [selectedCat, setSelectedCat] = useState(0)
   const [selectedOrder, setSelectedOrder] = useState("HOT")
+  const [listData, setListData] = useState([])
+
+  const history = useHistory()
 
   const { data: playlistCats } = useSWR(
     "/api/playlist/catlist",
@@ -145,64 +154,99 @@ const DiscoverMore = () => {
     return ["全部"].concat(new Array(8).fill(""))
   }, [playlistCats])
 
-  const { pageFetch, getUrl } = PAGE_REQUEST[params.type]
+  const { getUrl } = PAGE_REQUEST[params.type]
 
   const onLabelClick = useCallback(e => {
-    let selectedIndex = e.target.getAttribute("data-index")
-    selectedIndex = selectedIndex == null ? null : selectedIndex * 1
-    setSelectedCat(selectedIndex)
+    const selectedIndex = e.target.getAttribute("data-index")
+    if (selectedIndex != null) {
+      setSelectedCat(prevSelectedCat => {
+        if (selectedIndex * 1 === prevSelectedCat) {
+          return prevSelectedCat
+        }
+        page.current = 0
+        setListData([])
+        return selectedIndex * 1
+      })
+    }
   }, [])
 
   const onOrderClick = useCallback(e => {
     const clickedOrder = e.target.getAttribute("data-order")
     if (clickedOrder && clickedOrder === e.target.innerHTML) {
-      setSelectedOrder(clickedOrder)
+      setSelectedOrder(prevClickedOrder => {
+        if (clickedOrder === prevClickedOrder) {
+          return prevClickedOrder
+        }
+        page.current = 0
+        setListData([])
+        return clickedOrder
+      })
     }
   }, [])
 
-  const { pages, isLoadingMore, isReachingEnd, loadMore } = useSWRPages(
-    "discover-more",
-    ({ offset, withSWR }) => {
-      const { data } = withSWR(
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useSWR(
-          getUrl(selectedOrder, shuffledCats[selectedCat], offset || 0),
-          pageFetch,
-          {
-            revalidateOnFocus: false,
-          },
-        ),
-      )
-      if (data?.list === null) {
-        return <NoData>无结果</NoData>
-      }
-      return (
-        <MediaItemList
-          list={data?.list ?? new Array(2).fill({ type: params.type })}
-        />
-      )
-    },
-    // one page's SWR => offset of next page
-    (SWR, index) => {
-      if (SWR.data.more) return index + 1
-    },
-    [selectedCat, selectedOrder],
-  )
+  const requestList = useCallback(() => {
+    const url = getUrl(selectedOrder, shuffledCats[selectedCat], page.current)
+    if (!url) return Promise.resolve()
+    return axios
+      .get(url)
+      .then(res => res.data)
+      .then(({ playlists, more }) => {
+        return {
+          list: playlists.map(playlist => {
+            return {
+              imgUrl: playlist.coverImgUrl,
+              title: playlist.name,
+              desc: `${playlist.trackCount}首`,
+              type: "playlist",
+              id: playlist.id,
+            }
+          }),
+          more,
+        }
+      })
+  }, [getUrl, selectedCat, selectedOrder, shuffledCats])
+
+  const request = useCallback(async () => {
+    setIsLoading(true)
+    const [error, data] = await awaitWrapper(requestList)()
+    setIsLoading(false)
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    } else if (data) {
+      setIsMore(data.more)
+      setListData(prev => {
+        return [...prev, ...data.list]
+      })
+    }
+  }, [requestList])
+
+  useEffect(() => {
+    request()
+  }, [request])
 
   const onScroll = useCallback(() => {
     const isBottom =
       window.scrollY + 30 >
       pageContainerRef.current.clientHeight - window.innerHeight
-    console.log("isBottom", isBottom, isReachingEnd)
-    if (isBottom && !isReachingEnd) {
-      loadMore()
+    if (isBottom && !isLoading && isMore) {
+      page.current += 1
+      request()
     }
-  }, [isReachingEnd, loadMore])
+  }, [isLoading, isMore, request])
 
   useEffect(() => {
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
+    const throttled = throttle(onScroll, 300)
+    window.addEventListener("scroll", throttled)
+    return () => window.removeEventListener("scroll", throttled)
   }, [onScroll])
+
+  const onPlaylistItemClick = useCallback(
+    item => {
+      history.push(`/playlist/${item.id}`)
+    },
+    [history],
+  )
 
   return (
     <DiscoverMorePage ref={pageContainerRef}>
@@ -218,9 +262,7 @@ const DiscoverMore = () => {
               data-index={index}
               data-selected={index === selectedCat}
             >
-              {index === selectedCat && isLoadingMore && (
-                <StyledSpinnerLoading />
-              )}
+              {index === selectedCat && isLoading && <StyledSpinnerLoading />}
 
               {`#${cat}`}
             </StyledLoadingLabel>
@@ -229,7 +271,7 @@ const DiscoverMore = () => {
       </LabelWrapper>
       <ListWrapper>
         <ListHeader>
-          <PlaySongsBar withoutBar songsCount={0} />
+          <PlaySongsBar withoutBar songsCount={listData.length} />
           <Orders onClick={onOrderClick}>
             {ORDERS.map(order => (
               <Order
@@ -242,7 +284,20 @@ const DiscoverMore = () => {
             ))}
           </Orders>
         </ListHeader>
-        <ListContent>{pages}</ListContent>
+        <ListContent>
+          <MediaItemList
+            onItemClick={onPlaylistItemClick}
+            list={
+              listData.length
+                ? listData
+                : new Array(2).fill({ type: params.type })
+            }
+          />
+          {isLoading && (
+            <MediaItemList list={new Array(2).fill({ type: params.type })} />
+          )}
+          {!isMore && <NoData>到底啦～</NoData>}
+        </ListContent>
       </ListWrapper>
     </DiscoverMorePage>
   )
