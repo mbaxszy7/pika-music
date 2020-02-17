@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom"
 import { awaitWrapper, throttle } from "../../../utils"
 import { NoData, DiscoverMorePage } from "./styled"
 import PlaylistsMore from "./PlaylistsMore"
+import NewSongsMore from "./NewSongsMore"
 
 const PAGE_REQUEST = {
   playlist: {
@@ -30,6 +31,11 @@ const PAGE_REQUEST = {
       }
     },
     PagePart: PlaylistsMore,
+  },
+  song: {
+    getUrl: () => {},
+    selector: () => {},
+    PagePart: NewSongsMore,
   },
 }
 
@@ -63,8 +69,7 @@ const DiscoverMore = memo(() => {
   const { getUrl, selector, PagePart } = PAGE_REQUEST[params.type]
 
   const onLabelClick = useCallback(
-    e => {
-      const clickedLabel = e.target.getAttribute("data-label")
+    clickedLabel => {
       if (clickedLabel != null) {
         setSelectedLabel(prevSelectedLabel => {
           if (clickedLabel === prevSelectedLabel) {

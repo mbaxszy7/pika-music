@@ -73,9 +73,17 @@ const PlaylistsMore = ({
     [history],
   )
 
+  const handleLabelClick = useCallback(
+    e => {
+      const clickedLabel = e.target.getAttribute("data-label")
+      onLabelClick(clickedLabel)
+    },
+    [onLabelClick],
+  )
+
   return (
     <>
-      <LabelWrapper onClick={onLabelClick}>
+      <LabelWrapper onClick={handleLabelClick}>
         {shuffledCats.map((cat, index) => (
           <ReactPlaceholder
             customPlaceholder={<PlaceStyledLabel text="  " />}

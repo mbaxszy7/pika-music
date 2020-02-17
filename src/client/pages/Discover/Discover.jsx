@@ -95,7 +95,7 @@ const PlayListSection = styled.section`
 `
 
 const NewSongsSection = styled.section`
-  > ${MediaItemTitle} {
+  ${styled(Link)``} > ${MediaItemTitle} {
     margin-top: 10px;
     color: ${props => props.theme.fg};
   }
@@ -105,7 +105,7 @@ const NewSongsSection = styled.section`
 
 const AlbumsSection = styled.section`
   > ${MediaItemTitle} {
-    margin-top: 20px;
+    margin-top: 20px !important;
     color: ${props => props.theme.fg};
   }
   min-width: 100%;
@@ -258,6 +258,7 @@ const Discover = memo(() => {
 
       <NewSongsSection>
         <MediaItemList
+          moreUrl="/discover_more/song"
           title="Track_新歌"
           list={newSongs?.slice?.(0, 5) ?? new Array(5).fill({ type: "song" })}
         />
