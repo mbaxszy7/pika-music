@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React, { memo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
@@ -52,10 +53,10 @@ const LoadingRing = styled.div`
     position: absolute;
     width: inherit;
     height: inherit;
-    border: 3px solid white;
+    border: 3px solid ${({ color }) => color};
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #fff transparent transparent transparent;
+    border-color: ${({ color }) => color} transparent transparent transparent;
   }
   div:nth-child(1) {
     animation-delay: -0.45s;
@@ -81,9 +82,9 @@ const Spinner = memo(({ style }) => {
   )
 })
 
-export const SpinnerLoading = memo(({ className }) => {
+export const SpinnerLoading = memo(({ className, color }) => {
   return (
-    <LoadingRing className={className}>
+    <LoadingRing className={className} color={color}>
       <div />
       <div />
       <div />
@@ -92,8 +93,13 @@ export const SpinnerLoading = memo(({ className }) => {
   )
 })
 
-SpinnerLoading.propsTypes = {
+SpinnerLoading.propTypes = {
   className: PropTypes.string,
+  color: PropTypes.string,
+}
+
+SpinnerLoading.defaultProps = {
+  color: "#fff",
 }
 
 export default Spinner

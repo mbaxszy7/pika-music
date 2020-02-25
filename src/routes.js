@@ -4,7 +4,7 @@ import {
   ArtistMediaDetails,
   AlbumDetails,
 } from "./utils/lazyPage"
-import Rooter from "./client/Header"
+import PlayBar from "./client/pages/PlayBar/PlayBar"
 // import ArtistMediaDetails from "./client/pages/ArtistMediaDetails/ArtistMediaDetails"
 import discoverPage from "./client/pages/Discover/connectDiscoverReducer"
 import artistDetails from "./client/pages/ArtistDetails/connectArtistDetailsReducer"
@@ -16,7 +16,7 @@ import DiscoverMore from "./client/pages/DiscoverMore/DiscoverMore"
 
 const routes = [
   {
-    component: Rooter,
+    component: PlayBar,
     routes: [
       {
         path: "/",

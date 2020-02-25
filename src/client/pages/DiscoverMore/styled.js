@@ -7,6 +7,7 @@ export const NoData = styled.div`
   text-align: center;
   color: ${props => props.theme.fg};
   margin-top: 40px;
+  padding-bottom: 20px;
 `
 
 export const StyledSpinnerLoading = styled(SpinnerLoading)`

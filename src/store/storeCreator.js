@@ -6,6 +6,7 @@ import discoverReducer from "../client/pages/Discover/reducer"
 import artistDetailsReducer from "../client/pages/ArtistDetails/reducer"
 import albumDetailsReducer from "../client/pages/AlbumDetails/reducer"
 import playlistReducer from "../client/pages/PlayListDetails/reducer"
+import playBarReducer from "../client/pages/PlayBar/reducer"
 import { isCSR } from "../utils"
 
 const rootReducer = {
@@ -13,6 +14,7 @@ const rootReducer = {
   artistDetails: artistDetailsReducer,
   discover: discoverReducer,
   home: homeReducer,
+  playBar: playBarReducer,
   playlistDetails: playlistReducer,
 }
 

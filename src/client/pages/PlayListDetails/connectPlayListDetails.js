@@ -48,6 +48,7 @@ class ConnectPlayListReducer extends ConnectCompReducer {
         artistName: names,
         albumName: song.al.name,
         type: "song",
+        id: song.id,
       }
     })
   }

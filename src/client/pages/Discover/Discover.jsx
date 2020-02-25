@@ -95,9 +95,9 @@ const PlayListSection = styled.section`
 `
 
 const NewSongsSection = styled.section`
-  ${styled(Link)``} > ${MediaItemTitle} {
+  ${MediaItemTitle} {
     margin-top: 10px;
-    color: ${props => props.theme.fg};
+    color: ${props => props.theme.dg};
   }
   min-width: 100%;
   overflow: hidden;
@@ -106,7 +106,7 @@ const NewSongsSection = styled.section`
 const AlbumsSection = styled.section`
   > ${MediaItemTitle} {
     margin-top: 20px !important;
-    color: ${props => props.theme.fg};
+    color: ${props => props.theme.dg};
   }
   min-width: 100%;
 `
@@ -114,7 +114,7 @@ const AlbumsSection = styled.section`
 const PrivateMVsSection = styled.section`
   > ${MediaItemTitle} {
     margin-top: 20px;
-    color: ${props => props.theme.fg};
+    color: ${props => props.theme.dg};
   }
   min-width: 100%;
 `
@@ -199,6 +199,13 @@ const Discover = memo(() => {
     [history],
   )
 
+  const onAlbumItemClick = useCallback(
+    item => {
+      history.push(`/album?id=${item.id}`)
+    },
+    [history],
+  )
+
   return (
     <DiscoverPage>
       <PageTitle>DISCOVER</PageTitle>
@@ -266,6 +273,7 @@ const Discover = memo(() => {
 
       <AlbumsSection>
         <MediaItemList
+          onItemClick={onAlbumItemClick}
           title="Album_最新专辑"
           list={
             albums?.slice?.(0, 4) ?? new Array(4).fill({ type: "bigAlbum" })

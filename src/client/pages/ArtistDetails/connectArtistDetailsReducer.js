@@ -34,6 +34,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
           artistId: song.ar[0].id,
           albumId: song.al.id,
           type: "song",
+          id: song.id,
         })),
         res.data.artist,
       ],

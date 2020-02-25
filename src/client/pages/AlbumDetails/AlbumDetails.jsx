@@ -113,6 +113,8 @@ const AlbumDetails = memo(() => {
     },
   )
 
+  const onPlayIconClick = useCallback(() => {}, [])
+
   return (
     <Styled.AlbumDetailsPage>
       <Styled.PageBackWrapper opacity={headerOpacity}>
@@ -140,7 +142,10 @@ const AlbumDetails = memo(() => {
         />
         <Styled.MediaListWrapper>
           <Styled.PlayBarWrapper>
-            <PlaySongsBar songsCount={albumDetails?.songs?.length} />
+            <PlaySongsBar
+              songsCount={albumDetails?.songs?.length}
+              onPlayIconClick={onPlayIconClick}
+            />
           </Styled.PlayBarWrapper>
 
           <MediaItemList

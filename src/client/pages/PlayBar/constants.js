@@ -1,0 +1,6 @@
+export const SET_SHOW_PLAY_BAR = "_SET_SHOW_PLAY_BAR"
+export const SET_IMMEDIATELY_PLAY = "_SET_IMMEDIATELY_PLAY"
+export const SET_NEXT_PLAY = "_SET_NEXT_PLAY"
+export const PLAY_NEXT = "_PLAY_NEXT"
+export const PLAY_PRE = "_PLAY_PRE"
+export const REMOVE_CURRENT = "_REMOVE_CURRENT"

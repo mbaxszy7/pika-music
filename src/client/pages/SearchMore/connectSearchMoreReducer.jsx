@@ -16,6 +16,7 @@ const getData = {
       artistName: artistNames,
       albumName: data.album.name,
       desc: `${artistNames} · ${data.album.name}`,
+      id: data.id,
     }
   },
   video: data => {

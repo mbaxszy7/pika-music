@@ -12,10 +12,13 @@ const AppBgTheme = createGlobalStyle`
     text-decoration: none;
   }
  #root {
+   max-height: 100vh;
+   overflow-y:scroll;
+   padding-bottom: 63px;
    background-color: #212121;
  }
 `
-const theme = {
+export const theme = {
   // 主背景
   mg: "#212121",
   fg: "rgb(245,245,245)",

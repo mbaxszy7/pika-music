@@ -102,6 +102,7 @@ BannerListItem.propTypes = {
 
 const BannerListContainer = memo(({ bannerList }) => {
   const [activeBanner, setActiveBanner] = useState(0)
+
   const index = useRef(0)
   const [bannerWidth, setBannerWidth] = useState(768)
   useEffect(() => setBannerWidth(window.innerWidth), [])

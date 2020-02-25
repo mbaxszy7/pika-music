@@ -2,6 +2,7 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
 import React, { useMemo, useCallback } from "react"
+import styled from "styled-components"
 import PropTypes from "prop-types"
 import ReactPlaceholder from "react-placeholder"
 import useSWR from "swr"
@@ -24,6 +25,10 @@ import {
 } from "./styled"
 
 const ORDERS = ["HOT", "NEW"]
+
+const StyledLabelWrapper = styled(LabelWrapper)`
+  margin-top: 10px;
+`
 
 const PlaylistsMore = ({
   onLabelClick,
@@ -83,7 +88,7 @@ const PlaylistsMore = ({
 
   return (
     <>
-      <LabelWrapper onClick={handleLabelClick}>
+      <StyledLabelWrapper onClick={handleLabelClick}>
         {shuffledCats.map((cat, index) => (
           <ReactPlaceholder
             customPlaceholder={<PlaceStyledLabel text="  " />}
@@ -101,7 +106,7 @@ const PlaylistsMore = ({
             </StyledLoadingLabel>
           </ReactPlaceholder>
         ))}
-      </LabelWrapper>
+      </StyledLabelWrapper>
       <ListWrapper>
         <ListHeader>
           <PlaySongsBar withoutBar songsCount={listData.length} />

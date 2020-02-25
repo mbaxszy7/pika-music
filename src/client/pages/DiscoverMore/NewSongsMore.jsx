@@ -1,10 +1,14 @@
+/* eslint-disable react/require-default-props */
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useCallback, useEffect } from "react"
-
+import React, { useCallback } from "react"
+import PropTypes from "prop-types"
 import styled from "styled-components"
 import { Tabs, TabPane } from "../../../shared/Tab"
+import { ListWrapper } from "./styled"
+import MediaItemList from "../../components/MediaItemList"
 
 const StyledTabs = styled(Tabs)`
   & {
@@ -34,18 +38,13 @@ const SONGS_TYPE = [
   { area: "韩国", id: 16 },
 ]
 
-const NewSongsMore = ({
-  onLabelClick,
-  selectedLabel,
-  listData,
-  setListData,
-  isLoading,
-  resetPage,
-  type,
-}) => {
-  const onTabChange = useCallback(tabKey => {
-    // console.warn(tabKey)
-  }, [])
+const NewSongsMore = ({ onLabelClick, listData, type }) => {
+  const onTabChange = useCallback(
+    tabKey => {
+      onLabelClick(SONGS_TYPE[tabKey].id)
+    },
+    [onLabelClick],
+  )
 
   return (
     <StyledTabs onChange={onTabChange} defaultActiveKey="0" activeTabKey="0">
@@ -56,11 +55,21 @@ const NewSongsMore = ({
           tabKey={`${index}`}
           key={area.id}
         >
-          99999
+          <ListWrapper>
+            <MediaItemList
+              list={listData.length ? listData : new Array(2).fill({ type })}
+            />
+          </ListWrapper>
         </StyledTabPane>
       ))}
     </StyledTabs>
   )
+}
+
+NewSongsMore.propTypes = {
+  onLabelClick: PropTypes.func,
+  listData: PropTypes.array,
+  type: PropTypes.string,
 }
 
 export default NewSongsMore

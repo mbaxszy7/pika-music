@@ -4,6 +4,7 @@ import axios from "axios"
 import { useParams } from "react-router-dom"
 import { awaitWrapper, throttle } from "../../../utils"
 import { NoData, DiscoverMorePage } from "./styled"
+import PageBack from "../../components/PageBack"
 import PlaylistsMore from "./PlaylistsMore"
 import NewSongsMore from "./NewSongsMore"
 
@@ -33,8 +34,30 @@ const PAGE_REQUEST = {
     PagePart: PlaylistsMore,
   },
   song: {
-    getUrl: () => {},
-    selector: () => {},
+    getUrl: (type = 0) => `/api/top/song?type=${type}`,
+    selector: ({ data: songs }) => {
+      return {
+        list: songs.map(song => {
+          const artistNames = song.artists.length
+            ? [...song.artists]
+                .reverse()
+                .reduce((ac, a) => `${a.name} ${ac}`, "")
+            : ""
+          return {
+            imgUrl: song.album.picUrl,
+            title: `${song.name}`,
+            desc: `${artistNames} · ${song.album.name}`,
+            artistId: song.artists[0]?.id,
+            albumId: song.album.id,
+            artistName: artistNames,
+            albumName: song.album.name,
+            type: "song",
+            id: song.id,
+          }
+        }),
+        more: false,
+      }
+    },
     PagePart: NewSongsMore,
   },
 }
@@ -75,6 +98,7 @@ const DiscoverMore = memo(() => {
           if (clickedLabel === prevSelectedLabel) {
             return prevSelectedLabel
           }
+          setIsMore(true)
           resetPage()
           setListData([])
           return clickedLabel
@@ -133,6 +157,7 @@ const DiscoverMore = memo(() => {
 
   return (
     <DiscoverMorePage ref={pageContainerRef}>
+      <PageBack />
       <PagePart
         onLabelClick={onLabelClick}
         selectedLabel={selectedLabel}

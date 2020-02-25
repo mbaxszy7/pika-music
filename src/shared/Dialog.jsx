@@ -50,8 +50,8 @@ const Dialog = ({
     <InnerModal>
       <ModalMask>
         <DialogContainer>
-          {title && <p className="title">搜索历史</p>}
-          {dialogText && <p className="alert_text">确认清空搜索历史？</p>}
+          {title && <p className="title">{title}</p>}
+          {dialogText && <p className="alert_text">{dialogText}</p>}
           <div className="btn_group">
             {isShowCancel && (
               <span className="cancel" onClick={onCancelClick}>

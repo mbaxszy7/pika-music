@@ -1,20 +1,24 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useCallback } from "react"
+import React, { memo, useCallback, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
 import List from "../../shared/List"
+import playBarPage from "../pages/PlayBar/connectPlayBarReducer"
 import Label from "./Label"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../shared/LinesTexts.styled"
-
+import { axiosInstance } from "../../utils/connectPageReducer"
 import moreIcon from "../../assets/more.png"
+import Dialog from "../../shared/Dialog"
 
 export const MediaItemTitle = styled.p`
   height: 16px;
@@ -88,13 +92,14 @@ const StyledResultItem = styled.div`
       props.isMultipColumItem || props.isSingleColumItem ? "100%" : "70%"};
 
     dt {
-      color: ${props => props.theme.fg};
       margin-bottom: 4px;
       padding-right: 15px;
       ${props =>
         props.isMultipColumItem ? MultipleLineTexts(2) : SingleLineTexts};
       line-height: 1.3;
       min-height: 1em;
+      color: ${({ isActivePlay, theme }) =>
+        isActivePlay ? theme.secondary : theme.fg}
     }
     dd {
       padding-right: 15px;
@@ -103,6 +108,7 @@ const StyledResultItem = styled.div`
       min-height: 1em;
       margin-bottom: 2px;
       color: ${props => props.theme.dg};
+      line-height: 1.3em;
     }
   }
 `
@@ -242,71 +248,117 @@ const MediaItem = memo(props => {
     onItemClick,
     id,
   } = props
+  const { data: songValid, isValidating } = useSWR(
+    type === MediaItemTypes.SONG && id ? `/api/check/music?id=${id}` : null,
+    url => axiosInstance.get(url).then(res => res.data),
+    {
+      refreshInterval: 0,
+      revalidateOnFocus: false,
+      onErrorRetry: (err, key, option, revalidate, { retryCount }) => {
+        if (err.status === 404) return
+        if (retryCount >= 1) return
+
+        // retry after 5 seconds
+        setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 5000)
+      },
+    },
+  )
+  const [isShowDialog, setShowDialog] = useState(false)
   const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
   const innerDD = desc || publishTime
+  const storeDispatch = useDispatch()
   const onResultItemClick = useCallback(() => {
-    if (typeof onItemClick === "function") {
+    if (isValidating) {
+      return
+    }
+
+    if (typeof onItemClick === "function" && id) {
       onItemClick({
         id,
       })
     }
-  }, [onItemClick, id])
-  return (
-    <StyledResultItem
-      onClick={onResultItemClick}
-      isMultipColumItem={
-        type === MediaItemTypes.BIG_ALBUM ||
-        type === MediaItemTypes.BIG_MV ||
-        type === MediaItemTypes.BIG_PLAY_LIST
-      }
-      isSingleColumItem={
-        type === MediaItemTypes.BIGGER_MV || type === MediaItemTypes.PRIVATE_MV
-      }
-      isHalfItem={type === MediaItemTypes.BIG_PLAY_LIST}
-    >
-      {!noImg ? (
-        <ItemImg
-          type={type}
-          imgUrl={imgUrl}
-          renderTag={() => (
-            <>
-              {duration && <DurationTag>{duration}</DurationTag>}
-              {tag && <StyledLabel text={tag} />}
-            </>
-          )}
-        />
-      ) : !noIndex ? (
-        <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
-      ) : (
-        ""
-      )}
-      <ReactPlaceholder
-        ready={!!title}
-        rows={2}
-        color="grey"
-        showLoadingAnimation
-        style={{
-          width: "40%",
-          borderRadius: 200,
-          height: 30,
-        }}
-      >
-        <dl>
-          <dt>{title}</dt>
-          <dd>{innerDD}</dd>
-        </dl>
-      </ReactPlaceholder>
 
-      {type === MediaItemTypes.SONG && (
-        <SongMore
-          songName={title}
-          artistName={artistName || artistNameDesc}
-          albumName={albumName || albumNameDesc}
-          artistId={artistId}
-          albumId={albumId}
+    if (type === MediaItemTypes.SONG && !songValid?.success) {
+      setShowDialog(true)
+    }
+
+    if (type === MediaItemTypes.SONG && songValid?.success) {
+      storeDispatch(playBarPage.setImmediatelyPlay(id))
+    }
+  }, [isValidating, onItemClick, id, type, songValid, storeDispatch])
+
+  const activePlayId = useSelector(state => state.playBar.currentPlayId)
+
+  return (
+    <>
+      {isShowDialog && (
+        <Dialog
+          title="抱歉"
+          dialogText="此歌曲暂无版权"
+          isShowCancel={false}
+          isShowConfirm
+          onConfirmClick={() => setShowDialog(false)}
         />
       )}
-    </StyledResultItem>
+      <StyledResultItem
+        onClick={onResultItemClick}
+        isMultipColumItem={
+          type === MediaItemTypes.BIG_ALBUM ||
+          type === MediaItemTypes.BIG_MV ||
+          type === MediaItemTypes.BIG_PLAY_LIST
+        }
+        isSingleColumItem={
+          type === MediaItemTypes.BIGGER_MV ||
+          type === MediaItemTypes.PRIVATE_MV
+        }
+        isHalfItem={type === MediaItemTypes.BIG_PLAY_LIST}
+        isActivePlay={activePlayId === id && type === MediaItemTypes.SONG}
+      >
+        {!noImg ? (
+          <ItemImg
+            type={type}
+            imgUrl={isValidating ? "" : imgUrl}
+            renderTag={() => (
+              <>
+                {duration && <DurationTag>{duration}</DurationTag>}
+                {tag && <StyledLabel text={tag} />}
+              </>
+            )}
+          />
+        ) : !noIndex ? (
+          <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
+        ) : (
+          ""
+        )}
+        <ReactPlaceholder
+          ready={!!title && !isValidating}
+          rows={2}
+          color="grey"
+          showLoadingAnimation
+          style={{
+            width: "40%",
+            borderRadius: 200,
+            height: 30,
+          }}
+        >
+          <dl>
+            <dt>{title}</dt>
+            <dd>{innerDD}</dd>
+          </dl>
+        </ReactPlaceholder>
+        {type === MediaItemTypes.SONG && (
+          <SongMore
+            songName={title}
+            artistName={artistName || artistNameDesc}
+            albumName={albumName || albumNameDesc}
+            artistId={artistId}
+            albumId={albumId}
+            id={id}
+            isValid={songValid?.success && !isValidating}
+          />
+        )}
+      </StyledResultItem>
+    </>
   )
 })
 

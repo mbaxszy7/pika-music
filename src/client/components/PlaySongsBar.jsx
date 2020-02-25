@@ -1,9 +1,9 @@
 /* eslint-disable react/require-default-props */
-import React, { memo } from "react"
+import React, { memo, useCallback } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 
-const PlayIcon = styled.div`
+export const PlayIcon = styled.div`
   background: ${props => props.theme.secondary};
   width: 70px;
   height: 32px;
@@ -38,16 +38,23 @@ const SongsCount = styled.span`
   margin-left: 18px;
 `
 
-const PlaySongsBar = memo(({ songsCount, withoutBar }) => (
-  <PlayBar>
-    {!withoutBar && <PlayIcon />}
-    <SongsCount>{songsCount}</SongsCount>
-  </PlayBar>
-))
+const PlaySongsBar = memo(({ songsCount, withoutBar, onPlayIconClick }) => {
+  const handlePlayIconClick = useCallback(() => {
+    onPlayIconClick()
+  }, [onPlayIconClick])
+
+  return (
+    <PlayBar>
+      {!withoutBar && <PlayIcon onClick={handlePlayIconClick} />}
+      <SongsCount>{songsCount}</SongsCount>
+    </PlayBar>
+  )
+})
 
 PlaySongsBar.propTypes = {
   withoutBar: PropTypes.bool,
   songsCount: PropTypes.number,
+  onPlayIconClick: PropTypes.func,
 }
 
 PlaySongsBar.defaultProps = {

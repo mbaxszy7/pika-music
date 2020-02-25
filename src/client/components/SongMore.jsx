@@ -2,14 +2,17 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { memo, useState, useCallback, useEffect } from "react"
+import React, { memo, useCallback } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { useDispatch } from "react-redux"
 import InnerModal, { ModalMask } from "../../shared/InnerModal"
 import SingleLineTexts from "../../shared/LinesTexts.styled"
 import { useEffectShowModal } from "../../utils/hooks"
+import playBarPage from "../pages/PlayBar/connectPlayBarReducer"
 import nextSong from "../../assets/nextSong.png"
+import attention from "../../assets/attention.png"
 import artist from "../../assets/artist.png"
 import album from "../../assets/album.png"
 
@@ -67,7 +70,8 @@ const StyledModalContainer = styled.div`
     }
   }
   .next_song {
-    background-image: url(${nextSong});
+    background-image: ${({ isValid }) =>
+      isValid ? `url(${nextSong})` : `url(${attention})`};
   }
   .artist {
     ${SingleLineTexts}
@@ -105,6 +109,8 @@ const SongMore = memo(function SongMore({
   albumName,
   albumId,
   artistId,
+  isValid,
+  id,
 }) {
   const {
     isShowModal,
@@ -112,37 +118,66 @@ const SongMore = memo(function SongMore({
     onModalOpen: onMoreClick,
     onModalClose: onClose,
   } = useEffectShowModal()
-
+  const storeDispatch = useDispatch()
   const onModalContainerClick = useCallback(e => {
     if (!e.target.getAttribute("data-close")) {
       e.stopPropagation()
     }
   }, [])
 
+  const handleMoreClick = useCallback(
+    e => {
+      e.stopPropagation()
+      onMoreClick()
+    },
+    [onMoreClick],
+  )
+
+  const handleModalClose = useCallback(
+    e => {
+      e.stopPropagation()
+      onClose()
+    },
+    [onClose],
+  )
+
+  const handleNextPlay = useCallback(
+    e => {
+      if (isValid) {
+        storeDispatch(playBarPage.setNextPlay(id))
+        handleModalClose(e)
+      }
+    },
+    [handleModalClose, id, isValid, storeDispatch],
+  )
+
   return (
     <>
-      <StyledMoreIcon onClick={onMoreClick}>
+      <StyledMoreIcon onClick={handleMoreClick}>
         <li />
         <li />
         <li />
       </StyledMoreIcon>
       {isShowModal && (
         <InnerModal>
-          <ModalMask onClick={onClose}>
+          <ModalMask onClick={handleModalClose}>
             <StyledModalContainer
               isShow={isShowContent}
               onClick={onModalContainerClick}
+              isValid={isValid}
             >
               <div className="song_name">{songName}</div>
               <ul className="contents">
-                <li className="next_song">下一首播放</li>
+                <li className="next_song" onClick={handleNextPlay}>
+                  {isValid ? "下一首播放" : "暂无版权"}
+                </li>
                 {artistName && (
                   <li className="artist">
                     <Link
                       to={`/artist?id=${artistId}&name=${
                         artistName?.split(" ")?.[0]
                       }`}
-                      onClick={onClose}
+                      onClick={handleModalClose}
                     >
                       {`歌手 ${artistName}`}
                     </Link>
@@ -173,6 +208,7 @@ SongMore.propTypes = {
   albumName: PropTypes.string,
   albumId: PropTypes.number,
   artistId: PropTypes.number,
+  isValid: PropTypes.bool,
 }
 
 export default SongMore

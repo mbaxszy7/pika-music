@@ -67,6 +67,7 @@ export const SEARCH_RESULT_SELECTOR = {
         albumId: data.al.id,
         artistName: artistNames,
         albumName: data.al.name,
+        id: data.id,
       }
     },
   },
@@ -206,6 +207,7 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
         artistName: names,
         albumName: song.album.name,
         type: "song",
+        id: song.id,
       }
     })
   }
@@ -223,6 +225,7 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
         ? moment(new Date(album.publishTime), "YYYY-MM-DD").format("YYYY-MM-DD")
         : null,
       type: "bigAlbum",
+      id: album.id,
       albumId: album.id,
     }))
   }
