@@ -58,6 +58,7 @@ ImageLoader.defaultProps = {
 
 const StyledImage = styled.img`
   background-color: ${props => props.theme.dg};
+  user-select: none;
   &[data-settled="false"] {
     @keyframes react-placeholder-pulse {
       0% {

@@ -4,13 +4,13 @@ import ReactDOM from "react-dom"
 import styled from "styled-components"
 
 export const ModalMask = styled.div`
-  z-index: 1000;
+  z-index: 9999999;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
 `
 
 class InnerModal extends PureComponent {

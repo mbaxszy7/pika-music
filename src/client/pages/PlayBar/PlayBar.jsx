@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/require-default-props */
@@ -18,15 +20,58 @@ import styled from "styled-components"
 import { useSelector, useDispatch } from "react-redux"
 import playBarPage from "./connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
+import List from "../../../shared/List"
 import { axiosInstance } from "../../../utils/connectPageReducer"
 import { SpinnerLoading } from "../../../shared/Spinner"
-import { theme } from "../../../shared/AppTheme"
+import { theme as appTheme } from "../../../shared/AppTheme"
+import { SINGLE_CYCLE, LIST_CYCLE, SHUFFLE_PLAY } from "./constants"
 import { awaitWrapper, formatAudioTime } from "../../../utils"
+import { useEffectShowModal } from "../../../utils/hooks"
+import InnerModal, { ModalMask } from "../../../shared/InnerModal"
+import SingleLineTexts from "../../../shared/LinesTexts.styled"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
 import preIcon from "../../../assets/pre.png"
 import nextIcon from "../../../assets/next.png"
 import downIcon from "../../../assets/down.png"
+import listIcon from "../../../assets/list.png"
+import singleCycle from "../../../assets/singleCycle.png"
+import listCycle from "../../../assets/listCycle.png"
+import shufflePlay from "../../../assets/shufflePlay.png"
+
+const StyledRemoveClose = styled.div`
+  font-size: 20px;
+  color: ${props => props.theme.dg};
+  margin-left: auto;
+`
+
+const StyledModalContainer = styled.div`
+  opacity: 0.96;
+  border-radius: 12px 12px 0 0;
+  background-color: ${props => props.theme.mg};
+  position: absolute;
+  bottom: 0;
+  padding: 25px 14px 80px 14px;
+  width: 100%;
+  transition: transform 0.2s;
+  transform: ${props =>
+    props.isShow ? "translate3d(0, 0,0)" : "translate3d(0, 100%,0)"};
+  .contents {
+    min-height: 300px;
+    max-height: 70vh;
+    padding: 15px;
+    overflow-y: scroll;
+  }
+  .close {
+    position: absolute;
+    bottom: 20px;
+    color: ${props => props.theme.fg};
+    text-align: center;
+    font-size: 30px;
+    width: 100%;
+    left: 0;
+  }
+`
 
 const PlayerLoadingIcon = styled(SpinnerLoading)`
   & {
@@ -40,8 +85,8 @@ const PlayerLoadingIcon = styled(SpinnerLoading)`
 `
 
 const IconImg = styled.img`
-  width: ${({ large }) => (large ? 47 : 32)}px;
-  height: ${({ large }) => (large ? 47 : 32)}px;
+  width: ${({ large, small }) => (large ? 47 : small ? 20 : 32)}px;
+  height: ${({ large, small }) => (large ? 47 : small ? 20 : 32)}px;
 `
 
 const HiddenPlayPageIcon = styled(IconImg)`
@@ -51,6 +96,7 @@ const HiddenPlayPageIcon = styled(IconImg)`
 
 const PlayPageBar = styled.div`
   position: fixed;
+  padding: 0 3px 0 6px;
   bottom: 40px;
   left: 0;
   margin: 0 15px;
@@ -95,17 +141,18 @@ const ArtistName = styled.div`
   margin-top: 15px;
   font-size: 16px;
 `
-const ProgressBar = styled.div`
+const ProgressBar = styled.div.attrs(({ theme, progress }) => ({
+  style: {
+    backgroundImage: `linear-gradient(
+    90deg, ${theme.secondary} 0, ${theme.secondary} ${progress}, ${theme.fg} ${progress}
+  )`,
+  },
+}))`
   position: relative;
   width: 100%;
   height: 3px;
   border-radius: 200px;
-  color: ${({ theme }) => theme.fg};
-  background-image: linear-gradient(
-    90deg,
-    ${({ progress, theme }) =>
-      `${theme.secondary} 0, ${theme.secondary} ${progress}, ${theme.fg} ${progress}`}
-  );
+  color: ${props => props.theme.fg};
 `
 
 const ProgressBarHandler = styled.div`
@@ -206,6 +253,7 @@ const StyledPlayBar = styled.div`
     height: 100%;
     line-height: 40px;
   }
+
   ${({ isShowPlayPage, theme }) => {
     if (isShowPlayPage) {
       return {
@@ -222,6 +270,164 @@ const StyledPlayBar = styled.div`
   }}
 `
 
+const StyledPlayListItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  line-height: 1.3;
+  min-height: 1em;
+  .text_wrapper {
+    padding-right: 15px;
+    ${SingleLineTexts};
+    color: ${({ isActivePlay, theme }) =>
+      isActivePlay ? theme.secondary : theme.fg};
+  }
+  .artist_name {
+    font-size: 14px;
+    color: ${props => props.theme.dg};
+  }
+`
+
+const PlayListItem = ({ songName, artistName, isActivePlay, songIndex }) => {
+  const storeDispatch = useDispatch()
+  const onPlayClick = useCallback(
+    e => {
+      e.stopPropagation()
+      console.log(songIndex)
+      storeDispatch(playBarPage.setPlaylistSongPlay(songIndex))
+    },
+    [songIndex, storeDispatch],
+  )
+  const onRemoveItem = useCallback(
+    e => {
+      e.stopPropagation()
+      storeDispatch(playBarPage.removeSong(songIndex))
+    },
+    [songIndex, storeDispatch],
+  )
+  return (
+    <StyledPlayListItem isActivePlay={isActivePlay} onClick={onPlayClick}>
+      <p className="text_wrapper">
+        {songName}
+        <span className="artist_name">{` - ${artistName}`}</span>
+      </p>
+      <StyledRemoveClose onClick={onRemoveItem}>&times;</StyledRemoveClose>
+    </StyledPlayListItem>
+  )
+}
+
+const Playlist = memo(({ songList }) => {
+  const currentPlayId = useSelector(state => state.playBar.currentPlayId)
+  const currentPlayIndex = useSelector(state => state.playBar.currentPlayIndex)
+  return (
+    <List
+      list={songList}
+      listItem={({ item, index }) => (
+        <PlayListItem
+          key={index}
+          songName={item.title}
+          artistName={item.artistName}
+          songIndex={index}
+          isActivePlay={
+            item.id === currentPlayId && currentPlayIndex === index + 1
+          }
+        />
+      )}
+    />
+  )
+})
+
+const PlayerStateIcon = memo(({ playState, onClick }) => {
+  if (playState === "loading")
+    return <PlayerLoadingIcon color={appTheme.secondary} onClick={onClick} />
+  if (playState === "playing" || playState === "loaded")
+    return <PlayerStopIcon onClick={onClick} />
+  return <PlayerPlayIcon onClick={onClick} />
+})
+
+PlayerStateIcon.propTypes = {
+  playState: PropTypes.string,
+  onClick: PropTypes.func,
+}
+
+const PlayPageAbovePart = memo(({ toPlayPage, songDetail }) => {
+  return (
+    <>
+      <HiddenPlayPageIcon src={downIcon} onClick={toPlayPage} />
+      <StyledSongPic>
+        <StyledMyImage url={songDetail?.[0]?.picUrl} />
+      </StyledSongPic>
+
+      <SongName>
+        <ReactPlaceholder
+          type="textRow"
+          ready={!!songDetail?.[0]?.title}
+          style={{ width: "40%", height: "1.2em" }}
+        >
+          {songDetail?.[0]?.title ?? ""}
+        </ReactPlaceholder>
+      </SongName>
+      <ArtistName>{songDetail?.[0]?.artistName}</ArtistName>
+    </>
+  )
+})
+
+const PlayPageBottomPart = memo(
+  ({ playState, handlePlayIconClick, onModalOpen, onNextPlay }) => {
+    const playMode = useSelector(state => state.playBar.playMode)
+    const storeDispatch = useDispatch()
+    const onPrePlay = useCallback(() => {
+      storeDispatch(playBarPage.playPre())
+    }, [storeDispatch])
+    const nextSong = useCallback(() => {
+      onNextPlay(true)
+    }, [onNextPlay])
+    return (
+      <PlayPageBar>
+        <PlayPageBarWrapper>
+          {playMode === LIST_CYCLE && (
+            <IconImg
+              src={listCycle}
+              small
+              onClick={() =>
+                storeDispatch(playBarPage.setPlayMode(SINGLE_CYCLE))
+              }
+            />
+          )}
+          {playMode === SHUFFLE_PLAY && (
+            <IconImg
+              src={shufflePlay}
+              small
+              onClick={() => storeDispatch(playBarPage.setPlayMode(LIST_CYCLE))}
+            />
+          )}
+          {playMode === SINGLE_CYCLE && (
+            <IconImg
+              src={singleCycle}
+              small
+              onClick={() =>
+                storeDispatch(playBarPage.setPlayMode(SHUFFLE_PLAY))
+              }
+            />
+          )}
+          <IconImg src={preIcon} onClick={onPrePlay} />
+          <IconImg
+            src={
+              playState === "playing" || playState === "loaded"
+                ? pauseIcon
+                : playIcon
+            }
+            large
+            onClick={handlePlayIconClick}
+          />
+          <IconImg src={nextIcon} onClick={nextSong} />
+          <IconImg src={listIcon} onClick={onModalOpen} small />
+        </PlayPageBarWrapper>
+      </PlayPageBar>
+    )
+  },
+)
+
 const PlayBar = memo(({ route }) => {
   const audioRef = useRef()
   const [playState, setPlayState] = useState("")
@@ -230,12 +436,36 @@ const PlayBar = memo(({ route }) => {
   const isShowPlayBar = useSelector(state => state.playBar.isShowPlayBar)
   const songIdList = useSelector(state => state.playBar.songIdList)
   const currentPlayId = useSelector(state => state.playBar.currentPlayId)
+  const currentPlayIndex = useSelector(state => state.playBar.currentPlayIndex)
   const storeDispatch = useDispatch()
+  const isProgressBarActived = useRef(false)
+  const playMode = useSelector(state => state.playBar.playMode)
+  const progressBarRef = useRef()
+  const [songList, setSongList] = useState([])
+
+  const {
+    isShowModal,
+    isShowContent,
+    onModalOpen,
+    onModalClose,
+  } = useEffectShowModal()
 
   const { data: songDetail } = useSWR(
     currentPlayId && `/api/song/detail?ids=${currentPlayId}`,
     playBarPage.requestSongDetails,
   )
+
+  useEffect(() => {
+    const getSongList = async () => {
+      const songs = await playBarPage.requestSongDetails(
+        `/api/song/detail?ids=${songIdList.join(",")}`,
+      )
+      if (songs) {
+        setSongList(songIdList.map(id => songs.find(s => s.id === id)))
+      }
+    }
+    getSongList()
+  }, [songIdList])
 
   const getTrack = useCallback(async id => {
     const data = await axiosInstance
@@ -245,15 +475,24 @@ const PlayBar = memo(({ route }) => {
     return data
   }, [])
 
-  const onNextPlay = useCallback(() => {
-    console.log("onNextPlay")
-    storeDispatch(playBarPage.playNext())
-  }, [storeDispatch])
-
-  const onPrePlay = useCallback(() => {
-    console.log("onPrePlay")
-    storeDispatch(playBarPage.playPre())
-  }, [storeDispatch])
+  const onNextPlay = useCallback(
+    isForcedNext => {
+      let toPlayIndex = null
+      if (playMode === LIST_CYCLE) {
+        if (songIdList.length === currentPlayIndex) {
+          toPlayIndex = 1
+        }
+      } else if (playMode === SINGLE_CYCLE && !isForcedNext) {
+        audioRef.current.currentTime = 0
+        audioRef.current.play()
+        return
+      } else if (playMode === SHUFFLE_PLAY) {
+        toPlayIndex = Math.ceil(Math.random() * songIdList.length)
+      }
+      storeDispatch(playBarPage.playNext(toPlayIndex))
+    },
+    [currentPlayIndex, playMode, songIdList.length, storeDispatch],
+  )
 
   useEffect(() => {
     const setTrack = async () => {
@@ -273,7 +512,8 @@ const PlayBar = memo(({ route }) => {
       }
     }
     setTrack()
-  }, [currentPlayId, getTrack, onNextPlay, storeDispatch])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPlayId, getTrack, storeDispatch, currentPlayIndex])
 
   const onAudioEnd = useCallback(() => {
     setPlayState("stopped")
@@ -283,28 +523,24 @@ const PlayBar = memo(({ route }) => {
   const onAudioLoadedData = useCallback(() => {
     setAudioCurTime(audioRef.current.duration)
     setPlayState("loaded")
-    console.log("onAudioLoadedData", audioRef.current.duration)
   }, [])
 
   const onAudioTimeUpdate = useCallback(() => {
-    console.log("onAudioTimeUpdate", audioRef.current.duration)
-    setPlayState("playing")
     setAudioCurTime(audioRef.current.duration - audioRef.current.currentTime)
   }, [])
 
   const onAudioPlay = useCallback(() => {
-    console.log("onAudioPlay", audioRef.current.duration)
+    setPlayState("playing")
   }, [])
 
   const onAudioPause = useCallback(() => {
-    console.log("onAudioPause", audioRef.current.duration)
     setPlayState("paused")
   }, [])
 
   const handlePlayIconClick = useCallback(() => {
     if (playState === "paused" || playState === "stopped") {
       audioRef.current.play()
-    } else if (playState === "playing") {
+    } else if (playState === "playing" || playState === "loaded") {
       audioRef.current.pause()
     }
   }, [playState])
@@ -322,24 +558,120 @@ const PlayBar = memo(({ route }) => {
     return audioRef.current.currentTime / audioRef.current.duration
   }, [])
 
-  const onProgressBarClick = useCallback(() => {}, [])
+  const audioSeek = useCallback(per => {
+    audioRef.current.currentTime = audioRef.current.duration * per
+    if (!isProgressBarActived.current) {
+      audioRef.current.play()
+    }
+  }, [])
 
-  console.log("songDetail", songDetail)
+  const onProgressBarClick = useCallback(
+    e => {
+      const { x, width } = e.currentTarget.getBoundingClientRect()
+      const clickedX = e.clientX
+      if (clickedX > x && clickedX < width + x) {
+        const offset = clickedX - x
+        audioSeek(offset / width)
+      }
+    },
+    [audioSeek],
+  )
+
+  const onMouseDown = useCallback(() => {
+    isProgressBarActived.current = true
+    audioRef.current.pause()
+  }, [])
+
+  const onTouchStart = useCallback(() => {
+    audioRef.current.pause()
+    isProgressBarActived.current = true
+  }, [])
+
+  const onProgressBarTouchMoving = useCallback(
+    touchPointX => {
+      const { left, width } = progressBarRef.current.getBoundingClientRect()
+      const offset = touchPointX - left
+      if (offset >= width) {
+        audioSeek(0.99)
+      } else if (!Number.isNaN(offset)) {
+        audioSeek(offset / width)
+      }
+    },
+    [audioSeek],
+  )
+
+  const onTouchEnd = useCallback(
+    e => {
+      e.preventDefault()
+      const touchPointX = e.changedTouches[0].pageX
+      isProgressBarActived.current = false
+      onProgressBarTouchMoving(touchPointX)
+    },
+    [onProgressBarTouchMoving],
+  )
+
+  const onTouchMove = useCallback(
+    e => {
+      const touchPointX = e.changedTouches[0].pageX
+      onProgressBarTouchMoving(touchPointX)
+    },
+    [onProgressBarTouchMoving],
+  )
+
+  const onProgressBarMouseEnd = useCallback(
+    e => {
+      if (!isProgressBarActived.current) {
+        return false
+      }
+
+      isProgressBarActived.current = false
+
+      const clickedPointX = e.clientX
+      onProgressBarTouchMoving(clickedPointX)
+    },
+    [onProgressBarTouchMoving],
+  )
+
+  const onProgressBarMouseMove = useCallback(
+    e => {
+      if (!isProgressBarActived.current) {
+        return false
+      }
+
+      const clickedPointX = e.clientX
+      onProgressBarTouchMoving(clickedPointX)
+    },
+    [onProgressBarTouchMoving],
+  )
 
   return (
     <>
-      {
-        <audio
-          src=""
-          ref={audioRef}
-          onEnded={onAudioEnd}
-          preload="metadata"
-          onLoadedData={onAudioLoadedData}
-          onTimeUpdate={onAudioTimeUpdate}
-          onPlay={onAudioPlay}
-          onPause={onAudioPause}
-        />
-      }
+      {isShowModal && (
+        <InnerModal>
+          <ModalMask onClick={onModalClose}>
+            <StyledModalContainer isShow={isShowContent}>
+              <div className="contents">
+                <Playlist songList={songList} />
+              </div>
+              <div className="close" data-close="true">
+                &times;
+              </div>
+            </StyledModalContainer>
+          </ModalMask>
+        </InnerModal>
+      )}
+
+      <audio
+        src=""
+        ref={audioRef}
+        onEnded={onAudioEnd}
+        preload="metadata"
+        onLoadedData={onAudioLoadedData}
+        onTimeUpdate={onAudioTimeUpdate}
+        onPlay={onAudioPlay}
+        onPause={onAudioPause}
+      />
+
       {isShowPlayBar && (
         <StyledPlayBar isShowPlayPage={isShowPlayPage}>
           {!isShowPlayPage ? (
@@ -355,51 +687,40 @@ const PlayBar = memo(({ route }) => {
             </>
           ) : (
             <>
-              <HiddenPlayPageIcon src={downIcon} onClick={toPlayPage} />
-              <StyledSongPic>
-                <StyledMyImage url={songDetail?.[0]?.al?.picUrl} />
-              </StyledSongPic>
-
-              <SongName>
-                <ReactPlaceholder
-                  type="textRow"
-                  ready={!!songDetail?.[0]?.name}
-                  style={{ width: "40%", height: "1.2em" }}
-                >
-                  {songDetail?.[0]?.name}
-                </ReactPlaceholder>
-              </SongName>
-              <ArtistName>{songDetail?.[0]?.ar[0]?.name}</ArtistName>
+              <PlayPageAbovePart
+                toPlayPage={toPlayPage}
+                songDetail={songDetail}
+              />
               <ProgressContainer>
                 <ProgressBar
                   progress={`${getProgress() * 100}%`}
                   onClick={onProgressBarClick}
+                  onMouseUp={onProgressBarMouseEnd}
+                  onMouseLeave={onProgressBarMouseEnd}
+                  onMouseMove={onProgressBarMouseMove}
+                  ref={progressBarRef}
                 >
-                  <ProgressBarHandler progress={`${getProgress() * 100}%`} />
+                  <ProgressBarHandler
+                    progress={`${getProgress() * 100}%`}
+                    onMouseDown={onMouseDown}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                    onTouchMove={onTouchMove}
+                  />
                 </ProgressBar>
                 <CurrentTimeProgress>
-                  {formatAudioTime(audioRef.current.currentTime)}
+                  {formatAudioTime(audioCurTime)}
                 </CurrentTimeProgress>
                 <DurationProgress>
                   {formatAudioTime(audioRef.current.duration)}
                 </DurationProgress>
               </ProgressContainer>
-
-              <PlayPageBar>
-                <PlayPageBarWrapper>
-                  <IconImg src={preIcon} onClick={onPrePlay} />
-                  <IconImg
-                    src={
-                      playState === "playing" || playState === "loaded"
-                        ? pauseIcon
-                        : playIcon
-                    }
-                    large
-                    onClick={handlePlayIconClick}
-                  />
-                  <IconImg src={nextIcon} onClick={onNextPlay} />
-                </PlayPageBarWrapper>
-              </PlayPageBar>
+              <PlayPageBottomPart
+                playState={playState}
+                handlePlayIconClick={handlePlayIconClick}
+                onModalOpen={onModalOpen}
+                onNextPlay={onNextPlay}
+              />
             </>
           )}
         </StyledPlayBar>
@@ -408,18 +729,5 @@ const PlayBar = memo(({ route }) => {
     </>
   )
 })
-
-const PlayerStateIcon = memo(({ playState, onClick }) => {
-  if (playState === "loading")
-    return <PlayerLoadingIcon color={theme.secondary} onClick={onClick} />
-  if (playState === "playing" || playState === "loaded")
-    return <PlayerStopIcon onClick={onClick} />
-  return <PlayerPlayIcon onClick={onClick} />
-})
-
-PlayerStateIcon.propTypes = {
-  playState: PropTypes.string,
-  onClick: PropTypes.func,
-}
 
 export default PlayBar

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-indent */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
@@ -247,6 +248,7 @@ const MediaItem = memo(props => {
     noIndex,
     onItemClick,
     id,
+    renderRightPart,
   } = props
   const { data: songValid, isValidating } = useSWR(
     type === MediaItemTypes.SONG && id ? `/api/check/music?id=${id}` : null,
@@ -267,25 +269,29 @@ const MediaItem = memo(props => {
   const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
   const innerDD = desc || publishTime
   const storeDispatch = useDispatch()
-  const onResultItemClick = useCallback(() => {
-    if (isValidating) {
-      return
-    }
+  const onResultItemClick = useCallback(
+    e => {
+      e.stopPropagation()
+      if (isValidating) {
+        return
+      }
 
-    if (typeof onItemClick === "function" && id) {
-      onItemClick({
-        id,
-      })
-    }
+      if (typeof onItemClick === "function" && id) {
+        onItemClick({
+          id,
+        })
+      }
 
-    if (type === MediaItemTypes.SONG && !songValid?.success) {
-      setShowDialog(true)
-    }
+      if (type === MediaItemTypes.SONG && !songValid?.success) {
+        setShowDialog(true)
+      }
 
-    if (type === MediaItemTypes.SONG && songValid?.success) {
-      storeDispatch(playBarPage.setImmediatelyPlay(id))
-    }
-  }, [isValidating, onItemClick, id, type, songValid, storeDispatch])
+      if (type === MediaItemTypes.SONG && songValid?.success) {
+        storeDispatch(playBarPage.setImmediatelyPlay(id))
+      }
+    },
+    [isValidating, onItemClick, id, type, songValid, storeDispatch],
+  )
 
   const activePlayId = useSelector(state => state.playBar.currentPlayId)
 
@@ -346,17 +352,19 @@ const MediaItem = memo(props => {
             <dd>{innerDD}</dd>
           </dl>
         </ReactPlaceholder>
-        {type === MediaItemTypes.SONG && (
-          <SongMore
-            songName={title}
-            artistName={artistName || artistNameDesc}
-            albumName={albumName || albumNameDesc}
-            artistId={artistId}
-            albumId={albumId}
-            id={id}
-            isValid={songValid?.success && !isValidating}
-          />
-        )}
+        {typeof renderRightPart === "function"
+          ? renderRightPart()
+          : type === MediaItemTypes.SONG && (
+              <SongMore
+                songName={title}
+                artistName={artistName || artistNameDesc}
+                albumName={albumName || albumNameDesc}
+                artistId={artistId}
+                albumId={albumId}
+                id={id}
+                isValid={songValid?.success && !isValidating}
+              />
+            )}
       </StyledResultItem>
     </>
   )
@@ -365,6 +373,7 @@ const MediaItem = memo(props => {
 MediaItem.displayName = "MediaItem"
 
 MediaItem.propTypes = {
+  renderRightPart: PropTypes.func,
   noIndex: PropTypes.bool,
   noImg: PropTypes.bool,
   index: PropTypes.number,
@@ -384,7 +393,7 @@ MediaItem.propTypes = {
 }
 
 const MediaItemList = memo(
-  ({ list, title, placeHolderCount, moreUrl, onItemClick }) => {
+  ({ list, title, placeHolderCount, moreUrl, onItemClick, rendItemRight }) => {
     if (!list?.length) {
       return null
     }
@@ -408,6 +417,7 @@ const MediaItemList = memo(
               {...item}
               key={index}
               onItemClick={onItemClick}
+              renderRightPart={rendItemRight}
             />
           )}
         />
@@ -417,6 +427,7 @@ const MediaItemList = memo(
 )
 
 MediaItemList.propTypes = {
+  rendItemRight: PropTypes.func,
   onItemClick: PropTypes.func,
   moreUrl: PropTypes.string,
   placeHolderCount: PropTypes.number,

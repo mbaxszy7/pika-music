@@ -7,13 +7,30 @@ import {
   PLAY_NEXT,
   REMOVE_CURRENT,
   PLAY_PRE,
+  PLAY_LIST_SONG_PLAY,
+  REMOVE_SONG,
+  PLAY_MODE,
 } from "./constants"
 
 class ConnectPlayBarReducer extends ConnectCompReducer {
   requestSongDetails = async url => {
-    const [error, res] = await awaitWrapper(this.fetcher)(url)
+    const [, res] = await awaitWrapper(this.fetcher)(url)
     if (res) {
-      return res.data.songs
+      return res.data.songs.map(data => {
+        return {
+          picUrl: data.al?.picUrl,
+          type: "song",
+          noImg: true,
+          noIndex: true,
+          title: data.name,
+          artistId: data.ar[0]?.id,
+          albumId: data.al.id,
+          artistName: data.ar[0]?.name,
+          albumName: data.al.name,
+          desc: data.ar[0]?.name,
+          id: data.id,
+        }
+      })
     }
   }
 
@@ -46,6 +63,21 @@ class ConnectPlayBarReducer extends ConnectCompReducer {
 
   removeCur = () => ({
     type: REMOVE_CURRENT,
+  })
+
+  setPlaylistSongPlay = index => ({
+    type: PLAY_LIST_SONG_PLAY,
+    data: index,
+  })
+
+  removeSong = index => ({
+    type: REMOVE_SONG,
+    data: index,
+  })
+
+  setPlayMode = mode => ({
+    type: PLAY_MODE,
+    data: mode,
   })
 }
 

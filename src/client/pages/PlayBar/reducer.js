@@ -7,6 +7,10 @@ import {
   PLAY_NEXT,
   REMOVE_CURRENT,
   PLAY_PRE,
+  PLAY_LIST_SONG_PLAY,
+  REMOVE_SONG,
+  PLAY_MODE,
+  LIST_CYCLE,
 } from "./constants"
 
 const defaultState = {
@@ -14,6 +18,7 @@ const defaultState = {
   currentPlayId: null,
   songIdList: [],
   currentPlayIndex: 0,
+  playMode: LIST_CYCLE,
 }
 
 const discoverReducer = produce((draft, action) => {
@@ -51,7 +56,11 @@ const discoverReducer = produce((draft, action) => {
     }
   }
   if (action.type === PLAY_NEXT) {
-    if (draft.songIdList.length > draft.currentPlayIndex) {
+    if (typeof action.data === "number") {
+      const toPlayIndex = action.data
+      draft.currentPlayIndex = toPlayIndex
+      draft.currentPlayId = draft.songIdList[toPlayIndex - 1]
+    } else if (draft.songIdList.length > draft.currentPlayIndex) {
       const toPlayIndex = draft.currentPlayIndex
       draft.currentPlayIndex = toPlayIndex + 1
       draft.currentPlayId = draft.songIdList[toPlayIndex]
@@ -74,6 +83,27 @@ const discoverReducer = produce((draft, action) => {
       draft.currentPlayIndex = toIndex
       draft.currentPlayId = list[toIndex - 1]
     }
+  }
+
+  if (action.type === REMOVE_SONG) {
+    const toRemoveIndex = action.data
+    if (toRemoveIndex + 1 <= draft.currentPlayIndex) {
+      draft.currentPlayIndex -= 1
+    }
+    const list = [...draft.songIdList]
+    list.splice(toRemoveIndex, 1)
+    draft.songIdList = list
+  }
+
+  if (action.type === PLAY_LIST_SONG_PLAY) {
+    if (action.data !== -1) {
+      draft.currentPlayIndex = action.data + 1
+      draft.currentPlayId = draft.songIdList[action.data]
+    }
+  }
+
+  if (action.type === PLAY_MODE) {
+    draft.playMode = action.data
   }
 }, defaultState)
 
