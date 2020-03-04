@@ -112,6 +112,7 @@
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
+    "screenfull": "^5.0.2",
     "styled-components": "^4.4.1",
     "styled-reset": "^4.0.9",
     "swr": "^0.1.16",

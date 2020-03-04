@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { memo, useRef, useCallback } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import ReactPlaceholder from "react-placeholder"
 import queryString from "query-string"
 import { useLocation } from "react-router-dom"
@@ -16,6 +16,7 @@ import { clamp } from "../../../utils"
 import Avatar from "../../../shared/Avatar"
 import InnerModal from "../../../shared/InnerModal"
 import PlaySongsBar from "../../components/PlaySongsBar"
+import playBarPage from "../PlayBar/connectPlayBarReducer"
 import * as Styled from "./styled"
 
 const AlbumBrief = memo(
@@ -113,12 +114,22 @@ const AlbumDetails = memo(() => {
     },
   )
 
-  const onPlayIconClick = useCallback(() => {}, [])
+  const storeDispatch = useDispatch()
+
+  const onPlayIconClick = useCallback(() => {
+    if (albumDetails?.songs?.length) {
+      storeDispatch(
+        playBarPage.setImmediatelyPlay(albumDetails.songs.map(song => song.id)),
+      )
+    }
+  }, [albumDetails, storeDispatch])
 
   return (
     <Styled.AlbumDetailsPage>
       <Styled.PageBackWrapper opacity={headerOpacity}>
-        <PageBack title={headerOpacity !== 2 ? albumDetails.artist.name : ""} />
+        <PageBack
+          title={headerOpacity !== 2 ? albumDetails?.artist?.name : ""}
+        />
       </Styled.PageBackWrapper>
       <Styled.AlbumPic>
         <ReactPlaceholder

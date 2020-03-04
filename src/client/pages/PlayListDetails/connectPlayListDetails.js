@@ -27,7 +27,7 @@ class ConnectPlayListReducer extends ConnectCompReducer {
       subscribedCount,
       playCount,
       name,
-      description,
+      description: description ?? "",
       trackIds: trackIds.map(track => track.id),
     }
   }

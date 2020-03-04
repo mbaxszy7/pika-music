@@ -19,10 +19,10 @@ const getData = {
       id: data.id,
     }
   },
-  video: data => {
+  mv: data => {
     return {
-      ...SEARCH_RESULT_SELECTOR.video.selector(data),
-      type: "video",
+      ...SEARCH_RESULT_SELECTOR.mv.selector(data),
+      type: "mv",
     }
   },
   playlist: data => {
@@ -56,7 +56,7 @@ class ConnectSearchMoreDetails extends ConnectCompReducer {
       let isMore = index < count
       if (offset === 0) {
         if (index < count) {
-          isMore = false
+          isMore = true
         }
       }
       return [

@@ -13,6 +13,7 @@ import albumDetails from "./client/pages/AlbumDetails/connectAlbumDetailsReducer
 import SearchMore from "./client/pages/SearchMore/SearchMore"
 import PlayListDetails from "./client/pages/PlayListDetails/PlayListDetails"
 import DiscoverMore from "./client/pages/DiscoverMore/DiscoverMore"
+import MVPlay from "./client/pages/MVPlay/MVPlay"
 
 const routes = [
   {
@@ -56,6 +57,11 @@ const routes = [
         path: "/discover_more/:type",
         exact: true,
         component: DiscoverMore,
+      },
+      {
+        path: "/mv/:id",
+        exact: true,
+        component: MVPlay,
       },
     ],
   },

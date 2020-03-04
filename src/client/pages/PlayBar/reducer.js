@@ -26,24 +26,30 @@ const discoverReducer = produce((draft, action) => {
     draft.isShowPlayBar = action.data
   }
   if (action.type === SET_IMMEDIATELY_PLAY) {
+    const { songIdList } = draft
+    //  列表被删除空了， songIdList: [] currentPlayId 有值
+    // if (draft.currentPlayId && draft.songIdList.length) {
+    //   songIdList = [draft.currentPlayId]
+    // }
+
     if (Array.isArray(action.data)) {
-      draft.songIdList = [...action.data, ...draft.songIdList]
+      draft.songIdList = [...action.data, ...songIdList]
       // eslint-disable-next-line prefer-destructuring
       draft.currentPlayId = action.data[0]
       draft.currentPlayIndex = 1
     } else if (action.data !== draft.currentPlayId) {
       const curPlayIndex = draft.currentPlayIndex
       draft.songIdList = [
-        ...draft.songIdList.slice(0, curPlayIndex),
+        ...songIdList.slice(0, curPlayIndex),
         action.data,
-        ...draft.songIdList.slice(curPlayIndex),
+        ...songIdList.slice(curPlayIndex),
       ]
       draft.currentPlayIndex = curPlayIndex + 1
       draft.currentPlayId = action.data
     }
   }
   if (action.type === SET_NEXT_PLAY) {
-    if (!draft.songIdList.length) {
+    if (!draft.currentPlayId) {
       draft.songIdList = [action.data]
       draft.currentPlayId = action.data
       draft.currentPlayIndex = 1
@@ -57,9 +63,13 @@ const discoverReducer = produce((draft, action) => {
   }
   if (action.type === PLAY_NEXT) {
     if (typeof action.data === "number") {
-      const toPlayIndex = action.data
-      draft.currentPlayIndex = toPlayIndex
-      draft.currentPlayId = draft.songIdList[toPlayIndex - 1]
+      if (!draft.songIdList.length) {
+        draft.currentPlayIndex = 0
+      } else {
+        const toPlayIndex = action.data
+        draft.currentPlayIndex = toPlayIndex
+        draft.currentPlayId = draft.songIdList[toPlayIndex - 1]
+      }
     } else if (draft.songIdList.length > draft.currentPlayIndex) {
       const toPlayIndex = draft.currentPlayIndex
       draft.currentPlayIndex = toPlayIndex + 1
@@ -67,7 +77,15 @@ const discoverReducer = produce((draft, action) => {
     }
   }
   if (action.type === PLAY_PRE) {
-    if (draft.currentPlayIndex > 1) {
+    if (typeof action.data === "number") {
+      if (!draft.songIdList.length) {
+        draft.currentPlayIndex = 0
+      } else {
+        const toPlayIndex = action.data
+        draft.currentPlayIndex = toPlayIndex
+        draft.currentPlayId = draft.songIdList[toPlayIndex - 1]
+      }
+    } else if (draft.currentPlayIndex > 1) {
       const toPlayIndex = draft.currentPlayIndex - 1
       draft.currentPlayIndex = toPlayIndex
       draft.currentPlayId = draft.songIdList[toPlayIndex - 1]
@@ -82,6 +100,8 @@ const discoverReducer = produce((draft, action) => {
 
       draft.currentPlayIndex = toIndex
       draft.currentPlayId = list[toIndex - 1]
+    } else {
+      draft.songIdList = []
     }
   }
 

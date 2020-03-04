@@ -13,6 +13,7 @@ const AppBgTheme = createGlobalStyle`
   }
  #root {
    max-height: 100vh;
+   height:100vh;
    overflow-y:scroll;
    padding-bottom: 63px;
    background-color: #212121;

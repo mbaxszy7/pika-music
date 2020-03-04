@@ -41,7 +41,6 @@ const PlaylistsMore = ({
   resetPage,
   type,
 }) => {
-  const history = useHistory()
   const { data: playlistCats } = useSWR(
     "/api/playlist/catlist",
     discoverMorePage.requestPlaylistCat,
@@ -69,13 +68,6 @@ const PlaylistsMore = ({
       }
     },
     [resetPage, setListData, setSelectedSubLabel],
-  )
-
-  const onPlaylistItemClick = useCallback(
-    item => {
-      history.push(`/playlist/${item.id}`)
-    },
-    [history],
   )
 
   const handleLabelClick = useCallback(
@@ -124,7 +116,6 @@ const PlaylistsMore = ({
         </ListHeader>
         <ListContent>
           <MediaItemList
-            onItemClick={onPlaylistItemClick}
             list={listData.length ? listData : new Array(2).fill({ type })}
           />
           {isLoading && <MediaItemList list={new Array(2).fill({ type })} />}

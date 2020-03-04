@@ -4,6 +4,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useCallback, useRef, memo } from "react"
 import PropTypes from "prop-types"
+import { useDispatch } from "react-redux"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
 import styled from "styled-components"
@@ -21,6 +22,7 @@ import PlaySongsBar from "../../components/PlaySongsBar"
 import PageBack from "../../components/PageBack"
 import Label from "../../components/Label"
 import List from "../../../shared/List"
+import playBarPage from "../PlayBar/connectPlayBarReducer"
 import {
   AlbumDetailsPage as PlaylistDetails,
   AlbumPic,
@@ -94,7 +96,7 @@ const PlaylistBrief = memo(
 
         <ReactPlaceholder
           type="textRow"
-          ready={!!desc}
+          ready={desc != null}
           style={{ marginTop: 20 }}
         >
           <StyledDesc onClick={onModalOpen}>{desc}</StyledDesc>
@@ -122,7 +124,7 @@ PlaylistBrief.propTypes = {
 
 const PlayListDetails = () => {
   useIsomorphicEffect(() => {
-    window.scroll(0, 0)
+    document.getElementById("root").scrollTop = 0
   }, [])
   const params = useParams()
   const scrollContainerRef = useRef()
@@ -151,6 +153,15 @@ const PlayListDetails = () => {
     playlistDetailPage.requestSongs,
   )
 
+  const storeDispatch = useDispatch()
+
+  const onPlayIconClick = useCallback(() => {
+    if (playlistSongs?.length) {
+      storeDispatch(
+        playBarPage.setImmediatelyPlay(playlistSongs.map(song => song.id)),
+      )
+    }
+  }, [playlistSongs, storeDispatch])
   return (
     <PlaylistDetails>
       <PageBackWrapper opacity={headerOpacity}>
@@ -176,7 +187,10 @@ const PlayListDetails = () => {
         />
         <MediaListWrapper>
           <PlayBarWrapper>
-            <PlaySongsBar songsCount={playlistSongs?.length} />
+            <PlaySongsBar
+              songsCount={playlistSongs?.length}
+              onPlayIconClick={onPlayIconClick}
+            />
           </PlayBarWrapper>
 
           <MediaItemList

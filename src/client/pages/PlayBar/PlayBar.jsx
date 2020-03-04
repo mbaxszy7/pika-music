@@ -21,14 +21,16 @@ import { useSelector, useDispatch } from "react-redux"
 import playBarPage from "./connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
 import List from "../../../shared/List"
-import { axiosInstance } from "../../../utils/connectPageReducer"
 import { SpinnerLoading } from "../../../shared/Spinner"
 import { theme as appTheme } from "../../../shared/AppTheme"
 import { SINGLE_CYCLE, LIST_CYCLE, SHUFFLE_PLAY } from "./constants"
 import { awaitWrapper, formatAudioTime } from "../../../utils"
 import { useEffectShowModal } from "../../../utils/hooks"
 import InnerModal, { ModalMask } from "../../../shared/InnerModal"
-import SingleLineTexts from "../../../shared/LinesTexts.styled"
+import SingleLineTexts, {
+  MultipleLineTexts,
+} from "../../../shared/LinesTexts.styled"
+import mediaQury from "../../../shared/mediaQury.styled"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
 import preIcon from "../../../assets/pre.png"
@@ -45,21 +47,43 @@ const StyledRemoveClose = styled.div`
   margin-left: auto;
 `
 
+const StyledPlayListItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  line-height: 1.3;
+  min-height: 1em;
+  .text_wrapper {
+    padding-right: 15px;
+    ${SingleLineTexts};
+    color: ${({ isActivePlay, theme }) =>
+      isActivePlay ? theme.secondary : theme.fg};
+  }
+  .artist_name {
+    font-size: 14px;
+    color: ${props => props.theme.dg};
+  }
+`
+
 const StyledModalContainer = styled.div`
   opacity: 0.96;
   border-radius: 12px 12px 0 0;
   background-color: ${props => props.theme.mg};
   position: absolute;
   bottom: 0;
-  padding: 25px 14px 80px 14px;
+  padding: 40px 14px 80px 14px;
   width: 100%;
   transition: transform 0.2s;
+  max-height: 90vh;
   transform: ${props =>
     props.isShow ? "translate3d(0, 0,0)" : "translate3d(0, 100%,0)"};
   .contents {
+    ${StyledPlayListItem}:first-child {
+      margin-top: 0;
+    }
     min-height: 300px;
     max-height: 70vh;
-    padding: 15px;
+    padding: 0 15px 15px 15px;
     overflow-y: scroll;
   }
   .close {
@@ -124,22 +148,31 @@ const StyledSongPic = styled.div`
   width: 65%;
   padding-bottom: 65%;
   display: block;
-  margin: 30px auto 0 auto;
+  margin: 3.2em auto 0 auto;
   border-radius: 5px;
   overflow: hidden;
+  ${mediaQury.miniPhone`margin:2em`}
 `
 
 const SongName = styled.div`
   color: ${({ theme }) => theme.fg};
-  margin-top: 25px;
-  font-size: 20px;
+  margin-top: 1.5em;
+  font-size: 1.1em;
   line-height: 1.4;
   font-weight: bold;
+  ${MultipleLineTexts(2)}
 `
+const LyricLine = styled.div`
+  color: ${({ theme }) => theme.fg};
+  margin-top: 15px;
+  font-size: 100%;
+  line-height: 1.4;
+`
+
 const ArtistName = styled.div`
   color: ${({ theme }) => theme.dg};
-  margin-top: 15px;
-  font-size: 16px;
+  margin-top: 1em;
+  font-size: 100%;
 `
 const ProgressBar = styled.div.attrs(({ theme, progress }) => ({
   style: {
@@ -155,16 +188,28 @@ const ProgressBar = styled.div.attrs(({ theme, progress }) => ({
   color: ${props => props.theme.fg};
 `
 
-const ProgressBarHandler = styled.div`
+const ProgressBarHandler = styled.div.attrs(({ progress }) => ({
+  style: {
+    left: `${progress}`,
+  },
+}))`
   position: absolute;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: ${({ theme }) => theme.secondary};
-  left: ${({ progress }) => progress};
+
   will-change: left;
   top: 50%;
   transform: translate3d(0, -52%, 0);
+  &::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 28px;
+    height: 28px;
+  }
 `
 
 const ProgressTime = styled.div`
@@ -257,11 +302,11 @@ const StyledPlayBar = styled.div`
   ${({ isShowPlayPage, theme }) => {
     if (isShowPlayPage) {
       return {
-        zIndex: 99999,
+        zIndex: 9999,
         bottom: 0,
         left: 0,
         borderRadius: 0,
-        height: "100vh",
+        height: window.innerHeight,
         width: "100vw",
         background: theme.mg,
         padding: 20,
@@ -270,30 +315,11 @@ const StyledPlayBar = styled.div`
   }}
 `
 
-const StyledPlayListItem = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 20px 0;
-  line-height: 1.3;
-  min-height: 1em;
-  .text_wrapper {
-    padding-right: 15px;
-    ${SingleLineTexts};
-    color: ${({ isActivePlay, theme }) =>
-      isActivePlay ? theme.secondary : theme.fg};
-  }
-  .artist_name {
-    font-size: 14px;
-    color: ${props => props.theme.dg};
-  }
-`
-
 const PlayListItem = ({ songName, artistName, isActivePlay, songIndex }) => {
   const storeDispatch = useDispatch()
   const onPlayClick = useCallback(
     e => {
       e.stopPropagation()
-      console.log(songIndex)
       storeDispatch(playBarPage.setPlaylistSongPlay(songIndex))
     },
     [songIndex, storeDispatch],
@@ -350,7 +376,7 @@ PlayerStateIcon.propTypes = {
   onClick: PropTypes.func,
 }
 
-const PlayPageAbovePart = memo(({ toPlayPage, songDetail }) => {
+const PlayPageAbovePart = memo(({ toPlayPage, songDetail, curLyricLine }) => {
   return (
     <>
       <HiddenPlayPageIcon src={downIcon} onClick={toPlayPage} />
@@ -362,26 +388,28 @@ const PlayPageAbovePart = memo(({ toPlayPage, songDetail }) => {
         <ReactPlaceholder
           type="textRow"
           ready={!!songDetail?.[0]?.title}
-          style={{ width: "40%", height: "1.2em" }}
+          style={{ width: "40%", height: ".9em" }}
         >
           {songDetail?.[0]?.title ?? ""}
         </ReactPlaceholder>
       </SongName>
+
       <ArtistName>{songDetail?.[0]?.artistName}</ArtistName>
+      <LyricLine>{curLyricLine ?? ""}</LyricLine>
     </>
   )
 })
 
 const PlayPageBottomPart = memo(
-  ({ playState, handlePlayIconClick, onModalOpen, onNextPlay }) => {
+  ({ playState, handlePlayIconClick, onModalOpen, onNextOrPrePlay }) => {
     const playMode = useSelector(state => state.playBar.playMode)
     const storeDispatch = useDispatch()
     const onPrePlay = useCallback(() => {
-      storeDispatch(playBarPage.playPre())
-    }, [storeDispatch])
+      onNextOrPrePlay(true, "prev")
+    }, [onNextOrPrePlay])
     const nextSong = useCallback(() => {
-      onNextPlay(true)
-    }, [onNextPlay])
+      onNextOrPrePlay(true, "next")
+    }, [onNextOrPrePlay])
     return (
       <PlayPageBar>
         <PlayPageBarWrapper>
@@ -434,6 +462,7 @@ const PlayBar = memo(({ route }) => {
   const [isShowPlayPage, setShowPlayPage] = useState(false)
   const [audioCurTime, setAudioCurTime] = useState(0)
   const isShowPlayBar = useSelector(state => state.playBar.isShowPlayBar)
+  const [curLyricLine, setCurLyricLine] = useState("")
   const songIdList = useSelector(state => state.playBar.songIdList)
   const currentPlayId = useSelector(state => state.playBar.currentPlayId)
   const currentPlayIndex = useSelector(state => state.playBar.currentPlayIndex)
@@ -441,7 +470,6 @@ const PlayBar = memo(({ route }) => {
   const isProgressBarActived = useRef(false)
   const playMode = useSelector(state => state.playBar.playMode)
   const progressBarRef = useRef()
-  const [songList, setSongList] = useState([])
 
   const {
     isShowModal,
@@ -455,41 +483,51 @@ const PlayBar = memo(({ route }) => {
     playBarPage.requestSongDetails,
   )
 
-  useEffect(() => {
-    const getSongList = async () => {
-      const songs = await playBarPage.requestSongDetails(
-        `/api/song/detail?ids=${songIdList.join(",")}`,
-      )
-      if (songs) {
-        setSongList(songIdList.map(id => songs.find(s => s.id === id)))
-      }
-    }
-    getSongList()
-  }, [songIdList])
+  const { data: songLyric } = useSWR(
+    currentPlayId && `/api/lyric?id=${currentPlayId}`,
+    playBarPage.requestSongLyric,
+  )
+
+  const { data: songList } = useSWR(
+    songIdList?.length ? `/api/song/detail?ids=${songIdList.join(",")}` : null,
+    playBarPage.requestSongDetails,
+  )
 
   const getTrack = useCallback(async id => {
-    const data = await axiosInstance
+    const data = await playBarPage.fetcher
       .get(`/api/song/url?id=${id}`)
       .then(res => res.data.data[0])
 
     return data
   }, [])
 
-  const onNextPlay = useCallback(
-    isForcedNext => {
+  const onNextOrPrePlay = useCallback(
+    (isForcedNextOrPrev, direct) => {
       let toPlayIndex = null
       if (playMode === LIST_CYCLE) {
-        if (songIdList.length === currentPlayIndex) {
+        if (direct === "next" && songIdList.length === currentPlayIndex) {
           toPlayIndex = 1
         }
-      } else if (playMode === SINGLE_CYCLE && !isForcedNext) {
+        if (direct === "prev" && currentPlayIndex === 1) {
+          toPlayIndex = songIdList.length
+        }
+      } else if (playMode === SINGLE_CYCLE && !isForcedNextOrPrev) {
         audioRef.current.currentTime = 0
         audioRef.current.play()
         return
       } else if (playMode === SHUFFLE_PLAY) {
         toPlayIndex = Math.ceil(Math.random() * songIdList.length)
       }
-      storeDispatch(playBarPage.playNext(toPlayIndex))
+
+      if (isForcedNextOrPrev) {
+        audioRef.current.currentTime = 0
+      }
+      if (direct === "next") {
+        storeDispatch(playBarPage.playNext(toPlayIndex))
+      }
+      if (direct === "prev") {
+        storeDispatch(playBarPage.playPre(toPlayIndex))
+      }
     },
     [currentPlayIndex, playMode, songIdList.length, storeDispatch],
   )
@@ -503,31 +541,58 @@ const PlayBar = memo(({ route }) => {
         if (error || !track?.url) {
           setPlayState("stopped")
           storeDispatch(playBarPage.removeCur())
-          onNextPlay()
+          onNextOrPrePlay(false, "next")
         } else {
           audioRef.current.src = track.url
           audioRef.current.currentTime = 0
           audioRef.current.play()
         }
+      } else {
+        audioRef.current.src = ""
+        audioRef.current.currentTime = 0
       }
     }
     setTrack()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPlayId, getTrack, storeDispatch, currentPlayIndex])
+  }, [currentPlayId, getTrack, storeDispatch])
 
   const onAudioEnd = useCallback(() => {
     setPlayState("stopped")
-    onNextPlay()
-  }, [onNextPlay])
+    onNextOrPrePlay(false, "next")
+  }, [onNextOrPrePlay])
 
   const onAudioLoadedData = useCallback(() => {
     setAudioCurTime(audioRef.current.duration)
     setPlayState("loaded")
   }, [])
 
+  const lyriclines = useMemo(
+    () =>
+      songLyric?.split("\n")?.map(s => {
+        const r = s.match(/\[([^\[\]]*)\](.*)/)
+        return r
+          ? [
+              r[1]
+                .split(":")
+                .map(n => n * 1)
+                .reduce((a, b) => a * 60 + b)
+                .toFixed(3),
+              r[2],
+            ]
+          : []
+      }),
+    [songLyric],
+  )
+
   const onAudioTimeUpdate = useCallback(() => {
     setAudioCurTime(audioRef.current.duration - audioRef.current.currentTime)
-  }, [])
+    const lyricLineIndex = lyriclines?.findIndex(
+      line =>
+        // eslint-disable-next-line eqeqeq
+        Math.max(line[0], audioRef.current.currentTime.toFixed(3)) == line[0],
+    )
+    setCurLyricLine(lyriclines?.[lyricLineIndex - 1]?.[1])
+  }, [lyriclines])
 
   const onAudioPlay = useCallback(() => {
     setPlayState("playing")
@@ -567,10 +632,10 @@ const PlayBar = memo(({ route }) => {
 
   const onProgressBarClick = useCallback(
     e => {
-      const { x, width } = e.currentTarget.getBoundingClientRect()
+      const { left, width } = e.currentTarget.getBoundingClientRect()
       const clickedX = e.clientX
-      if (clickedX > x && clickedX < width + x) {
-        const offset = clickedX - x
+      if (clickedX > left && clickedX < width + left) {
+        const offset = clickedX - left
         audioSeek(offset / width)
       }
     },
@@ -644,6 +709,12 @@ const PlayBar = memo(({ route }) => {
     [onProgressBarTouchMoving],
   )
 
+  const songPlayList = useMemo(() => {
+    return songList
+      ? songIdList.map(id => songList?.find?.(song => song.id === id))
+      : []
+  }, [songIdList, songList])
+
   return (
     <>
       {isShowModal && (
@@ -651,7 +722,7 @@ const PlayBar = memo(({ route }) => {
           <ModalMask onClick={onModalClose}>
             <StyledModalContainer isShow={isShowContent}>
               <div className="contents">
-                <Playlist songList={songList} />
+                <Playlist songList={songPlayList} />
               </div>
               <div className="close" data-close="true">
                 &times;
@@ -690,6 +761,7 @@ const PlayBar = memo(({ route }) => {
               <PlayPageAbovePart
                 toPlayPage={toPlayPage}
                 songDetail={songDetail}
+                curLyricLine={curLyricLine}
               />
               <ProgressContainer>
                 <ProgressBar
@@ -719,7 +791,7 @@ const PlayBar = memo(({ route }) => {
                 playState={playState}
                 handlePlayIconClick={handlePlayIconClick}
                 onModalOpen={onModalOpen}
-                onNextPlay={onNextPlay}
+                onNextOrPrePlay={onNextOrPrePlay}
               />
             </>
           )}

@@ -7,6 +7,7 @@ import PropTypes from "prop-types"
 import styled from "styled-components"
 import SingleLineTexts from "../../shared/LinesTexts.styled"
 import pageBackIcon from "../../assets/pageBack.png"
+import blackBackIcon from "../../assets/blackBack.png"
 
 const StyledPageBack = styled.div`
   display: flex;
@@ -27,19 +28,26 @@ const StyledPageBack = styled.div`
   }
 `
 
-const PageBack = memo(({ title, style }) => {
+const PageBack = memo(({ title, style, className, isBlack }) => {
   const onPageBack = useCallback(() => {
     window.history.back()
   }, [])
   return (
-    <StyledPageBack style={style}>
-      <img src={pageBackIcon} alt="" onClick={onPageBack} />
+    <StyledPageBack style={style} className={className}>
+      {isBlack ? (
+        <img src={blackBackIcon} alt="" onClick={onPageBack} />
+      ) : (
+        <img src={pageBackIcon} alt="" onClick={onPageBack} />
+      )}
+
       {title && <p>{title}</p>}
     </StyledPageBack>
   )
 })
 
 PageBack.propTypes = {
+  isBlack: PropTypes.bool,
+  className: PropTypes.string,
   style: PropTypes.object,
   title: PropTypes.string,
 }

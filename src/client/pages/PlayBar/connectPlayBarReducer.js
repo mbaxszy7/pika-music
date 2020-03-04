@@ -34,6 +34,13 @@ class ConnectPlayBarReducer extends ConnectCompReducer {
     }
   }
 
+  requestSongLyric = async url => {
+    const [, res] = await awaitWrapper(this.fetcher)(url)
+    if (res) {
+      return res.data.lrc.lyric
+    }
+  }
+
   getInitialData = async () => {}
 
   setShowPlayBar = data => ({

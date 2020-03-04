@@ -83,6 +83,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
 
   useEffect(() => {
     imgRef.current.setAttribute("data-loaded", false)
+    imgRef.current.setAttribute("data-settled", true)
     imgRef.current.src = ""
     const observer = lozad()
     observer.observe()

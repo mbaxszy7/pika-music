@@ -27,6 +27,7 @@ export const StyledSpinnerLoading = styled(SpinnerLoading)`
 export const DiscoverMorePage = styled.div`
   min-height: 100vh;
   padding: 30px 15px 0 15px;
+  overflow: hidden;
 `
 
 export const LabelWrapper = styled.div`

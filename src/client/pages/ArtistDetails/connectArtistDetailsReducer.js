@@ -60,6 +60,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
             : null,
           type: "bigAlbum",
           albumId: album.id,
+          id: album.id,
         }
       }),
       res.data.more,
@@ -70,6 +71,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
     const res = await this.fetcher.get(url)
     return [
       res.data.mvs.map(mv => ({
+        vtype: 0,
         imgUrl: mv.imgurl,
         title: mv.name,
         id: mv.id,

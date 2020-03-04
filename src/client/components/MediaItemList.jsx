@@ -3,7 +3,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
 import React, { memo, useCallback, useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import useSWR from "swr"
 import ReactPlaceholder from "react-placeholder"
@@ -57,7 +57,7 @@ export const MediaItemTypes = {
   ALBUM: "album",
   PLAY_LIST: "playlist",
   SONG: "song",
-  VIDEO: "video",
+  MV: "mv",
   ARTIST: "artist",
   BIG_ALBUM: "bigAlbum",
   BIG_MV: "bigMV",
@@ -265,10 +265,22 @@ const MediaItem = memo(props => {
       },
     },
   )
+
+  // ALBUM: "album",
+  // PLAY_LIST: "playlist",
+  // SONG: "song",
+  // VIDEO: "video",
+  // ARTIST: "artist",
+  // BIG_ALBUM: "bigAlbum",
+  // BIG_MV: "bigMV",
+  // BIGGER_MV: "biggerMV",
+  // BIG_PLAY_LIST: "big_playlist",
+  // PRIVATE_MV: "privateMV",
   const [isShowDialog, setShowDialog] = useState(false)
   const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
   const innerDD = desc || publishTime
   const storeDispatch = useDispatch()
+  const history = useHistory()
   const onResultItemClick = useCallback(
     e => {
       e.stopPropagation()
@@ -276,25 +288,56 @@ const MediaItem = memo(props => {
         return
       }
 
+      if (type === MediaItemTypes.BIG_ALBUM || type === MediaItemTypes.ALBUM) {
+        history.push(`/album?id=${id}`)
+      } else if (
+        type === MediaItemTypes.PLAY_LIST ||
+        type === MediaItemTypes.BIG_PLAY_LIST
+      ) {
+        history.push(`/playlist/${id}`)
+      } else if (type === MediaItemTypes.SONG && !songValid?.success) {
+        setShowDialog(true)
+      } else if (type === MediaItemTypes.SONG && songValid?.success) {
+        storeDispatch(playBarPage.setImmediatelyPlay(id))
+      } else if (
+        type === MediaItemTypes.BIG_MV ||
+        type === MediaItemTypes.BIGGER_MV ||
+        type === MediaItemTypes.MV ||
+        type === MediaItemTypes.PRIVATE_MV
+      ) {
+        history.push(`/mv/${id}`)
+      } else if (type === MediaItemTypes.ARTIST) {
+        history.push(`/artist?id=${id}&name=${artistName?.split(" ")?.[0]}`)
+      }
       if (typeof onItemClick === "function" && id) {
         onItemClick({
           id,
         })
       }
-
-      if (type === MediaItemTypes.SONG && !songValid?.success) {
-        setShowDialog(true)
-      }
-
-      if (type === MediaItemTypes.SONG && songValid?.success) {
-        storeDispatch(playBarPage.setImmediatelyPlay(id))
-      }
     },
-    [isValidating, onItemClick, id, type, songValid, storeDispatch],
+    [
+      isValidating,
+      type,
+      songValid,
+      onItemClick,
+      id,
+      history,
+      storeDispatch,
+      artistName,
+    ],
   )
 
   const activePlayId = useSelector(state => state.playBar.currentPlayId)
 
+  const imageTag = useCallback(
+    () => (
+      <>
+        {duration && <DurationTag>{duration}</DurationTag>}
+        {tag && <StyledLabel text={tag} />}
+      </>
+    ),
+    [duration, tag],
+  )
   return (
     <>
       {isShowDialog && (
@@ -324,12 +367,7 @@ const MediaItem = memo(props => {
           <ItemImg
             type={type}
             imgUrl={isValidating ? "" : imgUrl}
-            renderTag={() => (
-              <>
-                {duration && <DurationTag>{duration}</DurationTag>}
-                {tag && <StyledLabel text={tag} />}
-              </>
-            )}
+            renderTag={imageTag}
           />
         ) : !noIndex ? (
           <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
@@ -389,7 +427,7 @@ MediaItem.propTypes = {
   publishTime: PropTypes.string,
   tag: PropTypes.string,
   onItemClick: PropTypes.func,
-  id: PropTypes.number,
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 }
 
 const MediaItemList = memo(

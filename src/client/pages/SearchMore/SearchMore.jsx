@@ -20,8 +20,9 @@ const ListWrapper = styled.div`
 `
 
 const SearchMorePage = styled.div`
-  min-height: 100vh;
+  min-height: 100%;
   padding: 30px 15px 40px 15px;
+  overflow: hidden;
 `
 const PageBackWrapper = styled.div`
   position: fixed;
@@ -40,8 +41,8 @@ const requestUrl = {
     `/api/search?keywords=${k}&offset=${offset}&type=1&limit=30`,
   artist: (k, offset) =>
     `/api/search?keywords=${k}&offset=${offset}&type=100&limit=30`,
-  video: (k, offset) =>
-    `/api/search?keywords=${k}&offset=${offset}&type=1014&limit=30`,
+  mv: (k, offset) =>
+    `/api/search?keywords=${k}&offset=${offset}&type=1004&limit=30`,
   album: (k, offset) =>
     `/api/search?keywords=${k}&offset=${offset}&type=10&limit=30`,
 }
@@ -60,7 +61,7 @@ const SearchMore = () => {
   )
 
   useLayoutEffect(() => {
-    window.scroll(0, 0)
+    document.getElementById("root").scrollTop = 0
   }, [])
 
   const mockLoadingOptions = useMemo(() => {
@@ -76,7 +77,7 @@ const SearchMore = () => {
       <PageBackWrapper>
         <PageBack title={SEARCH_RESULT_SELECTOR[type.toLowerCase()].desc} />
         <div style={{ marginTop: 20 }}>
-          <PlaySongsBar songsCount={itemsCount} withoutBar={type !== "song"} />
+          <PlaySongsBar songsCount={itemsCount} withoutBar />
         </div>
       </PageBackWrapper>
       <ListWrapper>

@@ -1,13 +1,17 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { memo, useMemo, useCallback } from "react"
 import styled from "styled-components"
-import { useHistory, Link } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
+import { useSelector, useDispatch } from "react-redux"
 import useSWR from "swr"
 import discoverPage from "./connectDiscoverReducer"
 import BannerListContainer from "../../components/Banner"
 import Search from "../../components/Search"
+import playBarPage from "../PlayBar/connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
 import MediaItemList, { MediaItemTitle } from "../../components/MediaItemList"
+import { useIsomorphicEffect } from "../../../utils/hooks"
 
 const StyledMediaItemTitle = styled(MediaItemTitle)`
   color: ${props => props.theme.fg};
@@ -25,6 +29,7 @@ const BannersSection = styled.section`
 const DiscoverPage = styled.main`
   position: relative;
   padding: 15px;
+  overflow: hidden;
 `
 
 const PersonalizedSongsSection = styled.section`
@@ -140,6 +145,10 @@ const Discover = memo(() => {
   const initialAlbums = useSelector(state => state.discover.albums)
   const initialMVs = useSelector(state => state.discover.mvs)
 
+  useIsomorphicEffect(() => {
+    document.getElementById("root").scrollTop = 0
+  }, [])
+
   const { data: bannerList } = useSWR(
     "/api/banner?type=2",
     discoverPage.requestBannerList,
@@ -185,26 +194,20 @@ const Discover = memo(() => {
     },
   )
 
-  const history = useHistory()
-
   const threePersonalizedSongs = useMemo(
     () => personalizedSongs?.slice?.(0, 3).map(song => song.picUrl),
     [personalizedSongs],
   )
 
-  const onPlaylistItemClick = useCallback(
-    item => {
-      history.push(`/playlist/${item.id}`)
-    },
-    [history],
-  )
+  const storeDispatch = useDispatch()
 
-  const onAlbumItemClick = useCallback(
-    item => {
-      history.push(`/album?id=${item.id}`)
-    },
-    [history],
-  )
+  const onPlayPersonalizedSongs = useCallback(() => {
+    storeDispatch(
+      playBarPage.setImmediatelyPlay(
+        personalizedSongs?.map(song => song.id) ?? [],
+      ),
+    )
+  }, [personalizedSongs, storeDispatch])
 
   return (
     <DiscoverPage>
@@ -234,7 +237,7 @@ const Discover = memo(() => {
             )}
           </div>
           <p className="title">个性好歌推荐</p>
-          <div className="right_play_bar" />
+          <div className="right_play_bar" onClick={onPlayPersonalizedSongs} />
         </PersonalizedSongsContainer>
       </PersonalizedSongsSection>
 
@@ -245,7 +248,6 @@ const Discover = memo(() => {
       <SectionScroll>
         <PlayListSection>
           <MediaItemList
-            onItemClick={onPlaylistItemClick}
             list={
               playlists?.slice?.(0, 4) ??
               new Array(4).fill({ type: "big_playlist" })
@@ -254,7 +256,6 @@ const Discover = memo(() => {
         </PlayListSection>
         <PlayListSection>
           <MediaItemList
-            onItemClick={onPlaylistItemClick}
             list={
               playlists?.slice?.(4, 8) ??
               new Array(4).fill({ type: "big_playlist" })
@@ -273,7 +274,6 @@ const Discover = memo(() => {
 
       <AlbumsSection>
         <MediaItemList
-          onItemClick={onAlbumItemClick}
           title="Album_最新专辑"
           list={
             albums?.slice?.(0, 4) ?? new Array(4).fill({ type: "bigAlbum" })

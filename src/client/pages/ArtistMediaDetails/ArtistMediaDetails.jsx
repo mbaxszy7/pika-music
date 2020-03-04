@@ -67,7 +67,7 @@ const ArtistMediaDetails = memo(() => {
   )
 
   useLayoutEffect(() => {
-    window.scroll(0, 0)
+    document.getElementById("root").scrollTop = 0
   }, [])
 
   useEffect(() => {

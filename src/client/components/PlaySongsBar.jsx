@@ -40,7 +40,8 @@ const SongsCount = styled.span`
 
 const PlaySongsBar = memo(({ songsCount, withoutBar, onPlayIconClick }) => {
   const handlePlayIconClick = useCallback(() => {
-    onPlayIconClick()
+    // eslint-disable-next-line no-unused-expressions
+    onPlayIconClick && onPlayIconClick()
   }, [onPlayIconClick])
 
   return (

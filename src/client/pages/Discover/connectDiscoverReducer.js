@@ -16,6 +16,9 @@ const BEST_SEARCH_SELECTOR = {
   artist: {
     selector: data => {
       return {
+        type: "artist",
+        id: data.id,
+        artistName: data.name,
         imgUrl: data.img1v1Url || data.picUrl,
         title: `艺人：${data.name}`,
         desc: `歌曲：${data.musicSize} 专辑：${data.albumSize}`,
@@ -25,6 +28,9 @@ const BEST_SEARCH_SELECTOR = {
   mv: {
     selector: data => {
       return {
+        type: "video",
+        id: data.vid,
+        vtype: data.type,
         imgUrl: data.cover,
         title: `MV：${data.name}`,
         desc: `歌手：${data.artistName} 播放量：${data.playCount}`,
@@ -34,6 +40,8 @@ const BEST_SEARCH_SELECTOR = {
   album: {
     selector: data => {
       return {
+        type: "album",
+        id: data.id,
         imgUrl: data.picUrl,
         title: `专辑：${data.name}`,
         desc: `歌手：${data.artist.name}`,
@@ -47,6 +55,7 @@ export const SEARCH_RESULT_SELECTOR = {
     desc: "歌单",
     selector: data => {
       return {
+        id: data.id,
         imgUrl: data.coverImgUrl,
         title: `${data.name}`,
         desc: `${data.trackCount}首`,
@@ -75,19 +84,22 @@ export const SEARCH_RESULT_SELECTOR = {
     desc: "艺人",
     selector: data => {
       return {
+        id: data.id,
+        artistName: data.name,
         imgUrl: data.img1v1Url || data.picUrl,
         title: `艺人：${data.name}`,
         desc: `mv:${data.mvSize}  专辑:${data.albumSize}`,
       }
     },
   },
-  video: {
-    desc: "视频",
+  mv: {
+    desc: "MV",
     selector: data => {
       return {
-        imgUrl: data.coverUrl,
-        title: `${data.title}`,
-        desc: `${data.creator[0].userName}`,
+        id: data.id,
+        imgUrl: data.cover,
+        title: `${data.name}`,
+        desc: `${data.artistName}`,
       }
     },
   },
@@ -95,6 +107,7 @@ export const SEARCH_RESULT_SELECTOR = {
     desc: "专辑",
     selector: data => {
       return {
+        id: data.id,
         imgUrl: data.picUrl,
         title: data.name,
         desc: data.artist.name,
@@ -137,19 +150,27 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
     }
   }
 
-  requestSearch = async url => {
-    const result = await this.fetcher.get(url).then(res => res.data.result)
-    if (result) {
-      if (result.order?.length) {
-        return result.order
+  requestSearch = async (url, keyword) => {
+    const result = await Promise.allSettled([
+      this.fetcher.get(url).then(res => res.data.result),
+      this.fetcher
+        .get(`/api/search?keywords=${keyword}&type=1004`)
+        .then(res => res.data.result),
+    ])
+    const mainResult = result[0]
+    const mvsResult = result[1]
+    if (mainResult.status === "fulfilled") {
+      mainResult.value.mv = mvsResult.value
+      if (mainResult.value.order?.length) {
+        return [...mainResult.value.order, "mv"]
           .map(type => {
             const lowerCaseType = type.toLowerCase()
             const typeData = SEARCH_RESULT_SELECTOR[lowerCaseType]
-            let dataList = result[type][`${type}s`]
+            let dataList = mainResult.value?.[type]?.[`${type}s`]
             if (lowerCaseType === "song") {
               dataList = dataList.slice(0, 5)
             }
-            if (typeData) {
+            if (typeData && dataList) {
               return {
                 type: lowerCaseType,
                 title: typeData.desc,

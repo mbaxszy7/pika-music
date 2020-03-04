@@ -42,6 +42,7 @@ const ScrollPaginationMediaItems = memo(
         if (setItemsCount) {
           setItemsCount(projects?.[2])
         }
+
         if (projects?.[1]) {
           return page.current + 1
         }
@@ -51,17 +52,19 @@ const ScrollPaginationMediaItems = memo(
     )
 
     const onScroll = useCallback(() => {
+      const pageRef = document.getElementById("root")
       const isBottom =
-        window.scrollY + 30 > getScrollRef().clientHeight - window.innerHeight
-
+        pageRef.scrollTop + 30 >
+        getScrollRef().clientHeight - window.innerHeight
       if (isBottom && !isReachingEnd && !isLoadingMore) {
         loadMore()
       }
     }, [getScrollRef, isReachingEnd, isLoadingMore, loadMore])
 
     useEffect(() => {
-      window.addEventListener("scroll", onScroll)
-      return () => window.removeEventListener("scroll", onScroll)
+      const pageRef = document.getElementById("root")
+      pageRef.addEventListener("scroll", onScroll)
+      return () => pageRef.removeEventListener("scroll", onScroll)
     }, [onScroll])
 
     return <>{pages}</>

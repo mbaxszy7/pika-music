@@ -16,6 +16,10 @@ const StyledTabs = styled(Tabs)`
     white-space: nowrap;
     overflow-x: scroll;
     line-height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: ${({ theme }) => theme.mg};
   }
 `
 const StyledTabPane = styled(TabPane)`

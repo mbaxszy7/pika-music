@@ -15,6 +15,7 @@ class ConnectArtistMediaDetails extends ConnectCompReducer {
 
     return [
       res.data.mvs.map(mv => ({
+        vtype: 0,
         imgUrl: mv.imgurl,
         title: mv.name,
         id: mv.id,

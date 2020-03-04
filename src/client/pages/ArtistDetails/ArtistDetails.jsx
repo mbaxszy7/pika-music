@@ -281,7 +281,7 @@ const ArtistDetails = () => {
         />
         <MediaItemList
           moreUrl={`/artist/media?type=biggerMV&artistId=${artistId}`}
-          title="视频"
+          title="MV"
           list={artistMVs?.[0] ?? new Array(4).fill({ type: "bigMV" })}
         />
       </ScrollContainer>

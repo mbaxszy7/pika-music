@@ -7,6 +7,7 @@ import { NoData, DiscoverMorePage } from "./styled"
 import PageBack from "../../components/PageBack"
 import PlaylistsMore from "./PlaylistsMore"
 import NewSongsMore from "./NewSongsMore"
+import { useIsomorphicEffect } from "../../../utils/hooks"
 
 const PAGE_REQUEST = {
   playlist: {
@@ -84,6 +85,10 @@ const DiscoverMore = memo(() => {
       return "HOT"
     }
   })
+
+  useIsomorphicEffect(() => {
+    document.getElementById("root").scrollTop = 0
+  }, [])
 
   const resetPage = useCallback(() => {
     page.current = 0

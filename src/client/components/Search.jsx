@@ -266,7 +266,7 @@ const SearchResult = memo(
     )
 
     const { data: searchResultList, isValidating: isLoadSearchData } = useSWR(
-      keyword ? `/api/search?keywords=${keyword}&type=1018` : "",
+      keyword ? [`/api/search?keywords=${keyword}&type=1018`, keyword] : "",
       onSearch,
       {
         revalidateOnFocus: false,

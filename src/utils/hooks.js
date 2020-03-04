@@ -110,11 +110,11 @@ export const useEleScrollValue = (ele, formatter) => {
   })
 
   useEffect(() => {
+    const pageRef = document.getElementById("root")
     const onWindowScroll = () => {
       const { top } = ele().getBoundingClientRect()
       if (!isScrolled.current.tag) {
-        const scrolledValue =
-          document.documentElement.scrollTop || document.body.scrollTop
+        const scrolledValue = pageRef.scrollTop
         isScrolled.current.value = scrolledValue + top
         isScrolled.current.tag = true
       }
@@ -122,8 +122,9 @@ export const useEleScrollValue = (ele, formatter) => {
         (top - isScrolled.current.value) / -isScrolled.current.value
       setHeaderOpacity(opacityV)
     }
-    window.addEventListener("scroll", onWindowScroll)
-    return () => window.removeEventListener("scroll", onWindowScroll)
+
+    pageRef.addEventListener("scroll", onWindowScroll)
+    return () => pageRef.removeEventListener("scroll", onWindowScroll)
   }, [ele, formatter])
 
   return formatter(headerOpacity)
