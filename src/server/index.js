@@ -9,6 +9,13 @@ import uaParser from "./ua"
 
 const app = new Koa()
 app.use(logger())
+app.use(async (ctx, next) => {
+  if (ctx.path.includes(".js")) {
+    ctx.set({ "Service-Worker-Allowed": "/" })
+  }
+  await next()
+})
+app.use(mount("/images", serve("./public/images")))
 app.use(mount("/public", serve("./public")))
 app.use(uaParser)
 
@@ -18,6 +25,7 @@ app.use(async ctx => {
   if (staticContext.NOT_FOUND) {
     ctx.status = 404
   }
+
   ctx.type = "text/html; charset=utf-8"
   ctx.body = html
 })

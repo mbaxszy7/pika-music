@@ -65,7 +65,7 @@ const renderHTML = async (ctx, staticContext) => {
     )
     const bundles = getBundles(stats, modules)
     dynamicBundles = bundles.map(bundle => {
-      return `<script src="/public/${bundle.file}"></script>`
+      return `<script type="text/javascript" src="/public/${bundle.file}"></script>`
     })
 
     styleTags = sheet.getStyleTags()
@@ -95,7 +95,7 @@ const renderHTML = async (ctx, staticContext) => {
             }
       </script>
      ${dynamicBundles.join("")}
-     <script src="/public/client.js"></script>
+     <script type="text/javascript" src="/public/client.js"></script>
     </body>
   </html>
  `
