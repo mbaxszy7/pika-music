@@ -15,6 +15,9 @@ app.use(uaParser)
 app.use(async ctx => {
   const staticContext = {}
   const html = await renderHTML(ctx, staticContext)
+  if (staticContext.NOT_FOUND) {
+    ctx.status = 404
+  }
   ctx.type = "text/html; charset=utf-8"
   ctx.body = html
 })

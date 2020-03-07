@@ -5,7 +5,7 @@ class ConnectMVPlayReducer extends ConnectCompReducer {
   requestMVDetails = async url => {
     const [, res] = await awaitWrapper(this.fetcher.get)(url)
     if (res) {
-      return res.data.data
+      return { ...res.data.data, desc: res.data.data.desc ?? "" }
     }
   }
 
@@ -13,6 +13,19 @@ class ConnectMVPlayReducer extends ConnectCompReducer {
     const [, res] = await awaitWrapper(this.fetcher.get)(url)
     if (res) {
       return res.data.data.url
+    }
+  }
+
+  requestSameMVs = async url => {
+    const [, res] = await awaitWrapper(this.fetcher.get)(url)
+    if (res) {
+      return res.data.mvs.map(mv => ({
+        vtype: 0,
+        imgUrl: mv.cover,
+        title: mv.name,
+        id: mv.id,
+        type: "bigMV",
+      }))
     }
   }
 }

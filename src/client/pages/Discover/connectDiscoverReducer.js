@@ -281,7 +281,7 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
           this.requestPlaylist(playlistUrl),
           this.requestNewSongs(newSongUrl),
           this.requestAlbums(albumUrl),
-          this.requestPrivateMV(mvUrl),
+          this.requestPrivateMVs(mvUrl),
         ]),
     )(
       "/api/banner?type=2",

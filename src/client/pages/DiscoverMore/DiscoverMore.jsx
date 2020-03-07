@@ -1,10 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState, useRef, useEffect, memo } from "react"
-import axios from "axios"
 import { useParams } from "react-router-dom"
 import { awaitWrapper, throttle } from "../../../utils"
 import { NoData, DiscoverMorePage } from "./styled"
 import PageBack from "../../components/PageBack"
+import discoverMorePage from "./connectDiscoverMoreReducer"
 import PlaylistsMore from "./PlaylistsMore"
 import NewSongsMore from "./NewSongsMore"
 import { useIsomorphicEffect } from "../../../utils/hooks"
@@ -115,7 +115,7 @@ const DiscoverMore = memo(() => {
 
   const requestList = useCallback(
     url => {
-      return axios
+      return discoverMorePage.fetcher
         .get(url)
         .then(res => res.data)
         .then(selector)

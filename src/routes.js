@@ -14,6 +14,7 @@ import SearchMore from "./client/pages/SearchMore/SearchMore"
 import PlayListDetails from "./client/pages/PlayListDetails/PlayListDetails"
 import DiscoverMore from "./client/pages/DiscoverMore/DiscoverMore"
 import MVPlay from "./client/pages/MVPlay/MVPlay"
+import NotFound from "./shared/NotFound"
 
 const routes = [
   {
@@ -62,6 +63,9 @@ const routes = [
         path: "/mv/:id",
         exact: true,
         component: MVPlay,
+      },
+      {
+        component: NotFound,
       },
     ],
   },

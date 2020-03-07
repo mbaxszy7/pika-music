@@ -224,9 +224,7 @@ const Discover = memo(() => {
       </BannersSection>
 
       <PersonalizedSongsSection>
-        <PersonalizedSongsContainer
-          pics={personalizedSongs?.slice?.(0, 3).map(song => song.picUrl)}
-        >
+        <PersonalizedSongsContainer>
           <div className="left_images">
             {threePersonalizedSongs?.map((pic, index) =>
               index === 2 ? (

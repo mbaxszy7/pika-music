@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable no-console */
@@ -10,23 +11,84 @@ import React, {
   useRef,
   useEffect,
 } from "react"
+import ReactPlaceholder from "react-placeholder"
 import screenfull from "screenfull"
 import styled from "styled-components"
 import useSWR from "swr"
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
-import { formatAudioTime } from "../../../utils"
+import MediaItemList from "../../components/MediaItemList"
+import { MyImage } from "../../../shared/Image"
+import { formatAudioTime, awaitWrapper } from "../../../utils"
 import PageBack from "../../components/PageBack"
 import MVPlayPage from "./connectMVPlayReducer"
 import playBarPage from "../PlayBar/connectPlayBarReducer"
 import { SpinnerLoading } from "../../../shared/Spinner"
 import { theme as appTheme } from "../../../shared/AppTheme"
+import { useIsomorphicEffect } from "../../../utils/hooks"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
 import fullScrenIcon from "../../../assets/fullScreen.png"
 
 const StyledMVPlayPage = styled.div``
+
+const SameMVsContainer = styled.div`
+  margin-top: 30px;
+  padding: 0 12px;
+`
+
+const SameMVsTitle = styled.div`
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: ${({ theme }) => theme.fg};
+`
+
+const ArtistWrapper = styled.div`
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+`
+
+const StyledMyImg = styled(MyImage)`
+  & {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+`
+
+const VideoDetailsContainer = styled.div`
+  margin-top: 25px;
+  padding: 0 12px;
+`
+const VideoName = styled.div`
+  color: ${({ theme }) => theme.fg};
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 1.3;
+`
+
+const PublishTime = styled.div`
+  margin-top: 20px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.dg};
+`
+
+const VideoArtistName = styled.div`
+  font-size: 14px;
+  margin-left: 10px;
+  a {
+    color: ${({ theme }) => theme.fg};
+  }
+`
+
+const VideoDesc = styled.div`
+  margin-top: 10px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.dg};
+  line-height: 1.5;
+`
 
 const VideoMask = styled.div`
   position: absolute;
@@ -93,6 +155,7 @@ const ProgressBar = styled.div.attrs(({ theme, progress, bufferedLength }) => ({
   height: ${({ isSeeking }) => (isSeeking ? 10 : 4)}px;
   color: ${props => props.theme.fg};
   transition: all 0.3s;
+  touch-action: pan-x;
   &::after {
     content: "";
     position: absolute;
@@ -103,7 +166,9 @@ const ProgressBar = styled.div.attrs(({ theme, progress, bufferedLength }) => ({
 `
 
 const VideoWrapper = styled.div`
-  position: relative;
+  position: sticky;
+  z-index: 300;
+  top: 0;
   width: 100%;
   font-size: 0;
 `
@@ -163,8 +228,15 @@ const MVPlay = memo(() => {
   const progressBarRef = useRef()
   const isUserClickVideo = useRef()
 
+  useIsomorphicEffect(() => {
+    document.getElementById("root").scrollTop = 0
+  }, [id])
+
   useLayoutEffect(() => {
     storeDispatch(playBarPage.setShowPlayBar(false))
+    return () => {
+      storeDispatch(playBarPage.setShowPlayBar(true))
+    }
   }, [storeDispatch])
 
   const { data: details } = useSWR(
@@ -187,16 +259,18 @@ const MVPlay = memo(() => {
 
   const onVideoWrapperClick = useCallback(() => {
     console.warn("playState", playState)
-    // if (playState === "canplay") {
-    videoRef.current.play()
-    isUserClickVideo.current = true
-    // }
     setVideoFocuced(pre => !pre)
-    if (autoChangeVideoFocuced.current) {
-      clearTimeout(autoChangeVideoFocuced.current)
-      autoChangeVideoFocuced.current = null
+    // 当前为可播放状态就直接点击播放
+    if (playState === "canplay") {
+      videoRef.current.play()
+      isUserClickVideo.current = true
     }
+    // 当前为正在播放就延迟三秒关闭控制面板
     if (playState === "playing") {
+      if (autoChangeVideoFocuced.current) {
+        clearTimeout(autoChangeVideoFocuced.current)
+        autoChangeVideoFocuced.current = null
+      }
       autoChangeVideoFocuced.current = setTimeout(() => {
         setVideoFocuced(false)
       }, 3000)
@@ -204,6 +278,7 @@ const MVPlay = memo(() => {
   }, [playState])
 
   useEffect(() => {
+    // 监听如果是暂停状态不要延迟三秒关闭控制面板
     if (autoChangeVideoFocuced.current && playState === "paused") {
       clearTimeout(autoChangeVideoFocuced.current)
       autoChangeVideoFocuced.current = null
@@ -496,8 +571,98 @@ const MVPlay = memo(() => {
           </DurationTimeWrapper>
         )}
       </VideoWrapper>
+      <VideoDetails details={details} />
+      <SameMVs mvId={id} />
     </StyledMVPlayPage>
   )
 })
 
 export default MVPlay
+
+const VideoDetails = ({ details }) => {
+  const [artistAvatar, setAvatar] = useState("")
+  useEffect(() => {
+    if (details?.artists?.[0]?.id) {
+      const getArtistAvatar = async () => {
+        const [, res] = await awaitWrapper(MVPlayPage.fetcher)(
+          `/api/artists?id=${details.artists[0].id}`,
+        )
+        if (res) {
+          setAvatar(res.data.artist.img1v1Url)
+        }
+      }
+      getArtistAvatar()
+    }
+  }, [details])
+
+  return (
+    <>
+      <VideoDetailsContainer>
+        <VideoName>
+          <ReactPlaceholder
+            type="textRow"
+            ready={details?.name != null}
+            showLoadingAnimation
+            style={{ height: "1.2em", width: "45%" }}
+          >
+            {details?.name ?? ""}
+          </ReactPlaceholder>
+        </VideoName>
+
+        <ArtistWrapper>
+          <StyledMyImg url={artistAvatar} />
+          <VideoArtistName>
+            <ReactPlaceholder
+              type="textRow"
+              ready={details?.artistName != null}
+              showLoadingAnimation
+              style={{ height: "1em", width: "30%" }}
+            >
+              <Link
+                to={`/artist?id=${details?.artists?.[0]?.id}&name=${details?.artists?.[0]?.name}`}
+              >
+                {details?.artistName ?? ""}
+              </Link>
+            </ReactPlaceholder>
+          </VideoArtistName>
+        </ArtistWrapper>
+
+        <PublishTime>
+          <ReactPlaceholder
+            type="textRow"
+            ready={details?.publishTime != null}
+            showLoadingAnimation
+            style={{ height: "1em", width: "30%" }}
+          >
+            {details?.publishTime ? `发布：${details?.publishTime}` : ""}
+          </ReactPlaceholder>
+        </PublishTime>
+
+        <VideoDesc>
+          <ReactPlaceholder
+            type="text"
+            ready={details?.desc != null}
+            showLoadingAnimation
+            style={{ height: "6em" }}
+            rows={3}
+          >
+            {details?.desc ?? ""}
+          </ReactPlaceholder>
+        </VideoDesc>
+      </VideoDetailsContainer>
+    </>
+  )
+}
+
+const SameMVs = ({ mvId }) => {
+  const { data: sameMVs } = useSWR(
+    `/api/simi/mv?mvid=${mvId}`,
+    MVPlayPage.requestSameMVs,
+  )
+  return (
+    <SameMVsContainer>
+      <SameMVsTitle>相似MV</SameMVsTitle>
+      <MediaItemList list={sameMVs ?? new Array(4).fill({ type: "bigMV" })} />
+    </SameMVsContainer>
+  )
+}

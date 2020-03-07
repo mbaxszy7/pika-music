@@ -11,27 +11,27 @@ import {
   REMOVE_SONG,
   PLAY_MODE,
 } from "./constants"
+import playlistDetailsPage from "../PlayListDetails/connectPlayListDetails"
 
 class ConnectPlayBarReducer extends ConnectCompReducer {
   requestSongDetails = async url => {
-    const [, res] = await awaitWrapper(this.fetcher)(url)
-    if (res) {
-      return res.data.songs.map(data => {
-        return {
-          picUrl: data.al?.picUrl,
-          type: "song",
-          noImg: true,
-          noIndex: true,
-          title: data.name,
-          artistId: data.ar[0]?.id,
-          albumId: data.al.id,
-          artistName: data.ar[0]?.name,
-          albumName: data.al.name,
-          desc: data.ar[0]?.name,
-          id: data.id,
-        }
-      })
-    }
+    return playlistDetailsPage.requestSongs(url)
+    // const [, res] = await awaitWrapper(this.fetcher)(url)
+    // if (res) {
+    //   return res.data.songs.map(data => {
+    //     return {
+    //       picUrl: data.al?.picUrl,
+    //       type: "song",
+    //       title: data.name,
+    //       artistId: data.ar[0]?.id,
+    //       albumId: data.al.id,
+    //       artistName: data.ar[0]?.name,
+    //       albumName: data.al.name,
+    //       desc: data.ar[0]?.name,
+    //       id: data.id,
+    //     }
+    //   })
+    // }
   }
 
   requestSongLyric = async url => {

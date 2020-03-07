@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useCallback, useEffect, useState } from "react"
+import React, { memo, useCallback, useState } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import useSWR from "swr"

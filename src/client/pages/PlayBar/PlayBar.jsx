@@ -350,7 +350,7 @@ const Playlist = memo(({ songList }) => {
       list={songList}
       listItem={({ item, index }) => (
         <PlayListItem
-          key={index}
+          key={item.id}
           songName={item.title}
           artistName={item.artistName}
           songIndex={index}
@@ -381,7 +381,7 @@ const PlayPageAbovePart = memo(({ toPlayPage, songDetail, curLyricLine }) => {
     <>
       <HiddenPlayPageIcon src={downIcon} onClick={toPlayPage} />
       <StyledSongPic>
-        <StyledMyImage url={songDetail?.[0]?.picUrl} />
+        <StyledMyImage url={songDetail?.[0]?.imgUrl} />
       </StyledSongPic>
 
       <SongName>
@@ -538,7 +538,11 @@ const PlayBar = memo(({ route }) => {
         setPlayState("loading")
         const [error, track] = await awaitWrapper(getTrack)(currentPlayId)
         console.log(error, !track?.url)
-        if (error || !track?.url) {
+        if (error?.response?.status === 403) {
+          audioRef.current.src = ` https://music.163.com/song/media/outer/url?id=${currentPlayId}.mp3`
+          audioRef.current.currentTime = 0
+          audioRef.current.play()
+        } else if (error || !track?.url) {
           setPlayState("stopped")
           storeDispatch(playBarPage.removeCur())
           onNextOrPrePlay(false, "next")
@@ -741,6 +745,13 @@ const PlayBar = memo(({ route }) => {
         onTimeUpdate={onAudioTimeUpdate}
         onPlay={onAudioPlay}
         onPause={onAudioPause}
+        onError={e => {
+          console.log(
+            e,
+            e.currentTarget?.error?.code,
+            e.currentTarget?.error?.message,
+          )
+        }}
       />
 
       {isShowPlayBar && (
