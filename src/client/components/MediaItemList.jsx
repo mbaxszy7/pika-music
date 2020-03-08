@@ -1,8 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/jsx-indent */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useCallback, useState } from "react"
+import React, { memo, useCallback, useState, useMemo } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import useSWR from "swr"
@@ -20,6 +21,7 @@ import SingleLineTexts, {
 import { axiosInstance } from "../../utils/connectPageReducer"
 import moreIcon from "../../assets/more.png"
 import Dialog from "../../shared/Dialog"
+import mediaQuery from "../../shared/mediaQury.styled"
 
 export const MediaItemTitle = styled.p`
   height: 16px;
@@ -67,40 +69,24 @@ export const MediaItemTypes = {
 }
 
 const StyledResultItem = styled.div`
-  vertical-align:top;
+  vertical-align: top;
   position: relative;
-  width: ${props => (props.isMultipColumItem ? "48%" : "100%")};
-  margin-bottom: ${props =>
-    props.isMultipColumItem || props.isSingleColumItem ? "10px" : "20px"};
-  display: ${props =>
-    props.isMultipColumItem || props.isSingleColumItem
-      ? "inline-flex"
-      : "flex"};
-  flex-direction: ${props =>
-    props.isMultipColumItem || props.isSingleColumItem ? "column" : "row"};
-  align-items: ${props =>
-    props.isMultipColumItem || props.isSingleColumItem
-      ? "flex-start"
-      : "center"};
-  width: ${props => (props.isHalfItem ? "50%" : "")};
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   dl {
-    /* align-items: ${props =>
-      props.isMultipColumItem || props.isSingleColumItem
-        ? "flex-start"
-        : ""}; */
     font-size: 16px;
-    width: ${props =>
-      props.isMultipColumItem || props.isSingleColumItem ? "100%" : "70%"};
-
+    width: 70%;
     dt {
       margin-bottom: 4px;
       padding-right: 15px;
-      ${props =>
-        props.isMultipColumItem ? MultipleLineTexts(2) : SingleLineTexts};
+      ${SingleLineTexts};
       line-height: 1.3;
       min-height: 1em;
       color: ${({ isActivePlay, theme }) =>
-        isActivePlay ? theme.secondary : theme.fg}
+        isActivePlay ? theme.secondary : theme.fg};
     }
     dd {
       padding-right: 15px;
@@ -113,6 +99,49 @@ const StyledResultItem = styled.div`
     }
   }
 `
+
+const Styled48ResultItem = styled(StyledResultItem)`
+  width: 48%;
+  margin-bottom: 10px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  ${mediaQuery.aboveTablet`
+      max-width: 240px;
+  `}
+  dl {
+    width: 100%;
+    dt {
+      ${MultipleLineTexts(2)};
+      white-space: initial;
+    }
+  }
+`
+
+const Styled100ResultItem = styled(Styled48ResultItem)`
+  width: 100%;
+  ${mediaQuery.aboveTablet`
+      max-width: 400px;
+      margin-right: 20px
+  `}
+`
+
+const SwitchStyledResultItem = memo(({ type, ...restProps }) => {
+  if (
+    type === MediaItemTypes.BIG_ALBUM ||
+    type === MediaItemTypes.BIG_MV ||
+    type === MediaItemTypes.BIG_PLAY_LIST
+  ) {
+    return <Styled48ResultItem {...restProps} />
+  }
+
+  if (type === MediaItemTypes.BIGGER_MV || type === MediaItemTypes.PRIVATE_MV) {
+    return <Styled100ResultItem {...restProps} />
+  }
+
+  return <StyledResultItem {...restProps} />
+})
+
 const StyledMyImage = styled(MyImage)`
   & {
     width: 100%;
@@ -131,6 +160,10 @@ const StyledLabel = styled(Label)`
 const ItemImgWrapper = styled.div`
   position: relative;
   font-size: 0;
+  ${mediaQuery.aboveTablet`
+      min-width: 80px;
+      min-height: 80px
+  `}
 `
 
 const ItemIndex = styled.span`
@@ -265,17 +298,6 @@ const MediaItem = memo(props => {
       },
     },
   )
-
-  // ALBUM: "album",
-  // PLAY_LIST: "playlist",
-  // SONG: "song",
-  // VIDEO: "video",
-  // ARTIST: "artist",
-  // BIG_ALBUM: "bigAlbum",
-  // BIG_MV: "bigMV",
-  // BIGGER_MV: "biggerMV",
-  // BIG_PLAY_LIST: "big_playlist",
-  // PRIVATE_MV: "privateMV",
   const [isShowDialog, setShowDialog] = useState(false)
   const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
   const innerDD = desc || publishTime
@@ -338,6 +360,7 @@ const MediaItem = memo(props => {
     ),
     [duration, tag],
   )
+
   return (
     <>
       {isShowDialog && (
@@ -349,18 +372,13 @@ const MediaItem = memo(props => {
           onConfirmClick={() => setShowDialog(false)}
         />
       )}
-      <StyledResultItem
+      <SwitchStyledResultItem
+        type={type}
         onClick={onResultItemClick}
-        isMultipColumItem={
-          type === MediaItemTypes.BIG_ALBUM ||
-          type === MediaItemTypes.BIG_MV ||
-          type === MediaItemTypes.BIG_PLAY_LIST
-        }
         isSingleColumItem={
           type === MediaItemTypes.BIGGER_MV ||
           type === MediaItemTypes.PRIVATE_MV
         }
-        isHalfItem={type === MediaItemTypes.BIG_PLAY_LIST}
         isActivePlay={activePlayId === id && type === MediaItemTypes.SONG}
       >
         {!noImg ? (
@@ -403,7 +421,7 @@ const MediaItem = memo(props => {
                 isValid={songValid?.success && !isValidating}
               />
             )}
-      </StyledResultItem>
+      </SwitchStyledResultItem>
     </>
   )
 })

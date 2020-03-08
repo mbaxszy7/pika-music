@@ -118,8 +118,13 @@ const BestMatchContainer = styled.div`
 const SearchResultList = styled.div`
   padding: 5px 0 0 4px;
   position: absolute;
-  width: calc(100% - 30px);
+  padding: 0 15px;
+  width: calc(100% - 15px);
   z-index: 999;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding-bottom: 60px;
 `
 
 const SearchItem = memo(({ keyword, setKeyword, setValue }) => {

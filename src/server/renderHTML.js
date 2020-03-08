@@ -83,6 +83,13 @@ const renderHTML = async (ctx, staticContext) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
       <title>music-motion</title>
+      <link rel="apple-touch-icon" href="/public/icon_152x152.5c887cf5976509a3d2ac6f11efe54fa5.png">
+      <meta name="apple-mobile-web-app-title" content="Pika" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="theme-color" content="#FEDD27" />
+      <link rel="manifest" href="/public/manifest.3e35884acfa42ca1de0423bc45c14ce2.json" /></head>
+    </head>
     </head>
     ${styleTags}
     <body>

@@ -1,6 +1,7 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
+const WebpackPwaManifest = require("webpack-pwa-manifest")
 const webpack = require("webpack")
 const { ReactLoadablePlugin } = require("react-loadable/webpack")
 const {
@@ -65,6 +66,35 @@ module.exports = {
     }),
     new ReactLoadablePlugin({
       filename: "./public/react-loadable.json",
+    }),
+    new WebpackPwaManifest({
+      name: "Pika",
+      short_name: "Pika",
+      description: "A PWA Muisc Web Site",
+      display: "standalone",
+      start_url: "/?from=homescreen",
+      background_color: "#ffffff",
+      theme_color: "#FEDD27",
+      inject: true,
+      ios: true,
+      scope: "/",
+      icons: [
+        {
+          src: path.resolve(__dirname, "./src/assets/pika_tail_192x192.png"),
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: path.resolve(__dirname, "./src/assets/pika_tail_512x512.png"),
+          sizes: "512x512",
+          type: "image/png",
+        },
+        {
+          src: path.resolve(__dirname, "./src/assets/pika_tail_152x152.png"),
+          sizes: "152x152",
+          type: "image/png",
+        },
+      ],
     }),
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,

@@ -30,6 +30,7 @@ import InnerModal, { ModalMask } from "../../../shared/InnerModal"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../../shared/LinesTexts.styled"
+import AppNavigate from "../AppNavigate/AppNavigate"
 import mediaQury from "../../../shared/mediaQury.styled"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
@@ -133,6 +134,7 @@ const PlayPageBarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  ${mediaQury.aboveTablet`width: 40%;  margin: 0 auto;`}
 `
 
 const StyledMyImage = styled(MyImage)`
@@ -151,6 +153,7 @@ const StyledSongPic = styled.div`
   margin: 3.2em auto 0 auto;
   border-radius: 5px;
   overflow: hidden;
+  ${mediaQury.aboveTablet`width: 30%;  padding-bottom:30%`}
   ${mediaQury.miniPhone`margin:2em`}
 `
 
@@ -161,18 +164,21 @@ const SongName = styled.div`
   line-height: 1.4;
   font-weight: bold;
   ${MultipleLineTexts(2)}
+  ${mediaQury.aboveTablet`padding: 0 20%;`}
 `
 const LyricLine = styled.div`
   color: ${({ theme }) => theme.fg};
   margin-top: 15px;
   font-size: 100%;
   line-height: 1.4;
+  ${mediaQury.aboveTablet`padding: 0 20%;`}
 `
 
 const ArtistName = styled.div`
   color: ${({ theme }) => theme.dg};
   margin-top: 1em;
   font-size: 100%;
+  ${mediaQury.aboveTablet`padding: 0 20%;`}
 `
 const ProgressBar = styled.div.attrs(({ theme, progress }) => ({
   style: {
@@ -721,6 +727,7 @@ const PlayBar = memo(({ route }) => {
 
   return (
     <>
+      <AppNavigate />
       {isShowModal && (
         <InnerModal>
           <ModalMask onClick={onModalClose}>

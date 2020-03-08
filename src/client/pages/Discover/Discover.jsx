@@ -12,28 +12,42 @@ import playBarPage from "../PlayBar/connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
 import MediaItemList, { MediaItemTitle } from "../../components/MediaItemList"
 import { useIsomorphicEffect } from "../../../utils/hooks"
+import mediaQury from "../../../shared/mediaQury.styled"
 
 const StyledMediaItemTitle = styled(MediaItemTitle)`
   color: ${props => props.theme.fg};
-`
-
-const PageTitle = styled.h1`
-  font-size: 24px;
-  color: ${props => props.theme.fg};
-  font-weight: 900;
+  &:target {
+    color: ${props => props.theme.secondary} !important;
+  }
 `
 
 const BannersSection = styled.section`
+  ${mediaQury.aboveTablet`
+    max-width: 50vw;
+    margin: 0 auto;
+    margin-top: 30px;
+  `}
   width: 100%;
 `
 const DiscoverPage = styled.main`
   position: relative;
   padding: 15px;
   overflow: hidden;
+  ${mediaQury.aboveTablet`
+    margin-left: 240px;
+  `}
 `
 
 const PersonalizedSongsSection = styled.section`
   margin-top: 40px;
+`
+
+const StyledMyImage = styled(MyImage)`
+  & {
+    ${mediaQury.aboveTablet`
+      width: 8vw !important;
+    `}
+  }
 `
 
 const StyledCenterMyImage = styled(MyImage)`
@@ -43,6 +57,10 @@ const StyledCenterMyImage = styled(MyImage)`
     left: 50%;
     bottom: 0;
     transform: translateX(-50%);
+    ${mediaQury.aboveTablet`
+      width: 10vw !important;
+      left: 8vw;
+   `}
   }
 `
 
@@ -52,7 +70,10 @@ const PersonalizedSongsContainer = styled.div`
   border-radius: 30px 200px 200px 30px;
   display: flex;
   align-items: center;
-  min-height: 73px;
+  /* min-height: 73px; */
+  ${mediaQury.aboveTablet`
+      display: none;
+  `}
   .left_images {
     font-size: 0;
     flex: 2;
@@ -76,7 +97,6 @@ const PersonalizedSongsContainer = styled.div`
     height: 40px;
     border-radius: 50%;
     background: ${props => props.theme.secondary};
-
     &::after {
       content: "";
       width: 0;
@@ -97,6 +117,8 @@ const PersonalizedSongsContainer = styled.div`
 
 const PlayListSection = styled.section`
   min-width: 100%;
+  white-space: nowrap;
+  overflow-y: scroll;
 `
 
 const NewSongsSection = styled.section`
@@ -109,11 +131,16 @@ const NewSongsSection = styled.section`
 `
 
 const AlbumsSection = styled.section`
-  > ${MediaItemTitle} {
+  position: relative;
+  > ${StyledMediaItemTitle} {
+    position: sticky;
+    left: 0;
     margin-top: 20px !important;
     color: ${props => props.theme.dg};
   }
   min-width: 100%;
+  white-space: nowrap;
+  overflow-y: scroll;
 `
 
 const PrivateMVsSection = styled.section`
@@ -122,6 +149,10 @@ const PrivateMVsSection = styled.section`
     color: ${props => props.theme.dg};
   }
   min-width: 100%;
+  ${mediaQury.aboveTablet`
+    white-space: nowrap;
+    overflow-y: scroll;
+    `}
 `
 
 const SectionScroll = styled.div`
@@ -211,7 +242,6 @@ const Discover = memo(() => {
 
   return (
     <DiscoverPage>
-      <PageTitle>DISCOVER</PageTitle>
       <Search
         onSearchSuggest={discoverPage.requestSearchSuggest}
         onSearchBestMatch={discoverPage.requestSearchBestMatch}
@@ -230,7 +260,7 @@ const Discover = memo(() => {
               index === 2 ? (
                 <StyledCenterMyImage key={index} url={pic} alt="" />
               ) : (
-                <MyImage key={index} url={pic} alt="" />
+                <StyledMyImage key={index} url={pic} alt="" />
               ),
             )}
           </div>
@@ -240,22 +270,15 @@ const Discover = memo(() => {
       </PersonalizedSongsSection>
 
       <Link to="/discover_more/playlist">
-        <StyledMediaItemTitle>Playlist_歌单</StyledMediaItemTitle>
+        <StyledMediaItemTitle id="play_list">
+          Playlist_歌单
+        </StyledMediaItemTitle>
       </Link>
-
       <SectionScroll>
         <PlayListSection>
           <MediaItemList
             list={
-              playlists?.slice?.(0, 4) ??
-              new Array(4).fill({ type: "big_playlist" })
-            }
-          />
-        </PlayListSection>
-        <PlayListSection>
-          <MediaItemList
-            list={
-              playlists?.slice?.(4, 8) ??
+              playlists?.slice?.(0, 12) ??
               new Array(4).fill({ type: "big_playlist" })
             }
           />
@@ -263,26 +286,31 @@ const Discover = memo(() => {
       </SectionScroll>
 
       <NewSongsSection>
+        <StyledMediaItemTitle id="new_track" moreUrl="/discover_more/song">
+          Track_新歌
+        </StyledMediaItemTitle>
         <MediaItemList
-          moreUrl="/discover_more/song"
-          title="Track_新歌"
           list={newSongs?.slice?.(0, 5) ?? new Array(5).fill({ type: "song" })}
         />
       </NewSongsSection>
 
       <AlbumsSection>
+        <StyledMediaItemTitle withoutMore id="album">
+          Album_专辑
+        </StyledMediaItemTitle>
         <MediaItemList
-          title="Album_最新专辑"
+          title=""
           list={
-            albums?.slice?.(0, 4) ?? new Array(4).fill({ type: "bigAlbum" })
+            albums?.slice?.(0, 12) ?? new Array(4).fill({ type: "bigAlbum" })
           }
         />
       </AlbumsSection>
 
       <PrivateMVsSection>
+        <StyledMediaItemTitle id="mv" withoutMore>
+          MV_独家放送
+        </StyledMediaItemTitle>
         <MediaItemList
-          title="MV_独家放送"
-          withoutMore
           list={mvs?.slice?.(0, 3) ?? new Array(3).fill({ type: "privateMV" })}
         />
       </PrivateMVsSection>
