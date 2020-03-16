@@ -55,7 +55,7 @@ const Dot = styled.li`
 
 const BannerListItem = memo(
   ({ eventBind, display, translateX, imgUrl, scale, labelText }) => {
-    const events = useMemo(() => eventBind(), [])
+    const events = useMemo(() => eventBind(), [eventBind])
     return (
       <BannerItem
         // eslint-disable-next-line react/jsx-props-no-spreading
@@ -81,7 +81,9 @@ const BannerListItem = memo(
           <BannerImgContainer
             style={{
               transform: scale.interpolate(s => `scale(${s})`),
-              backgroundImage: `url(${imgUrl})`,
+              backgroundImage: `url(${
+                imgUrl ? imgUrl.replace(/https?/, "https") : ""
+              })`,
             }}
           />
         </ImageLoader>

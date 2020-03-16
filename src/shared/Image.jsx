@@ -93,7 +93,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
     <StyledImage
       ref={imgRef}
       className={` ${className} ${url ? "lozad" : ""}`}
-      data-src={url}
+      data-src={url ? url.replace(/https?/, "https") : ""}
       styledCss={styledCss}
       data-settled={isLoaded}
       alt=""
