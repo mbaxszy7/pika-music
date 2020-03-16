@@ -80,13 +80,13 @@ exports.babelPresets = env => {
     {
       useBuiltIns: "usage",
       modules: false,
-      debug: true,
+      debug: false,
       corejs: { version: 3, proposals: true },
     },
   ]
   if (env === "node") {
     common[1].targets = {
-      node: "12",
+      node: "13",
     }
   }
   return common

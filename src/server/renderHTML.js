@@ -2,6 +2,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React from "react"
 import Loadable from "react-loadable"
+import path from "path"
 import { getBundles } from "react-loadable/webpack"
 import { Provider } from "react-redux"
 import { StaticRouter } from "react-router-dom"
@@ -13,6 +14,7 @@ import getReduxStore from "../store/storeCreator"
 // import { isCSR, isDEV } from "../utils"
 // import createAxiosInstance from "../utils/axiosInstance"
 import stats from "../../public/react-loadable.json"
+import assetsStates from "../../public/stats.json"
 import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
@@ -75,6 +77,7 @@ const renderHTML = async (ctx, staticContext) => {
   } finally {
     sheet.seal()
   }
+
   return `
   <!DOCTYPE html>
   <html lang="zh-CN">
@@ -102,7 +105,9 @@ const renderHTML = async (ctx, staticContext) => {
             }
       </script>
      ${dynamicBundles.join("")}
-     <script type="text/javascript" src="/public/client.js"></script>
+     <script type="text/javascript" src="/public/${
+       assetsStates.assetsByChunkName.main
+     }"></script>
     </body>
   </html>
  `

@@ -5,6 +5,7 @@ const WebpackPwaManifest = require("webpack-pwa-manifest")
 const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
 const webpack = require("webpack")
 const { ReactLoadablePlugin } = require("react-loadable/webpack")
+const { StatsWriterPlugin } = require("webpack-stats-plugin")
 const {
   isDEV,
   webpackPlugins,
@@ -20,7 +21,7 @@ module.exports = {
   output: {
     publicPath: "/public/",
     // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
-    filename: "client.js",
+    filename: `client-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     chunkFilename: `[name]-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     path: path.resolve(__dirname, "public"),
   },
@@ -114,17 +115,9 @@ module.exports = {
         /\.webp$/,
       ],
     }),
-    // new WorkboxPlugin.GenerateSW({
-    //   clientsClaim: true,
-    //   skipWaiting: true,
-    //   swDest: "service-worker.js",
-    //   runtimeCaching: [
-    //     {
-    //       urlPattern: new RegExp("http://localhost:7004"),
-    //       handler: "NetworkFirst",
-    //     },
-    //   ],
-    // }),
+    new StatsWriterPlugin({
+      filename: "stats.json", // Default
+    }),
   ],
   // optimization: {
   //   runtimeChunk: {
