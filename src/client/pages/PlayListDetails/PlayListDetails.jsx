@@ -174,7 +174,10 @@ const PlayListDetails = () => {
           showLoadingAnimation
           style={{ width: 180, height: 180, borderRadius: 8 }}
         >
-          <img src={playlistDetails?.coverImgUrl} alt="" />
+          <img
+            src={playlistDetails?.coverImgUrl?.replace?.(/https?/, "https")}
+            alt=""
+          />
         </ReactPlaceholder>
       </AlbumPic>
       <ScrollContainer ref={scrollContainerRef}>
