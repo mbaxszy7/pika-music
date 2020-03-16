@@ -10,6 +10,7 @@ import { isCSR } from "../utils"
 import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
+import PWAService from "../shared/PWAService"
 
 const App = ({ store }) => (
   <>
@@ -17,6 +18,7 @@ const App = ({ store }) => (
     <ReactPlaceholderStyle />
     <AppTheme>
       <Provider store={store}>
+        <PWAService />
         <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
       </Provider>
     </AppTheme>

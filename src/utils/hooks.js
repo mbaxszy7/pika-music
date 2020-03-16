@@ -34,12 +34,23 @@ export const useOrientationChange = fn => {
 }
 
 export const useLocalStorage = key => {
-  const [lastValue, setLastValue] = useState([])
-
-  useEffect(() => {
+  const initialRef = useRef(false)
+  const [lastValue, setLastValue] = useState(() => {
     let suggests
-    if (key) {
+    if (key && typeof window !== "undefined") {
       suggests = localStorage.getItem(key)
+      if (suggests) {
+        initialRef.current = true
+        return JSON.parse(suggests)
+      }
+    }
+    if (!suggests) return []
+  })
+
+  useIsomorphicEffect(() => {
+    if (key && !initialRef.current) {
+      const suggests = localStorage.getItem(key)
+
       if (suggests) setLastValue(JSON.parse(suggests))
     }
   }, [key])
@@ -55,10 +66,21 @@ export const useLocalStorage = key => {
     [key, lastValue],
   )
 
+  const replaceValue = useCallback(
+    value => {
+      if (value) {
+        localStorage.removeItem(key)
+        setLastValue([value])
+        localStorage.setItem(key, JSON.stringify([value]))
+      }
+    },
+    [key],
+  )
+
   const clearValue = useCallback(() => {
     setLastValue([])
     if (localStorage.getItem(key)) {
-      localStorage.clear(key)
+      localStorage.removeItem(key)
     }
   }, [key])
 
@@ -66,6 +88,7 @@ export const useLocalStorage = key => {
     lastValue,
     setValue,
     clearValue,
+    replaceValue,
   }
 }
 

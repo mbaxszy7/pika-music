@@ -8,12 +8,14 @@ import InnerModal, { ModalMask } from "./InnerModal"
 
 const DialogContainer = styled.div`
   margin: 0 auto;
-  margin-top: 40%;
+
   width: 80%;
-  margin-left: 10%;
+
   border-radius: 10px;
   background: ${props => props.theme.mg};
   padding: 28px 15px 18px 15px;
+  max-width: 332px;
+  margin: 30vh auto 0 auto;
   p {
     line-height: 1.5;
     font-size: 16px;

@@ -286,9 +286,9 @@ const Discover = memo(() => {
       </SectionScroll>
 
       <NewSongsSection>
-        <StyledMediaItemTitle id="new_track" moreUrl="/discover_more/song">
-          Track_新歌
-        </StyledMediaItemTitle>
+        <Link to="/discover_more/song">
+          <StyledMediaItemTitle id="new_track">Track_新歌</StyledMediaItemTitle>
+        </Link>
         <MediaItemList
           list={newSongs?.slice?.(0, 5) ?? new Array(5).fill({ type: "song" })}
         />

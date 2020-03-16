@@ -18,10 +18,25 @@ import Label from "./Label"
 import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../shared/LinesTexts.styled"
-import { axiosInstance } from "../../utils/connectPageReducer"
+import Page from "../../utils/connectPageReducer"
 import moreIcon from "../../assets/more.png"
 import Dialog from "../../shared/Dialog"
 import mediaQuery from "../../shared/mediaQury.styled"
+
+const pageFetch = new Page()
+
+export const MediaItemTypes = {
+  ALBUM: "album",
+  PLAY_LIST: "playlist",
+  SONG: "song",
+  MV: "mv",
+  ARTIST: "artist",
+  BIG_ALBUM: "bigAlbum",
+  BIG_MV: "bigMV",
+  BIGGER_MV: "biggerMV",
+  BIG_PLAY_LIST: "big_playlist",
+  PRIVATE_MV: "privateMV",
+}
 
 export const MediaItemTitle = styled.p`
   height: 16px;
@@ -54,19 +69,6 @@ const DurationTag = styled.span`
   background-color: black;
   z-index: 4;
 `
-
-export const MediaItemTypes = {
-  ALBUM: "album",
-  PLAY_LIST: "playlist",
-  SONG: "song",
-  MV: "mv",
-  ARTIST: "artist",
-  BIG_ALBUM: "bigAlbum",
-  BIG_MV: "bigMV",
-  BIGGER_MV: "biggerMV",
-  BIG_PLAY_LIST: "big_playlist",
-  PRIVATE_MV: "privateMV",
-}
 
 const StyledResultItem = styled.div`
   vertical-align: top;
@@ -285,7 +287,7 @@ const MediaItem = memo(props => {
   } = props
   const { data: songValid, isValidating } = useSWR(
     type === MediaItemTypes.SONG && id ? `/api/check/music?id=${id}` : null,
-    url => axiosInstance.get(url).then(res => res.data),
+    url => pageFetch.fetcher.get(url).then(res => res.data),
     {
       refreshInterval: 0,
       revalidateOnFocus: false,

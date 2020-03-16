@@ -30,8 +30,13 @@ import { useIsomorphicEffect } from "../../../utils/hooks"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
 import fullScrenIcon from "../../../assets/fullScreen.png"
+import mediaQuery from "../../../shared/mediaQury.styled"
 
-const StyledMVPlayPage = styled.div``
+const StyledMVPlayPage = styled.div`
+  ${mediaQuery.aboveTablet`
+    padding: 0 10%;
+ `}
+`
 
 const SameMVsContainer = styled.div`
   margin-top: 30px;
@@ -171,6 +176,10 @@ const VideoWrapper = styled.div`
   top: 0;
   width: 100%;
   font-size: 0;
+  ${mediaQuery.aboveTablet`
+    width: 500px;
+    margin: 0 auto;
+  `}
 `
 
 const DurationTime = styled.div`
@@ -375,39 +384,26 @@ const MVPlay = memo(() => {
 
   const onProgressBarTouchMoving = useCallback(
     touchPointX => {
-      const { width } = progressBarRef.current.getBoundingClientRect()
+      const { width, left } = progressBarRef.current.getBoundingClientRect()
       if (touchPointX >= width) {
         audioSeek(0.99)
       } else if (!Number.isNaN(touchPointX)) {
-        audioSeek(touchPointX / width)
+        audioSeek((touchPointX - left) / width)
       }
     },
     [audioSeek],
   )
 
-  const onProgressBarMouseMove = useCallback(
-    e => {
-      const clickedPointX = e.clientX
-      onProgressBarTouchMoving(clickedPointX)
-    },
-    [onProgressBarTouchMoving],
-  )
-
-  const onProgressBarMouseEnd = useCallback(
-    e => {
-      const clickedPointX = e.clientX
-      onProgressBarTouchMoving(clickedPointX)
-    },
-    [onProgressBarTouchMoving],
-  )
-
-  const onMouseDown = useCallback(() => {
-    videoRef.current.pause()
-  }, [])
-
-  const onTouchStart = useCallback(() => {
-    console.log("onTouchStart")
-  }, [])
+  // const onProgressBarMouseMove = useCallback(
+  //   e => {
+  //     const clickedPointX = e.clientX
+  //     console.log(clickedPointX)
+  //     if (clickedPointX > 0) {
+  //       onProgressBarTouchMoving(clickedPointX)
+  //     }
+  //   },
+  //   [onProgressBarTouchMoving],
+  // )
 
   const isSeekedNeedLoading = useCallback(() => {
     try {
@@ -434,6 +430,26 @@ const MVPlay = memo(() => {
     }
   }, [])
 
+  // const onProgressBarMouseEnd = useCallback(
+  //   e => {
+  //     setVideoFocuced(false)
+  //     const isNeedLoading = isSeekedNeedLoading()
+  //     if (isNeedLoading) {
+  //       setPlayState("loading")
+  //     }
+  //   },
+  //   [isSeekedNeedLoading],
+  // )
+
+  // const onMouseDown = useCallback(e => {
+  //   e.stopPropagation()
+  //   videoRef.current.pause()
+  // }, [])
+
+  const onTouchStart = useCallback(() => {
+    console.log("onTouchStart")
+  }, [])
+
   const onTouchEnd = useCallback(() => {
     setVideoFocuced(false)
     const isNeedLoading = isSeekedNeedLoading()
@@ -456,10 +472,10 @@ const MVPlay = memo(() => {
   const onProgressBarClick = useCallback(
     e => {
       e.stopPropagation()
-      const { width } = e.currentTarget.getBoundingClientRect()
+      const { width, left } = e.currentTarget.getBoundingClientRect()
       const clickedX = e.clientX
-      if (window > 0 && clickedX > 0) {
-        audioSeek(clickedX / width)
+      if (width > 0 && clickedX > 0) {
+        audioSeek((clickedX - left) / width)
       }
     },
     [audioSeek],
@@ -553,10 +569,10 @@ const MVPlay = memo(() => {
             isSeeking={isSeeking.current}
             ref={progressBarRef}
             onClick={onProgressBarClick}
-            onMouseUp={onProgressBarMouseEnd}
-            onMouseLeave={onProgressBarMouseEnd}
-            onMouseMove={onProgressBarMouseMove}
-            onMouseDown={onMouseDown}
+            // onMouseUp={onProgressBarMouseEnd}
+            // onMouseLeave={onProgressBarMouseEnd}
+            // onMouseMove={onProgressBarMouseMove}
+            // onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
             onTouchMove={onTouchMove}

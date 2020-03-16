@@ -154,7 +154,7 @@ const StyledSongPic = styled.div`
   border-radius: 5px;
   overflow: hidden;
   ${mediaQury.aboveTablet`width: 30%;  padding-bottom:30%`}
-  ${mediaQury.miniPhone`margin:2em`}
+  ${mediaQury.miniPhone`margin:2em auto 2em auto`}
 `
 
 const SongName = styled.div`

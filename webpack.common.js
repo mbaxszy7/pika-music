@@ -37,14 +37,38 @@ exports.webpackPlugins = setWebpackPlugins()
 exports.commonRules = () => {
   const rules = [
     {
-      test: /\.(png|jpg|gif)$/,
-      loader: "file-loader",
-      options: {
-        name: "[name]-[hash:6].[ext]",
-        publicPath: "/images",
-        outputPath: "images",
-        emitFile: !isServerBuild,
-      },
+      test: /\.(gif|png|jpe?g|svg)$/i,
+      use: [
+        {
+          loader: "file-loader",
+          options: {
+            name: "[name]-[hash:6].[ext]",
+            publicPath: "/images",
+            outputPath: "images",
+            emitFile: !isServerBuild,
+          },
+        },
+        {
+          loader: "image-webpack-loader",
+          options: {
+            mozjpeg: {
+              progressive: true,
+              quality: 65,
+            },
+            // optipng.enabled: false will disable optipng
+            optipng: {
+              enabled: true,
+            },
+            pngquant: {
+              quality: [0.65, 0.9],
+              speed: 4,
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+          },
+        },
+      ],
     },
   ]
   return rules

@@ -2,6 +2,7 @@ const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
+const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
 const webpack = require("webpack")
 const { ReactLoadablePlugin } = require("react-loadable/webpack")
 const {
@@ -26,7 +27,10 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "http://192.168.0.115:9000",
+        target: "https://111.229.78.115",
+        // 修改发往 target的host: "localhost:8010", referrer: "http://localhost:8010/"
+        changeOrigin: true,
+        secure: false,
       },
     },
     historyApiFallback: true,
@@ -52,10 +56,12 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
+
       ...commonRules(),
     ],
   },
   plugins: [
+    new ImageminWebpWebpackPlugin(),
     ...webpackPlugins,
     new HtmlWebpackPlugin({
       title: "music-motion",
@@ -96,17 +102,29 @@ module.exports = {
         },
       ],
     }),
-    new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
+    new WorkboxPlugin.InjectManifest({
+      swSrc: path.join(process.cwd(), "./src/src-service-worker.js"),
       swDest: "service-worker.js",
-      runtimeCaching: [
-        {
-          urlPattern: new RegExp("http://localhost:7004"),
-          handler: "NetworkFirst",
-        },
+      exclude: [
+        /\.map$/,
+        /manifest$/,
+        /\.htaccess$/,
+        /service-worker\.js$/,
+        /sw\.js$/,
+        /\.webp$/,
       ],
     }),
+    // new WorkboxPlugin.GenerateSW({
+    //   clientsClaim: true,
+    //   skipWaiting: true,
+    //   swDest: "service-worker.js",
+    //   runtimeCaching: [
+    //     {
+    //       urlPattern: new RegExp("http://localhost:7004"),
+    //       handler: "NetworkFirst",
+    //     },
+    //   ],
+    // }),
   ],
   // optimization: {
   //   runtimeChunk: {
