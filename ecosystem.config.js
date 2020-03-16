@@ -27,7 +27,7 @@ module.exports = {
       repo: "git@github.com:mbaxszy7/music-motion.git",
       path: "/var/www/production",
       "post-deploy":
-        "npm install && npm run build-client && && npm run build-server && pm2 reload ecosystem.config.js --env production",
+        "npm install && npm run build-client && npm run build-server && pm2 reload ecosystem.config.js --env production",
     },
   },
 }
