@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "pika",
-      script: "./src/server/index.js",
+      script: "./public/server/bundle.js",
 
       // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
       args: "one two",
@@ -27,7 +27,7 @@ module.exports = {
       repo: "git@github.com:mbaxszy7/music-motion.git",
       path: "/var/www/production",
       "post-deploy":
-        "npm install && npm run build && pm2 reload ecosystem.config.js --env production",
+        "npm install && npm run build-client && && npm run build-server && pm2 reload ecosystem.config.js --env production",
     },
   },
 }

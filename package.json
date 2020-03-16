@@ -9,7 +9,8 @@
     "build:client": "webpack --render=server --watch --mode=production --config 'webpack.client.js'",
     "build:server": "webpack --render=server --build=server --watch --mode=production --config 'webpack.server.js'",
     "start:client": "webpack-dev-server --host 0.0.0.0 --mode=development  --hot --render=client  --config 'webpack.client.js'",
-    "build": "webpack --render=server --mode=production --config 'webpack.client.js'"
+    "build-client": "webpack --render=server --mode=production --config 'webpack.client.js'",
+    "build-server": "webpack --render=server --build=server --mode=production --config 'webpack.server.js'"
   },
   "husky": {
     "hooks": {
