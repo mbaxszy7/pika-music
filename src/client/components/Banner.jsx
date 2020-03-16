@@ -69,7 +69,7 @@ const BannerListItem = memo(
         }}
       >
         <ImageLoader
-          url={imgUrl}
+          url={imgUrl ? imgUrl.replace(/https?/, "https") : ""}
           placeHolderStyle={{
             position: "absolute",
             top: 0,
