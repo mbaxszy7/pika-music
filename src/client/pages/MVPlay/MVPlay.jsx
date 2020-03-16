@@ -176,10 +176,11 @@ const VideoWrapper = styled.div`
   top: 0;
   width: 100%;
   font-size: 0;
+  background: ${({ theme }) => theme.mg};
   ${mediaQuery.aboveTablet`
     width: 500px;
     margin: 0 auto;
-  `}
+  `};
 `
 
 const DurationTime = styled.div`

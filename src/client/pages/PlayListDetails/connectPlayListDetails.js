@@ -40,7 +40,7 @@ class ConnectPlayListReducer extends ConnectCompReducer {
         ? [...song.ar].reverse().reduce((ac, a) => `${a.name} ${ac}`, "")
         : ""
       return {
-        imgUrl: song.al.picUrl,
+        imgUrl: song.al.picUrl ? song.al.picUrl.replace(/https?/, "https") : "",
         title: `${song.name}`,
         desc: names,
         artistId: song.ar[0].id,
