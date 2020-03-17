@@ -1,8 +1,10 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
 import Koa from "koa"
+import path from "path"
 import serve from "koa-static"
 import mount from "koa-mount"
+import views from "koa-views"
 import logger from "koa-logger"
 import renderHTML from "./renderHTML"
 import uaParser from "./ua"
@@ -15,19 +17,32 @@ app.use(async (ctx, next) => {
   }
   await next()
 })
+app.use(
+  views(path.join(process.cwd(), "/src/server", "./views"), {
+    map: { hbs: "handlebars" },
+    extension: "hbs",
+    cache: true,
+  }),
+)
 app.use(mount("/images", serve("./public/images")))
 app.use(mount("/public", serve("./public")))
 app.use(uaParser)
 
 app.use(async ctx => {
   const staticContext = {}
-  const html = await renderHTML(ctx, staticContext)
+  const { styleTags, clientContent, state, dynamicBundles } = await renderHTML(
+    ctx,
+    staticContext,
+  )
   if (staticContext.NOT_FOUND) {
     ctx.status = 404
   }
-
-  ctx.type = "text/html; charset=utf-8"
-  ctx.body = html
+  await ctx.render("main", {
+    styleTags,
+    clientContent,
+    state,
+    dynamicBundles,
+  })
 })
 
 app.on("error", err => {

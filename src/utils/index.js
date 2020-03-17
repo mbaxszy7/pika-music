@@ -22,8 +22,8 @@ export const clamp = (num, min, max) => {
   return num
 }
 
-export const lazyMoment = () =>
-  import(/* webpackChunkName: 'moment',  webpackPrefetch:true  */ "moment")
+// export const lazyMoment = () =>
+//   import(/* webpackChunkName: 'moment',  webpackPrefetch:true  */ "moment")
 
 export const shuffle = arr =>
   arr.slice().sort(() => (Math.random() > 0.5 ? 1 : -1))

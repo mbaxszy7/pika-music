@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { awaitWrapper, lazyMoment } from "../../../utils"
+import { awaitWrapper } from "../../../utils"
 import {
   ADD_BANNER_LIST,
   SET_LAST_SEARCH_WORD,
@@ -234,16 +234,15 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
   }
 
   requestAlbums = async url => {
-    const [res, { default: moment }] = await Promise.all([
-      this.fetcher.get(url),
-      lazyMoment(),
-    ])
+    const res = await this.fetcher.get(url)
     const { albums } = res.data
     return albums.map(album => ({
       imgUrl: album.picUrl,
       title: album.name,
       publishTime: album.publishTime
-        ? moment(new Date(album.publishTime), "YYYY-MM-DD").format("YYYY-MM-DD")
+        ? this.moment(new Date(album.publishTime), "YYYY-MM-DD").format(
+            "YYYY-MM-DD",
+          )
         : null,
       type: "bigAlbum",
       id: album.id,

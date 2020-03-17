@@ -2,7 +2,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React from "react"
 import Loadable from "react-loadable"
-import path from "path"
 import { getBundles } from "react-loadable/webpack"
 import { Provider } from "react-redux"
 import { StaticRouter } from "react-router-dom"
@@ -11,10 +10,7 @@ import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
 import routes from "../routes"
 import getReduxStore from "../store/storeCreator"
-// import { isCSR, isDEV } from "../utils"
-// import createAxiosInstance from "../utils/axiosInstance"
 import stats from "../../public/react-loadable.json"
-import assetsStates from "../../public/stats.json"
 import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
@@ -78,39 +74,12 @@ const renderHTML = async (ctx, staticContext) => {
     sheet.seal()
   }
 
-  return `
-  <!DOCTYPE html>
-  <html lang="zh-CN">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>music-motion</title>
-      <link rel="apple-touch-icon" href="/public/icon_152x152.5c887cf5976509a3d2ac6f11efe54fa5.png">
-      <meta name="apple-mobile-web-app-title" content="Pika" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      <meta name="theme-color" content="#FEDD27" />
-      <link rel="manifest" href="/public/manifest.3e35884acfa42ca1de0423bc45c14ce2.json" /></head>
-    </head>
-    </head>
-    ${styleTags}
-    <body>
-      <div id="root">${clientContent}</div>
-      <div id="modal_root"></div>
-          <!--数据的注水-->
-      <script>
-            window.__INITIAL_STATE__ = {
-              state: ${JSON.stringify(store.getState())}
-            }
-      </script>
-     ${dynamicBundles.join("")}
-     <script type="text/javascript" src="/public/${
-       assetsStates.assetsByChunkName.main
-     }"></script>
-    </body>
-  </html>
- `
+  return {
+    styleTags,
+    clientContent,
+    state: JSON.stringify(store.getState()),
+    dynamicBundles: dynamicBundles.join(""),
+  }
 }
 
 export default renderHTML

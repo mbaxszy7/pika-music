@@ -1,10 +1,9 @@
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { awaitWrapper, lazyMoment } from "../../../utils"
+import { awaitWrapper } from "../../../utils"
 import { ADD_ALBUM_DETAILS } from "./constants"
 
 class ConnectAlbumDetailsReducer extends ConnectCompReducer {
   requestAlbumDetails = async url => {
-    const { default: moment } = await lazyMoment()
     return this.fetcher
       .get(url)
       .then(res => res.data)
@@ -13,9 +12,10 @@ class ConnectAlbumDetailsReducer extends ConnectCompReducer {
         const { artist, description, alias, info } = album
         return {
           picUrl: album.picUrl,
-          publishTime: moment(new Date(album.publishTime), "YYYY-MM-DD").format(
+          publishTime: this.moment(
+            new Date(album.publishTime),
             "YYYY-MM-DD",
-          ),
+          ).format("YYYY-MM-DD"),
           name: `${album.name}${alias[0] ? `(${alias[0]})` : ""}`,
           artist: {
             avatar: album.artist.picUrl,

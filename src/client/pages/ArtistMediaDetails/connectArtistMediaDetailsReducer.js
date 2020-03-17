@@ -1,5 +1,4 @@
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { lazyMoment } from "../../../utils"
 import connectArtistDetailsReducer from "../ArtistDetails/connectArtistDetailsReducer"
 
 class ConnectArtistMediaDetails extends ConnectCompReducer {
@@ -8,10 +7,7 @@ class ConnectArtistMediaDetails extends ConnectCompReducer {
   }
 
   requestBigMVs = async url => {
-    const [res, { default: moment }] = await Promise.all([
-      this.fetcher.get(url),
-      lazyMoment(),
-    ])
+    const res = await this.fetcher.get(url)
 
     return [
       res.data.mvs.map(mv => ({
@@ -20,7 +16,7 @@ class ConnectArtistMediaDetails extends ConnectCompReducer {
         title: mv.name,
         id: mv.id,
         duration: mv.duration
-          ? moment(new Date(mv.duration), "HH:mm").format("HH:mm")
+          ? this.moment(new Date(mv.duration), "HH:mm").format("HH:mm")
           : "",
         type: "biggerMV",
       })),

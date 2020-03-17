@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "pika",
-      script: "./public/server/bundle.js",
+      script: "./server_app/bundle.js",
 
       // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
       args: "one two",

@@ -1,5 +1,5 @@
 import ConnectCompReducer from "../../../utils/connectPageReducer"
-import { awaitWrapper, lazyMoment } from "../../../utils"
+import { awaitWrapper } from "../../../utils"
 import {
   ADD_ARTIST_DESC,
   ADD_ARTIST_SONGS,
@@ -43,10 +43,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
   }
 
   requestArtistAlbums = async url => {
-    const [res, { default: moment }] = await Promise.all([
-      this.fetcher.get(url),
-      lazyMoment(),
-    ])
+    const res = await this.fetcher.get(url)
 
     return [
       res.data.hotAlbums.map(album => {
@@ -54,7 +51,7 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
           imgUrl: album.picUrl,
           title: album.name,
           publishTime: album.publishTime
-            ? moment(new Date(album.publishTime), "YYYY-MM-DD").format(
+            ? this.moment(new Date(album.publishTime), "YYYY-MM-DD").format(
                 "YYYY-MM-DD",
               )
             : null,

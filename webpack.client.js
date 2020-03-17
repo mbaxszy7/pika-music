@@ -1,11 +1,10 @@
 const path = require("path")
+const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
 const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
-const webpack = require("webpack")
 const { ReactLoadablePlugin } = require("react-loadable/webpack")
-const { StatsWriterPlugin } = require("webpack-stats-plugin")
 const {
   isDEV,
   webpackPlugins,
@@ -15,6 +14,8 @@ const {
   getCommandArg,
   commonRules,
 } = require("./webpack.common.js")
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin
 
 module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
@@ -62,11 +63,13 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new ImageminWebpWebpackPlugin(),
     ...webpackPlugins,
     new HtmlWebpackPlugin({
       title: "music-motion",
-      template: path.resolve(__dirname, "./src/index.html"),
+      template: path.resolve(__dirname, "./src/assets/index.hbs"),
+      filename: path.join(__dirname, "./src/server/views/main.hbs"),
     }),
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),
@@ -113,39 +116,38 @@ module.exports = {
         /service-worker\.js$/,
         /sw\.js$/,
         /\.webp$/,
+        /\.hbs$/,
       ],
     }),
-    new StatsWriterPlugin({
-      filename: "stats.json", // Default
-    }),
+    new BundleAnalyzerPlugin(),
   ],
-  // optimization: {
-  //   runtimeChunk: {
-  //     name: "single",
-  //   },
-  //   splitChunks: {
-  //     chunks: "all",
-  //     minSize: 30000,
-  //     maxSize: 0,
-  //     minChunks: 1,
-  //     maxAsyncRequests: 6,
-  //     maxInitialRequests: 4,
-  //     automaticNameDelimiter: "-",
-  //     automaticNameMaxLength: 30,
-  //     cacheGroups: {
-  //       vendors: {
-  //         test: /[\\/]node_modules[\\/]/,
-  //         priority: -10,
-  //         chunks: "all",
-  //         name: "vendors",
-  //       },
-  //       default: {
-  //         name: "commmon",
-  //         minChunks: 2,
-  //         priority: -20,
-  //         reuseExistingChunk: true,
-  //       },
-  //     },
-  //   },
-  // },
+  optimization: {
+    runtimeChunk: {
+      name: "single",
+    },
+    splitChunks: {
+      chunks: "all",
+      minSize: 30000,
+      maxSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 6,
+      maxInitialRequests: 4,
+      automaticNameDelimiter: "-",
+      automaticNameMaxLength: 30,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          chunks: "all",
+          name: "vendors",
+        },
+        default: {
+          name: "commmon",
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
 }
