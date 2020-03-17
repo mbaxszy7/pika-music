@@ -18,7 +18,7 @@ app.use(async (ctx, next) => {
   await next()
 })
 app.use(
-  views(path.join(process.cwd(), "/src/server", "./views"), {
+  views(path.join(process.cwd(), "/public", "./views"), {
     map: { hbs: "handlebars" },
     extension: "hbs",
     cache: true,

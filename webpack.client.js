@@ -69,7 +69,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: "music-motion",
       template: path.resolve(__dirname, "./src/assets/index.hbs"),
-      filename: path.join(__dirname, "./src/server/views/main.hbs"),
+      filename: path.join(__dirname, "./public/views/main.hbs"),
+      favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
     }),
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),
