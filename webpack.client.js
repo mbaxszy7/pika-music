@@ -14,8 +14,8 @@ const {
   getCommandArg,
   commonRules,
 } = require("./webpack.common.js")
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin
 
 module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
@@ -119,7 +119,7 @@ module.exports = {
         /\.hbs$/,
       ],
     }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
   optimization: {
     runtimeChunk: {
