@@ -141,7 +141,7 @@
       "not android <= 6",
       "not ie<=11",
       "not ie_mob<=11",
-      "ios >= 10",
+      "ios >= 11.3",
       "safari >= 10",
       "not op_mini all"
     ],
