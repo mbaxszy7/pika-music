@@ -20,7 +20,7 @@ module.exports = {
   output: {
     filename: "bundle.js",
     chunkFilename: `[name]-[${isDEV ? "chunkhash" : "contenthash"}].js`,
-    path: path.resolve(__dirname, "server_app"),
+    path: path.resolve(__dirname, "public/server"),
   },
   resolve: webpackResolve,
   externals: [nodeExternals()],
