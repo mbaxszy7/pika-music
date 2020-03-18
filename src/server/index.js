@@ -7,7 +7,7 @@ import mount from "koa-mount"
 import views from "koa-views"
 import logger from "koa-logger"
 import renderHTML from "./renderHTML"
-import uaParser from "./ua"
+import uaParser from "./middlewares/ua"
 
 const app = new Koa()
 app.use(logger())

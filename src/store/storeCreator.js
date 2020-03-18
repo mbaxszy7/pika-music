@@ -7,7 +7,6 @@ import artistDetailsReducer from "../client/pages/ArtistDetails/reducer"
 import albumDetailsReducer from "../client/pages/AlbumDetails/reducer"
 import playlistReducer from "../client/pages/PlayListDetails/reducer"
 import playBarReducer from "../client/pages/PlayBar/reducer"
-import { isCSR } from "../utils"
 
 const rootReducer = {
   albumDetails: albumDetailsReducer,
@@ -22,7 +21,7 @@ const getReduxStore = defaultState => {
   const store = createStore(
     combineReducers({
       ...rootReducer,
-      config: () => ({ ua: defaultState?.ua, isSSR: !isCSR }),
+      config: () => ({ ua: defaultState?.ua }),
     }),
     composeWithDevTools(applyMiddleware(thunk)),
   )

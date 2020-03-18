@@ -1,5 +1,7 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
+const isDEV = process.env.NODE_ENV === "development"
+
 function findPara(param) {
   let result = ""
   process.argv.forEach(argv => {
@@ -14,13 +16,13 @@ const isServerBuild = findPara("build") === "server"
 
 const setWebpackPlugins = () => {
   const plugins = []
-  if (findPara("render") === "server") {
+  if (!isDEV) {
     plugins.push(new CleanWebpackPlugin())
   }
   return plugins
 }
 
-exports.isDEV = process.env.NODE_ENV
+exports.isDEV = isDEV
 
 exports.babelPlugins = [
   "babel-plugin-styled-components",

@@ -13,9 +13,9 @@
 <body>
   <div id="root">{{{clientContent}}}</div>
   <div id="modal_root"></div>
-  <script>window.__INITIAL_STATE__ = {
-      state: {{{ state }}}
-  }</script>
+  <textarea id="data-context" style="display: none;">
+    {{{ state }}}
+  </textarea>
   {{{dynamicBundles}}}
 </body>
 

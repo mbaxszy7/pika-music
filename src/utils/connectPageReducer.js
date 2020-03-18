@@ -1,8 +1,8 @@
 import moment from "moment"
-import { isCSR, isDEV } from "./index"
+import { isDEV } from "./index"
 import createAxiosInstance from "./axiosInstance"
 
-export const axiosInstance = createAxiosInstance({ isDEV, isSSR: !isCSR })
+export const axiosInstance = createAxiosInstance({ isDEV })
 class ConnectCompReducer {
   constructor() {
     this.fetcher = axiosInstance

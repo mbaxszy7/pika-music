@@ -3,6 +3,10 @@ import {
   ArtistDetails,
   ArtistMediaDetails,
   AlbumDetails,
+  PlayListDetails,
+  MVPlay,
+  DiscoverMore,
+  SearchMore,
 } from "./utils/lazyPage"
 import PlayBar from "./client/pages/PlayBar/PlayBar"
 // import ArtistMediaDetails from "./client/pages/ArtistMediaDetails/ArtistMediaDetails"
@@ -10,10 +14,6 @@ import discoverPage from "./client/pages/Discover/connectDiscoverReducer"
 import artistDetails from "./client/pages/ArtistDetails/connectArtistDetailsReducer"
 import artistMediaDetails from "./client/pages/ArtistMediaDetails/connectArtistMediaDetailsReducer"
 import albumDetails from "./client/pages/AlbumDetails/connectAlbumDetailsReducer"
-import SearchMore from "./client/pages/SearchMore/SearchMore"
-import PlayListDetails from "./client/pages/PlayListDetails/PlayListDetails"
-import DiscoverMore from "./client/pages/DiscoverMore/DiscoverMore"
-import MVPlay from "./client/pages/MVPlay/MVPlay"
 import NotFound from "./shared/NotFound"
 
 const routes = [

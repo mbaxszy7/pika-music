@@ -7,16 +7,23 @@ import Loadable from "react-loadable"
 import "intersection-observer"
 import App from "./App.jsx"
 import getReduxStore from "../store/storeCreator.js"
-import { isCSR } from "../utils"
+import { isDEV } from "../utils"
 
 // eslint-disable-next-line no-underscore-dangle
-const payloadData = window.__INITIAL_STATE__?.state ?? {}
+let payloadData = {}
+try {
+  payloadData = JSON.parse(
+    document.getElementById("data-context")?.value ?? "{}",
+  )
+} catch (e) {
+  console.log(e)
+}
 
 const store = getReduxStore(payloadData)
 
-const render = isCSR ? ReactDOM.render : ReactDOM.hydrate
+const render = isDEV ? ReactDOM.render : ReactDOM.hydrate
 
-if (isCSR) {
+if (isDEV) {
   render(<App store={store} />, document.getElementById("root"))
 } else {
   Loadable.preloadReady().then(() => {

@@ -11,9 +11,6 @@ export const awaitWrapper = pFn => {
   }
 }
 
-// eslint-disable-next-line no-undef
-export const isCSR = RENDER_OPTS === "client"
-
 export const isDEV = process.env.NODE_ENV === "development"
 
 export const clamp = (num, min, max) => {

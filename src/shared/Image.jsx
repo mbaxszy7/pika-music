@@ -91,6 +91,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
 
   return (
     <StyledImage
+      onMouseDown={e => e.preventDefault()}
       ref={imgRef}
       className={` ${className} ${url ? "lozad" : ""}`}
       data-src={url ? url.replace(/https?/, "https") : ""}

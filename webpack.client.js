@@ -20,10 +20,10 @@ const {
 module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
   output: {
-    publicPath: "/public/",
+    publicPath: isDEV ? "/" : "/public/",
     // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
-    filename: `client-[${isDEV ? "chunkhash" : "contenthash"}].js`,
-    chunkFilename: `[name]-[${isDEV ? "chunkhash" : "contenthash"}].js`,
+    filename: isDEV ? "client-[hash].js" : `client-[contenthash].js`,
+    chunkFilename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
     path: path.resolve(__dirname, "public"),
   },
   devServer: {
@@ -35,6 +35,7 @@ module.exports = {
         secure: false,
       },
     },
+    publicPath: "/",
     historyApiFallback: true,
     port: 8010,
     compress: true,
@@ -66,12 +67,17 @@ module.exports = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new ImageminWebpWebpackPlugin(),
     ...webpackPlugins,
-    new HtmlWebpackPlugin({
-      title: "music-motion",
-      template: path.resolve(__dirname, "./src/assets/index.hbs"),
-      filename: path.join(__dirname, "./public/views/main.hbs"),
-      favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
-    }),
+    isDEV
+      ? new HtmlWebpackPlugin({
+          title: "music-motion",
+          template: path.resolve(__dirname, "./index.html"),
+        })
+      : new HtmlWebpackPlugin({
+          title: "music-motion",
+          template: path.resolve(__dirname, "./src/assets/index.hbs"),
+          filename: path.join(__dirname, "./public/views/main.hbs"),
+          favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
+        }),
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),
     }),

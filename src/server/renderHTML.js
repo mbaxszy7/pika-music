@@ -3,17 +3,13 @@
 import React from "react"
 import Loadable from "react-loadable"
 import { getBundles } from "react-loadable/webpack"
-import { Provider } from "react-redux"
-import { StaticRouter } from "react-router-dom"
-import { matchRoutes, renderRoutes } from "react-router-config"
+import { matchRoutes } from "react-router-config"
 import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
 import routes from "../routes"
 import getReduxStore from "../store/storeCreator"
 import stats from "../../public/react-loadable.json"
-import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
-import AppTheme from "../shared/AppTheme"
-import AppCss from "../shared/AppCss.styled"
+import App from "../client/App"
 
 const setInitialDataToStore = async ctx => {
   // const axiosInstance = createAxiosInstance({ ctx, isSSR: !isCSR, isDEV })
@@ -39,25 +35,17 @@ const renderHTML = async (ctx, staticContext) => {
   let styleTags = ""
   const modules = []
   let dynamicBundles = []
+
   try {
     clientContent = renderToString(
       <Loadable.Capture report={moduleName => modules.push(moduleName)}>
         <StyleSheetManager sheet={sheet.instance}>
-          <>
-            <AppCss />
-            <ReactPlaceholderStyle />
-            <AppTheme>
-              <Provider store={store}>
-                <StaticRouter
-                  location={ctx.request.path}
-                  context={staticContext}
-                >
-                  {/* 渲染 / 根路由 */}
-                  {renderRoutes(routes)}
-                </StaticRouter>
-              </Provider>
-            </AppTheme>
-          </>
+          <App
+            store={store}
+            isServer
+            location={ctx.request.path}
+            staticContext={staticContext}
+          />
         </StyleSheetManager>
       </Loadable.Capture>,
     )
