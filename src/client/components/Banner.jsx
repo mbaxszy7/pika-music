@@ -7,7 +7,7 @@ import { useDrag } from "react-use-gesture"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import Label from "./Label"
-import { ImageLoader } from "../../shared/Image"
+import { MyImage } from "../../shared/Image"
 import { clamp } from "../../utils"
 
 const BannerList = styled.div`
@@ -15,6 +15,12 @@ const BannerList = styled.div`
   width: 100%;
   padding: 38.15% 0 0;
   overflow: hidden;
+`
+
+const StyledMyImage = styled(MyImage)`
+  width: 100%;
+  height: 100%;
+  position: absolute;
 `
 
 const BannerItem = styled(animated.div)`
@@ -35,6 +41,7 @@ const BannerImgContainer = styled(animated.div)`
   background-repeat: no-repeat;
   will-change: transform;
   border-radius: 10px;
+  overflow: hidden;
 `
 
 const DotsContainer = styled.ul`
@@ -68,25 +75,13 @@ const BannerListItem = memo(
           ),
         }}
       >
-        <ImageLoader
-          url={imgUrl ? imgUrl.replace(/https?/, "https") : ""}
-          placeHolderStyle={{
-            position: "absolute",
-            top: 0,
-            width: "100%",
-            height: "100%",
-            borderRadius: 10,
+        <BannerImgContainer
+          style={{
+            transform: scale.interpolate(s => `scale(${s})`),
           }}
         >
-          <BannerImgContainer
-            style={{
-              transform: scale.interpolate(s => `scale(${s})`),
-              backgroundImage: `url(${
-                imgUrl ? imgUrl.replace(/https?/, "https") : ""
-              })`,
-            }}
-          />
-        </ImageLoader>
+          <StyledMyImage url={imgUrl} />
+        </BannerImgContainer>
         <Label text={labelText} />
       </BannerItem>
     )
