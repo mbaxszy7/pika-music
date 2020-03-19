@@ -13,10 +13,10 @@ import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
 import PWAService from "../shared/PWAService"
 
-const App = ({ store, isServer, staticContext, location }) => {
+const App = ({ store, isServer, staticContext, location, ssrRoutes }) => {
   const IsomophicRouter = isServer ? (
     <StaticRouter location={location} context={staticContext}>
-      {renderRoutes(routes)}
+      {renderRoutes(ssrRoutes)}
     </StaticRouter>
   ) : (
     <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>

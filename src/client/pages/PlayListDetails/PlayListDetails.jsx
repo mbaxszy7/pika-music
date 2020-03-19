@@ -205,4 +205,6 @@ const PlayListDetails = () => {
   )
 }
 
+PlayListDetails.csr = true
+
 export default PlayListDetails

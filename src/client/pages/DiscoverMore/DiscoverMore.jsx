@@ -180,4 +180,6 @@ const DiscoverMore = memo(() => {
   )
 })
 
+DiscoverMore.csr = true
+
 export default DiscoverMore

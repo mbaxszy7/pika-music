@@ -27,7 +27,6 @@ exports.isDEV = isDEV
 exports.babelPlugins = [
   "babel-plugin-styled-components",
   "@babel/plugin-proposal-class-properties",
-  "react-loadable/babel",
 ]
 
 exports.webpackResolve = {

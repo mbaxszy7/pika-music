@@ -7,6 +7,7 @@ import React from "react"
 import styled from "styled-components"
 import Spinner from "../shared/Spinner"
 import Dialog from "../shared/Dialog"
+import { asyncLoader } from "./loadable"
 
 const PagePlaceHolder = styled.div`
   position: fixed;
@@ -39,79 +40,7 @@ function Loading(props) {
   return null
 }
 
-class Loadable extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      Comp: null,
-      error: null,
-      isTimeout: false,
-      retry: this.load,
-    }
-  }
-
-  // eslint-disable-next-line react/sort-comp
-  raceLoading = () => {
-    return new Promise((_, reject) => {
-      setTimeout(
-        () => reject(new Error("timeout")),
-        this.props.pastDelay || 200,
-      )
-    })
-  }
-
-  load = async () => {
-    const { loader } = this.props
-    try {
-      const loadedComp = await Promise.race([this.raceLoading(), loader()])
-
-      this.setState({
-        isTimeout: false,
-        Comp: loadedComp.default ? loadedComp.default : loadedComp,
-      })
-      // this.setState({
-      //   error: { message: "test" },
-      // })
-    } catch (e) {
-      if (e.message === "timeout") {
-        this.setState({
-          isTimeout: true,
-        })
-        this.load()
-      } else {
-        this.setState({
-          error: e,
-        })
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.load()
-  }
-
-  render() {
-    const { error, isTimeout, Comp, retry } = this.state
-    const { loading } = this.props
-    if (error) return loading({ error, retry })
-    if (isTimeout) return loading({ pastDelay: true })
-    if (Comp) return <Comp {...this.props} />
-    return null
-  }
-}
-
-const AsyncLoader = ({ loader, loading, pastDelay }) => {
-  return props => (
-    <Loadable
-      loader={loader}
-      loading={loading}
-      pastDelay={pastDelay}
-      {...props}
-    />
-  )
-}
-
-export const Discover = AsyncLoader({
+export const Discover = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'discover',  webpackPrefetch:true  */ "../client/pages/Discover/Discover.jsx"
@@ -119,7 +48,7 @@ export const Discover = AsyncLoader({
   loading: Loading,
 })
 
-export const ArtistDetails = AsyncLoader({
+export const ArtistDetails = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'artist-details',  webpackPrefetch:true  */ "../client/pages/ArtistDetails/ArtistDetails"
@@ -127,7 +56,7 @@ export const ArtistDetails = AsyncLoader({
   loading: Loading,
 })
 
-export const ArtistMediaDetails = AsyncLoader({
+export const ArtistMediaDetails = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'artist-media-details',  webpackPrefetch:true  */ "../client/pages/ArtistMediaDetails/ArtistMediaDetails"
@@ -135,7 +64,7 @@ export const ArtistMediaDetails = AsyncLoader({
   loading: Loading,
 })
 
-export const AlbumDetails = AsyncLoader({
+export const AlbumDetails = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'album-details',  webpackPrefetch:true  */ "../client/pages/AlbumDetails/AlbumDetails"
@@ -143,7 +72,7 @@ export const AlbumDetails = AsyncLoader({
   loading: Loading,
 })
 
-export const PlayListDetails = AsyncLoader({
+export const PlayListDetails = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'play-list-details',  webpackPrefetch:true  */ "../client/pages/PlayListDetails/PlayListDetails"
@@ -151,7 +80,7 @@ export const PlayListDetails = AsyncLoader({
   loading: Loading,
 })
 
-export const MVPlay = AsyncLoader({
+export const MVPlay = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'mv-play',  webpackPrefetch:true  */ "../client/pages/MVPlay/MVPlay"
@@ -159,7 +88,7 @@ export const MVPlay = AsyncLoader({
   loading: Loading,
 })
 
-export const DiscoverMore = AsyncLoader({
+export const DiscoverMore = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'discover-more',  webpackPrefetch:true  */ "../client/pages/DiscoverMore/DiscoverMore"
@@ -167,7 +96,7 @@ export const DiscoverMore = AsyncLoader({
   loading: Loading,
 })
 
-export const SearchMore = AsyncLoader({
+export const SearchMore = asyncLoader({
   loader: () =>
     import(
       /* webpackChunkName: 'search-more',  webpackPrefetch:true  */ "../client/pages/SearchMore/SearchMore"

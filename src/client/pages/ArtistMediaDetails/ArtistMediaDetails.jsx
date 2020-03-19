@@ -1,17 +1,11 @@
-import React, {
-  useMemo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  memo,
-  useCallback,
-} from "react"
+import React, { useMemo, useEffect, useRef, memo, useCallback } from "react"
 import { useLocation } from "react-router-dom"
 import styled from "styled-components"
 import queryString from "query-string"
 import ScrollPaginationMediaItems from "../../components/ScrollPaginationMediaItems"
 import artistMediaDetailsPage from "./connectArtistMediaDetailsReducer"
 import PageBack from "../../components/PageBack"
+import { useIsomorphicEffect } from "../../../utils/hooks"
 
 const ListWrapper = styled.div`
   margin-top: 60px;
@@ -66,7 +60,7 @@ const ArtistMediaDetails = memo(() => {
     [type],
   )
 
-  useLayoutEffect(() => {
+  useIsomorphicEffect(() => {
     document.getElementById("root").scrollTop = 0
   }, [])
 

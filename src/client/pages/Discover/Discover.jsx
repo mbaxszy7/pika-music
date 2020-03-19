@@ -318,4 +318,8 @@ const Discover = memo(() => {
   )
 })
 
+Discover.getInitialData = () => {
+  console.log('uuu')
+}
+
 export default Discover

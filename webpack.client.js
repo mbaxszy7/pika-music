@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
 const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
-const { ReactLoadablePlugin } = require("react-loadable/webpack")
 const {
   isDEV,
   webpackPlugins,
@@ -80,9 +79,6 @@ module.exports = {
         }),
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),
-    }),
-    new ReactLoadablePlugin({
-      filename: "./public/react-loadable.json",
     }),
     new WebpackPwaManifest({
       name: "Pika",

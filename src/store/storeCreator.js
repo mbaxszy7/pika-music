@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension/developmentOnly"
 import thunk from "redux-thunk"
-import homeReducer from "../client/pages/Home/reducer"
 import discoverReducer from "../client/pages/Discover/reducer"
 import artistDetailsReducer from "../client/pages/ArtistDetails/reducer"
 import albumDetailsReducer from "../client/pages/AlbumDetails/reducer"
@@ -12,7 +11,6 @@ const rootReducer = {
   albumDetails: albumDetailsReducer,
   artistDetails: artistDetailsReducer,
   discover: discoverReducer,
-  home: homeReducer,
   playBar: playBarReducer,
   playlistDetails: playlistReducer,
 }

@@ -3,14 +3,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
-import React, {
-  memo,
-  useLayoutEffect,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react"
+import React, { memo, useState, useCallback, useRef, useEffect } from "react"
 import ReactPlaceholder from "react-placeholder"
 import screenfull from "screenfull"
 import styled from "styled-components"
@@ -242,7 +235,7 @@ const MVPlay = memo(() => {
     document.getElementById("root").scrollTop = 0
   }, [id])
 
-  useLayoutEffect(() => {
+  useIsomorphicEffect(() => {
     storeDispatch(playBarPage.setShowPlayBar(false))
     return () => {
       storeDispatch(playBarPage.setShowPlayBar(true))
@@ -593,6 +586,8 @@ const MVPlay = memo(() => {
     </StyledMVPlayPage>
   )
 })
+
+MVPlay.csr = true
 
 export default MVPlay
 

@@ -108,7 +108,6 @@
     "react-dom": "^16.13.0",
     "react-hot-keys": "^2.5.1",
     "react-hot-loader": "^4.12.19",
-    "react-loadable": "^5.5.0",
     "react-placeholder": "^3.0.2",
     "react-redux": "^7.2.0",
     "react-router-config": "^5.1.1",

@@ -1,8 +1,9 @@
-import React, { useLayoutEffect } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useDispatch } from "react-redux"
 import PropTypes from "prop-types"
 import playBarPage from "../client/pages/PlayBar/connectPlayBarReducer"
+import { useIsomorphicEffect } from "../utils/hooks"
 
 const NotFoundAlert = styled.div`
   color: ${({ theme }) => theme.secondary};
@@ -19,7 +20,7 @@ const NotFound = ({ staticContext }) => {
 
   const dispatch = useDispatch()
 
-  useLayoutEffect(() => {
+  useIsomorphicEffect(() => {
     dispatch(playBarPage.setShowPlayBar(false))
   }, [dispatch])
 

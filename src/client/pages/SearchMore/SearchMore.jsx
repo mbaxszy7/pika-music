@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useLayoutEffect,
-  useState,
-  useMemo,
-} from "react"
+import React, { useRef, useCallback, useState, useMemo } from "react"
 import styled from "styled-components"
 import queryString from "query-string"
 import { useLocation } from "react-router-dom"
@@ -13,6 +7,7 @@ import ScrollPaginationMediaItems from "../../components/ScrollPaginationMediaIt
 import PageBack from "../../components/PageBack"
 import { SEARCH_RESULT_SELECTOR } from "../Discover/connectDiscoverReducer"
 import PlaySongsBar from "../../components/PlaySongsBar"
+import { useIsomorphicEffect } from "../../../utils/hooks"
 
 const ListWrapper = styled.div`
   margin-top: 78px;
@@ -60,7 +55,7 @@ const SearchMore = () => {
     [keyword, type],
   )
 
-  useLayoutEffect(() => {
+  useIsomorphicEffect(() => {
     document.getElementById("root").scrollTop = 0
   }, [])
 
@@ -93,5 +88,7 @@ const SearchMore = () => {
     </SearchMorePage>
   )
 }
+
+SearchMore.csr = true
 
 export default SearchMore
