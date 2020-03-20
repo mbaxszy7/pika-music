@@ -349,8 +349,8 @@ const PlayListItem = ({ songName, artistName, isActivePlay, songIndex }) => {
 }
 
 const Playlist = memo(({ songList }) => {
-  const currentPlayId = useSelector(state => state.playBar.currentPlayId)
-  const currentPlayIndex = useSelector(state => state.playBar.currentPlayIndex)
+  const currentPlayId = useSelector(state => state.root.currentPlayId)
+  const currentPlayIndex = useSelector(state => state.root.currentPlayIndex)
   return (
     <List
       list={songList}
@@ -408,7 +408,7 @@ const PlayPageAbovePart = memo(({ toPlayPage, songDetail, curLyricLine }) => {
 
 const PlayPageBottomPart = memo(
   ({ playState, handlePlayIconClick, onModalOpen, onNextOrPrePlay }) => {
-    const playMode = useSelector(state => state.playBar.playMode)
+    const playMode = useSelector(state => state.root.playMode)
     const storeDispatch = useDispatch()
     const onPrePlay = useCallback(() => {
       onNextOrPrePlay(true, "prev")
@@ -467,14 +467,14 @@ const PlayBar = memo(({ route }) => {
   const [playState, setPlayState] = useState("")
   const [isShowPlayPage, setShowPlayPage] = useState(false)
   const [audioCurTime, setAudioCurTime] = useState(0)
-  const isShowPlayBar = useSelector(state => state.playBar.isShowPlayBar)
+  const isShowPlayBar = useSelector(state => state.root.isShowPlayBar)
   const [curLyricLine, setCurLyricLine] = useState("")
-  const songIdList = useSelector(state => state.playBar.songIdList)
-  const currentPlayId = useSelector(state => state.playBar.currentPlayId)
-  const currentPlayIndex = useSelector(state => state.playBar.currentPlayIndex)
+  const songIdList = useSelector(state => state.root.songIdList)
+  const currentPlayId = useSelector(state => state.root.currentPlayId)
+  const currentPlayIndex = useSelector(state => state.root.currentPlayIndex)
   const storeDispatch = useDispatch()
   const isProgressBarActived = useRef(false)
-  const playMode = useSelector(state => state.playBar.playMode)
+  const playMode = useSelector(state => state.root.playMode)
   const progressBarRef = useRef()
 
   const {

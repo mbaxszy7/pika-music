@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import { useDispatch } from "react-redux"
 import PropTypes from "prop-types"
-import playBarPage from "../client/pages/PlayBar/connectPlayBarReducer"
+import playBarPage from "../client/pages/Root/connectPlayBarReducer"
 import { useIsomorphicEffect } from "../utils/hooks"
 
 const NotFoundAlert = styled.div`

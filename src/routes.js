@@ -8,7 +8,7 @@ import {
   DiscoverMore,
   SearchMore,
 } from "./utils/lazyPage"
-import PlayBar from "./client/pages/PlayBar/PlayBar"
+import Root from "./client/pages/Root/Root"
 // import ArtistMediaDetails from "./client/pages/ArtistMediaDetails/ArtistMediaDetails"
 import discoverPage from "./client/pages/Discover/connectDiscoverReducer"
 import artistDetails from "./client/pages/ArtistDetails/connectArtistDetailsReducer"
@@ -18,7 +18,7 @@ import NotFound from "./shared/NotFound"
 
 const routes = [
   {
-    component: PlayBar,
+    component: Root,
     routes: [
       {
         path: "/",

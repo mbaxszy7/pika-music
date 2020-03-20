@@ -13,7 +13,6 @@ class Loadable extends React.Component {
       Comp: null,
       error: null,
       isTimeout: false,
-      retry: this.load,
     }
   }
 
@@ -56,9 +55,9 @@ class Loadable extends React.Component {
   }
 
   render() {
-    const { error, isTimeout, Comp, retry } = this.state
+    const { error, isTimeout, Comp } = this.state
     const { loading } = this.props
-    if (error) return loading({ error, retry })
+    if (error) return loading({ error })
     if (isTimeout) return loading({ pastDelay: true })
     if (Comp) return <Comp {...this.props} />
     return null

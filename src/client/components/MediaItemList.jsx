@@ -13,7 +13,7 @@ import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
 import SongMore from "./SongMore"
 import List from "../../shared/List"
-import playBarPage from "../pages/PlayBar/connectPlayBarReducer"
+import playBarPage from "../pages/Root/connectPlayBarReducer"
 import Label from "./Label"
 import SingleLineTexts, {
   MultipleLineTexts,
@@ -291,13 +291,6 @@ const MediaItem = memo(props => {
     {
       refreshInterval: 0,
       revalidateOnFocus: false,
-      onErrorRetry: (err, key, option, revalidate, { retryCount }) => {
-        if (err.status === 404) return
-        if (retryCount >= 1) return
-
-        // retry after 5 seconds
-        setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 5000)
-      },
     },
   )
   const [isShowDialog, setShowDialog] = useState(false)
@@ -351,7 +344,7 @@ const MediaItem = memo(props => {
     ],
   )
 
-  const activePlayId = useSelector(state => state.playBar.currentPlayId)
+  const activePlayId = useSelector(state => state.root.currentPlayId)
 
   const imageTag = useCallback(
     () => (

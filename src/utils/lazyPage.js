@@ -26,7 +26,7 @@ function Loading(props) {
         dialogText={props.error?.message ?? "重新加载试一下吧～"}
         isShowConfirm
         isShowCancel={false}
-        onConfirmClick={props.retry}
+        onConfirmClick={() => window.location.reload()}
       />
     )
   }

@@ -5,13 +5,13 @@ import discoverReducer from "../client/pages/Discover/reducer"
 import artistDetailsReducer from "../client/pages/ArtistDetails/reducer"
 import albumDetailsReducer from "../client/pages/AlbumDetails/reducer"
 import playlistReducer from "../client/pages/PlayListDetails/reducer"
-import playBarReducer from "../client/pages/PlayBar/reducer"
+import playBarReducer from "../client/pages/Root/reducer"
 
 const rootReducer = {
   albumDetails: albumDetailsReducer,
   artistDetails: artistDetailsReducer,
   discover: discoverReducer,
-  playBar: playBarReducer,
+  root: playBarReducer,
   playlistDetails: playlistReducer,
 }
 

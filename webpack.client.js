@@ -122,7 +122,6 @@ module.exports = {
         /service-worker\.js$/,
         /sw\.js$/,
         /\.webp$/,
-        /\.hbs$/,
       ],
     }),
     // new BundleAnalyzerPlugin(),

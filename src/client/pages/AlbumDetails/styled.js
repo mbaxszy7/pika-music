@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import SingleLineTexts from "../../../shared/LinesTexts.styled"
+import { MyImage } from "../../../shared/Image"
 
 export const PageBackWrapper = styled.div`
   position: fixed;
@@ -25,18 +26,18 @@ export const ScrollContainer = styled.div`
 `
 
 export const AlbumPic = styled.div`
-  border-radius: 8px;
   margin-top: 35px;
   position: sticky;
   z-index: 0;
   top: 15px;
   display: flex;
   justify-content: center;
-  border-radius: 8px;
-  img {
+`
+export const StyledMyImage = styled(MyImage)`
+  & {
     width: 180px;
     height: 180px;
-    border-radius: 8px;
+    border-radius: 4px;
   }
 `
 

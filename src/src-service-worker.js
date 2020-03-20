@@ -20,6 +20,13 @@ skipWaiting()
 clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
+registerRoute(
+  new RegExp("/"),
+  new NetworkFirst({
+    cacheName: "whole-site",
+  }),
+)
+
 // 站点png图片拦截为webp
 registerRoute(/\.png$/, ({ event }) => {
   let supportWebp = false
@@ -60,13 +67,6 @@ registerRoute(/\.png$/, ({ event }) => {
     )
   }
 })
-
-registerRoute(
-  new RegExp("http://localhost:7004"),
-  new NetworkFirst({
-    cacheName: "whole-site",
-  }),
-)
 
 // Images
 registerRoute(

@@ -16,7 +16,7 @@ import { clamp } from "../../../utils"
 import Avatar from "../../../shared/Avatar"
 import InnerModal from "../../../shared/InnerModal"
 import PlaySongsBar from "../../components/PlaySongsBar"
-import playBarPage from "../PlayBar/connectPlayBarReducer"
+import playBarPage from "../Root/connectPlayBarReducer"
 import * as Styled from "./styled"
 
 const AlbumBrief = memo(
@@ -132,14 +132,7 @@ const AlbumDetails = memo(() => {
         />
       </Styled.PageBackWrapper>
       <Styled.AlbumPic>
-        <ReactPlaceholder
-          type="rect"
-          ready={!!albumDetails?.picUrl}
-          showLoadingAnimation
-          style={{ width: 180, height: 180, borderRadius: 8 }}
-        >
-          <img src={albumDetails?.picUrl} />
-        </ReactPlaceholder>
+        <Styled.StyledMyImage url={albumDetails?.picUrl} />
       </Styled.AlbumPic>
 
       <Styled.ScrollContainer ref={scrollContainerRef}>

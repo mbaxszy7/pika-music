@@ -22,7 +22,7 @@ import PlaySongsBar from "../../components/PlaySongsBar"
 import PageBack from "../../components/PageBack"
 import Label from "../../components/Label"
 import List from "../../../shared/List"
-import playBarPage from "../PlayBar/connectPlayBarReducer"
+import playBarPage from "../Root/connectPlayBarReducer"
 import {
   AlbumDetailsPage as PlaylistDetails,
   AlbumPic,
@@ -34,6 +34,7 @@ import {
   StyledDesc,
   MediaListWrapper,
   PlayBarWrapper,
+  StyledMyImage,
 } from "../AlbumDetails/styled"
 
 const PlaylistName = styled(AlbumName)`
@@ -168,17 +169,7 @@ const PlayListDetails = () => {
         <PageBack title={headerOpacity !== 2 ? playlistDetails?.name : ""} />
       </PageBackWrapper>
       <AlbumPic>
-        <ReactPlaceholder
-          type="rect"
-          ready={!!playlistDetails?.coverImgUrl}
-          showLoadingAnimation
-          style={{ width: 180, height: 180, borderRadius: 8 }}
-        >
-          <img
-            src={playlistDetails?.coverImgUrl?.replace?.(/https?/, "https")}
-            alt=""
-          />
-        </ReactPlaceholder>
+        <StyledMyImage url={playlistDetails?.coverImgUrl} />
       </AlbumPic>
       <ScrollContainer ref={scrollContainerRef}>
         <PlaylistBrief

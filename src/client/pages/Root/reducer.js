@@ -19,6 +19,7 @@ const defaultState = {
   songIdList: [],
   currentPlayIndex: 0,
   playMode: LIST_CYCLE,
+  isShowPageTip: false,
 }
 
 const discoverReducer = produce((draft, action) => {
