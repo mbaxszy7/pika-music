@@ -23,6 +23,7 @@ const ClientRouter = () => {
     <SWRConfig
       value={{
         onLoadingSlow: key => {
+          if (key.includes("/api/check/music")) return
           setTimeoutTips([
             {
               key,
