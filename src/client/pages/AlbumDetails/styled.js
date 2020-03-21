@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import SingleLineTexts from "../../../shared/LinesTexts.styled"
 import { MyImage } from "../../../shared/Image"
+import { StyledTextRow } from "../../../shared/MyPlaceholder"
 
 export const PageBackWrapper = styled.div`
   position: fixed;
@@ -45,6 +46,9 @@ export const PublishTime = styled.p`
   font-size: 16px;
   color: ${props => props.theme.dg};
   font-weight: bold;
+  > ${StyledTextRow} {
+    width: 100px;
+  }
 `
 export const StyledDescModal = styled.div`
   position: fixed;
@@ -76,6 +80,9 @@ export const AlbumName = styled.p`
   font-size: 20px;
   color: ${props => props.theme.fg};
   font-weight: bold;
+  > ${StyledTextRow} {
+    width: 150px;
+  }
 `
 export const Artist = styled.div`
   margin-top: 20px;
@@ -87,6 +94,9 @@ export const ArtistName = styled.span`
   font-size: 14px;
   color: ${props => props.theme.dg};
   margin-left: 15px;
+  > ${StyledTextRow} {
+    width: 120px;
+  }
 `
 export const StyledDesc = styled.div`
   min-height: 20px;
@@ -97,7 +107,10 @@ export const StyledDesc = styled.div`
   line-height: 1.3;
   color: ${props => props.theme.dg};
   ${props =>
-    props.isWhole ? "line-height:1.5; font-size: 16px" : SingleLineTexts}
+    props.isWhole ? "line-height:1.5; font-size: 16px" : SingleLineTexts};
+  > ${StyledTextRow} {
+    background: grey;
+  }
 `
 
 export const MediaListWrapper = styled.div`

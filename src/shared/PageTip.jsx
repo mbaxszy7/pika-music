@@ -1,6 +1,7 @@
+/* eslint-disable react/require-default-props */
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect, useCallback } from "react"
-
+import PropTypes from "prop-types"
 import { animated, useTransition } from "react-spring"
 import styled from "styled-components"
 import InnerModal from "./InnerModal"
@@ -64,11 +65,11 @@ const PageTip = ({ tips }) => {
       if (typeof item.action === "function") item.action()
 
       const clickedIndex = showTipTexts.findIndex(text => text.key === item.key)
-   
+
       if (clickedIndex !== -1) {
         const oldTips = [...showTipTexts]
         oldTips.splice(clickedIndex, 1)
-        console.log(clickedIndex,[...oldTips] )
+
         setShowTip(oldTips)
       }
     },
@@ -93,6 +94,16 @@ const PageTip = ({ tips }) => {
       </StyledPageTipWrapper>
     </InnerModal>
   )
+}
+
+PageTip.propTypes = {
+  tips: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      text: PropTypes.string,
+      action: PropTypes.func,
+    }),
+  ),
 }
 
 export default PageTip

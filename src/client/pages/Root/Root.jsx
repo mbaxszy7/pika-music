@@ -13,7 +13,6 @@ import React, {
   memo,
 } from "react"
 import useSWR from "swr"
-import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import { renderRoutes } from "react-router-config"
 import styled from "styled-components"
@@ -31,6 +30,7 @@ import SingleLineTexts, {
   MultipleLineTexts,
 } from "../../../shared/LinesTexts.styled"
 import AppNavigate from "../AppNavigate/AppNavigate"
+import MyPlaceholder, { StyledTextRow } from "../../../shared/MyPlaceholder"
 import mediaQury from "../../../shared/mediaQury.styled"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
@@ -165,6 +165,9 @@ const SongName = styled.div`
   font-weight: bold;
   ${MultipleLineTexts(2)}
   ${mediaQury.aboveTablet`padding: 0 20%;`}
+  > ${StyledTextRow} {
+    width: 40%;
+  }
 `
 const LyricLine = styled.div`
   color: ${({ theme }) => theme.fg};
@@ -391,13 +394,9 @@ const PlayPageAbovePart = memo(({ toPlayPage, songDetail, curLyricLine }) => {
       </StyledSongPic>
 
       <SongName>
-        <ReactPlaceholder
-          type="textRow"
-          ready={!!songDetail?.[0]?.title}
-          style={{ width: "40%", height: ".9em" }}
-        >
+        <MyPlaceholder ready={!!songDetail?.[0]?.title}>
           {songDetail?.[0]?.title ?? ""}
-        </ReactPlaceholder>
+        </MyPlaceholder>
       </SongName>
 
       <ArtistName>{songDetail?.[0]?.artistName}</ArtistName>

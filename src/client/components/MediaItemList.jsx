@@ -3,11 +3,10 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useCallback, useState, useMemo } from "react"
+import React, { memo, useCallback, useState } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import useSWR from "swr"
-import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import styled, { css } from "styled-components"
 import { MyImage } from "../../shared/Image"
@@ -22,6 +21,7 @@ import Page from "../../utils/connectPageReducer"
 import moreIcon from "../../assets/more.png"
 import Dialog from "../../shared/Dialog"
 import mediaQuery from "../../shared/mediaQury.styled"
+import MyPlaceholder, { StyledTextRow } from "../../shared/MyPlaceholder"
 
 const pageFetch = new Page()
 
@@ -81,6 +81,13 @@ const StyledResultItem = styled.div`
   dl {
     font-size: 16px;
     width: 70%;
+    > ${StyledTextRow} {
+      height: 10px;
+      background-color: grey;
+    }
+    > ${StyledTextRow}:first-of-type {
+      margin-top: 0 !important;
+    }
     dt {
       margin-bottom: 4px;
       padding-right: 15px;
@@ -387,22 +394,18 @@ const MediaItem = memo(props => {
         ) : (
           ""
         )}
-        <ReactPlaceholder
-          ready={!!title && !isValidating}
-          rows={2}
-          color="grey"
-          showLoadingAnimation
-          style={{
-            width: "40%",
-            borderRadius: 200,
-            height: 30,
-          }}
-        >
-          <dl>
+
+        <dl>
+          <MyPlaceholder
+            ready={!!title && !isValidating}
+            rows={2}
+            type="textBlock"
+          >
             <dt>{title}</dt>
             <dd>{innerDD}</dd>
-          </dl>
-        </ReactPlaceholder>
+          </MyPlaceholder>
+        </dl>
+
         {typeof renderRightPart === "function"
           ? renderRightPart()
           : type === MediaItemTypes.SONG && (

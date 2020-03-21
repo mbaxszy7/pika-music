@@ -4,7 +4,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { memo, useRef, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import ReactPlaceholder from "react-placeholder"
 import queryString from "query-string"
 import { useLocation } from "react-router-dom"
 import useSWR from "swr"
@@ -18,6 +17,7 @@ import InnerModal from "../../../shared/InnerModal"
 import PlaySongsBar from "../../components/PlaySongsBar"
 import playBarPage from "../Root/connectPlayBarReducer"
 import * as Styled from "./styled"
+import MyPlaceholder from "../../../shared/MyPlaceholder"
 
 const AlbumBrief = memo(
   ({ publishTime, name, artist, albumDesc, shareCount, likedCount }) => {
@@ -47,41 +47,25 @@ const AlbumBrief = memo(
             </Styled.StyledDescModal>
           </InnerModal>
         )}
-        <ReactPlaceholder
-          type="textRow"
-          ready={!!publishTime}
-          style={{ width: 100 }}
-        >
-          <Styled.PublishTime>{publishTime}</Styled.PublishTime>
-        </ReactPlaceholder>
-        <ReactPlaceholder
-          type="textRow"
-          ready={!!name}
-          style={{ width: 150, marginTop: 12, height: "1.5em" }}
-        >
-          <Styled.AlbumName>{name}</Styled.AlbumName>
-        </ReactPlaceholder>
+
+        <Styled.PublishTime>
+          <MyPlaceholder ready={!!publishTime}>{publishTime}</MyPlaceholder>
+        </Styled.PublishTime>
+
+        <Styled.AlbumName>
+          <MyPlaceholder ready={!!name}>{name}</MyPlaceholder>
+        </Styled.AlbumName>
+
         <Styled.Artist>
           <Avatar size="small" url={artist?.avatar} />
-          <ReactPlaceholder
-            type="textRow"
-            ready={!!artist?.name}
-            style={{ width: 120, marginLeft: 15, marginTop: 0 }}
-          >
-            <Styled.ArtistName>{artist?.name}</Styled.ArtistName>
-          </ReactPlaceholder>
+          <Styled.ArtistName>
+            <MyPlaceholder ready={!!artist?.name}>{artist?.name}</MyPlaceholder>
+          </Styled.ArtistName>
         </Styled.Artist>
-        <ReactPlaceholder
-          type="textRow"
-          ready={albumDesc != null}
-          style={{ marginTop: 20 }}
-        >
-          {albumDesc !== "" && (
-            <Styled.StyledDesc onClick={onModalOpen}>
-              {albumDesc}
-            </Styled.StyledDesc>
-          )}
-        </ReactPlaceholder>
+
+        <Styled.StyledDesc onClick={onModalOpen}>
+          <MyPlaceholder ready={albumDesc != null}>{albumDesc}</MyPlaceholder>
+        </Styled.StyledDesc>
       </>
     )
   },

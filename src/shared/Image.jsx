@@ -4,57 +4,6 @@ import React, { memo, useState, useEffect, useCallback, useRef } from "react"
 import PropTypes from "prop-types"
 import lozad from "lozad"
 import styled from "styled-components"
-import ReactPlaceholder from "react-placeholder"
-
-const ImageLoader = memo(
-  ({
-    url,
-    children,
-    showLoadingAnimation,
-    placeHolderType,
-    placeHolderStyle,
-  }) => {
-    const [isLoaded, setLoaded] = useState(false)
-
-    useEffect(() => {
-      const image = new Image()
-      image.onload = () => {
-        setLoaded(true)
-      }
-
-      image.onerror = () => {
-        setLoaded(false)
-      }
-      image.src = url
-    }, [url])
-
-    return (
-      <ReactPlaceholder
-        showLoadingAnimation={showLoadingAnimation}
-        type={placeHolderType}
-        ready={isLoaded}
-        color="#E0E0E0"
-        style={placeHolderStyle}
-      >
-        {children}
-      </ReactPlaceholder>
-    )
-  },
-)
-
-ImageLoader.propTypes = {
-  showLoadingAnimation: PropTypes.bool,
-  children: PropTypes.element,
-  placeHolderStyle: PropTypes.object,
-  url: PropTypes.string.isRequired,
-  placeHolderType: PropTypes.string,
-  // children: PropTypes.func.isRequired,
-}
-
-ImageLoader.defaultProps = {
-  showLoadingAnimation: true,
-  placeHolderType: "rect",
-}
 
 const StyledImage = styled.img`
   background-color: ${props => props.theme.dg};
@@ -109,4 +58,4 @@ MyImage.propTypes = {
   url: PropTypes.string,
 }
 
-export { MyImage, ImageLoader }
+export { MyImage, StyledImage }

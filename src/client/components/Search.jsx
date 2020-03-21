@@ -6,7 +6,6 @@
 import React, { memo, useState, useCallback, useEffect, useRef } from "react"
 import Hotkeys from "react-hot-keys"
 import { useDispatch } from "react-redux"
-import ReactPlaceholder from "react-placeholder"
 import PropTypes from "prop-types"
 import useSWR from "swr"
 import styled from "styled-components"
@@ -17,6 +16,7 @@ import clearIcon from "../../assets/clear.png"
 import Dialog from "../../shared/Dialog"
 import Spinner from "../../shared/Spinner"
 import MediaItemList from "./MediaItemList"
+import MyPlaceholder, { StyledTextRow } from "../../shared/MyPlaceholder"
 
 const InputWrapper = styled.div`
   display: ${props => (props.isFocus ? "flex" : "block")};
@@ -75,6 +75,11 @@ const SuggestList = styled.ul`
   position: relative;
   z-index: 999;
   padding: 14px 0 0 4px;
+  > ${StyledTextRow} {
+    height: 12px;
+    background: grey;
+    width: 50% !important;
+  }
 `
 
 const SuggestItem = styled.li`
@@ -212,15 +217,11 @@ const SearchSuggestList = memo(
 
     return (
       <SuggestList isFocus={isFocus} onClick={onSuggestItemClick}>
-        <ReactPlaceholder
-          type="text"
+        <MyPlaceholder
+          type="textBlock"
           ready={!isValidating || (isValidating && !inputValue)}
-          color="grey"
-          rows={3}
-          showLoadingAnimation
-          style={{
-            width: "60%",
-          }}
+          rows={2}
+          delay={200}
         >
           <List
             list={searchSuggest?.allMatch}
@@ -233,7 +234,7 @@ const SearchSuggestList = memo(
               />
             )}
           />
-        </ReactPlaceholder>
+        </MyPlaceholder>
       </SuggestList>
     )
   },

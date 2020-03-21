@@ -4,7 +4,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
 import React, { memo, useState, useCallback, useRef, useEffect } from "react"
-import ReactPlaceholder from "react-placeholder"
 import screenfull from "screenfull"
 import styled from "styled-components"
 import useSWR from "swr"
@@ -24,6 +23,7 @@ import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
 import fullScrenIcon from "../../../assets/fullScreen.png"
 import mediaQuery from "../../../shared/mediaQury.styled"
+import MyPlaceholder, { StyledTextRow } from "../../../shared/MyPlaceholder"
 
 const StyledMVPlayPage = styled.div`
   ${mediaQuery.aboveTablet`
@@ -65,12 +65,19 @@ const VideoName = styled.div`
   font-weight: bold;
   font-size: 20px;
   line-height: 1.3;
+  > ${StyledTextRow} {
+    height: 1em;
+    width: 60%;
+  }
 `
 
 const PublishTime = styled.div`
   margin-top: 20px;
   font-size: 14px;
   color: ${({ theme }) => theme.dg};
+  > ${StyledTextRow} {
+    width: 30%;
+  }
 `
 
 const VideoArtistName = styled.div`
@@ -79,6 +86,9 @@ const VideoArtistName = styled.div`
   a {
     color: ${({ theme }) => theme.fg};
   }
+  > ${StyledTextRow} {
+    min-width: 80px;
+  }
 `
 
 const VideoDesc = styled.div`
@@ -86,6 +96,10 @@ const VideoDesc = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.dg};
   line-height: 1.5;
+  > ${StyledTextRow} {
+    width: 100% !important;
+    background: grey;
+  }
 `
 
 const VideoMask = styled.div`
@@ -611,55 +625,38 @@ const VideoDetails = ({ details }) => {
     <>
       <VideoDetailsContainer>
         <VideoName>
-          <ReactPlaceholder
-            type="textRow"
-            ready={details?.name != null}
-            showLoadingAnimation
-            style={{ height: "1.2em", width: "45%" }}
-          >
+          <MyPlaceholder ready={!!details?.name}>
             {details?.name ?? ""}
-          </ReactPlaceholder>
+          </MyPlaceholder>
         </VideoName>
 
         <ArtistWrapper>
           <StyledMyImg url={artistAvatar} />
           <VideoArtistName>
-            <ReactPlaceholder
-              type="textRow"
-              ready={details?.artistName != null}
-              showLoadingAnimation
-              style={{ height: "1em", width: "30%" }}
-            >
+            <MyPlaceholder ready={details?.artistName != null}>
               <Link
                 to={`/artist?id=${details?.artists?.[0]?.id}&name=${details?.artists?.[0]?.name}`}
               >
                 {details?.artistName ?? ""}
               </Link>
-            </ReactPlaceholder>
+            </MyPlaceholder>
           </VideoArtistName>
         </ArtistWrapper>
 
         <PublishTime>
-          <ReactPlaceholder
-            type="textRow"
-            ready={details?.publishTime != null}
-            showLoadingAnimation
-            style={{ height: "1em", width: "30%" }}
-          >
+          <MyPlaceholder ready={details?.publishTime != null}>
             {details?.publishTime ? `发布：${details?.publishTime}` : ""}
-          </ReactPlaceholder>
+          </MyPlaceholder>
         </PublishTime>
 
         <VideoDesc>
-          <ReactPlaceholder
-            type="text"
+          <MyPlaceholder
+            type="textBlock"
             ready={details?.desc != null}
-            showLoadingAnimation
-            style={{ height: "6em" }}
             rows={3}
           >
             {details?.desc ?? ""}
-          </ReactPlaceholder>
+          </MyPlaceholder>
         </VideoDesc>
       </VideoDetailsContainer>
     </>

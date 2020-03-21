@@ -7,7 +7,7 @@ import React from "react"
 import styled from "styled-components"
 import Spinner from "../shared/Spinner"
 import Dialog from "../shared/Dialog"
-import { asyncLoader } from "./loadable"
+import { asyncLoader } from "../shared/Loadable"
 
 const PagePlaceHolder = styled.div`
   position: fixed;

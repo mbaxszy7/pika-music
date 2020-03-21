@@ -4,13 +4,12 @@
 import React, { useMemo, useCallback } from "react"
 import styled from "styled-components"
 import PropTypes from "prop-types"
-import ReactPlaceholder from "react-placeholder"
 import useSWR from "swr"
 import { shuffle } from "../../../utils"
 import discoverMorePage from "./connectDiscoverMoreReducer"
 import PlaySongsBar from "../../components/PlaySongsBar"
-
 import MediaItemList from "../../components/MediaItemList"
+import MyPlaceholder from "../../../shared/MyPlaceholder"
 import {
   LabelWrapper,
   StyledLoadingLabel,
@@ -81,9 +80,8 @@ const PlaylistsMore = ({
     <>
       <StyledLabelWrapper onClick={handleLabelClick}>
         {shuffledCats.map((cat, index) => (
-          <ReactPlaceholder
+          <MyPlaceholder
             customPlaceholder={<PlaceStyledLabel text="  " />}
-            showLoadingAnimation
             ready={!!cat}
             key={index}
           >
@@ -95,7 +93,7 @@ const PlaylistsMore = ({
 
               {`#${cat}`}
             </StyledLoadingLabel>
-          </ReactPlaceholder>
+          </MyPlaceholder>
         ))}
       </StyledLabelWrapper>
       <ListWrapper>

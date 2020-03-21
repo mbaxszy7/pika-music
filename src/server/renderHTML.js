@@ -6,7 +6,7 @@ import { renderToString } from "react-dom/server"
 import { ServerStyleSheet, StyleSheetManager } from "styled-components"
 import routes from "../routes"
 import getReduxStore from "../store/storeCreator"
-import { ssrRoutesCapture } from "../utils/loadable"
+import { ssrRoutesCapture } from "../shared/Loadable"
 import App from "../client/App"
 
 const setInitialDataToStore = async (matchedRoutes, ctx) => {

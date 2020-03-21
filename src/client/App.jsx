@@ -9,7 +9,6 @@ import { Provider } from "react-redux"
 import { renderRoutes } from "react-router-config"
 import routes from "../routes"
 import { isDEV } from "../utils"
-import ReactPlaceholderStyle from "../shared/ReactPlaceholder.styled"
 import AppTheme from "../shared/AppTheme"
 import AppCss from "../shared/AppCss.styled"
 import PWAService from "../shared/PWAService"
@@ -42,7 +41,7 @@ const ClientRouters = () => {
           setTimeoutTips([
             {
               key,
-              text: `··( 数据好像加载超时了\n请检查网络`,
+              text: `··( 数据加载缓慢\n`,
               action: () => mutate(key),
             },
           ])
@@ -85,7 +84,6 @@ const App = ({ store, isServer, staticContext, location, ssrRoutes }) => {
   return (
     <>
       <AppCss />
-      <ReactPlaceholderStyle />
       <AppTheme>
         <Provider store={store}>
           {!isServer && <PWAService />}

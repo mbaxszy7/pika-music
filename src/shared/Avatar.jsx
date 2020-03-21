@@ -1,7 +1,6 @@
 /* eslint-disable react/require-default-props */
-import React, { memo } from "react"
+import React, { memo, useState, useCallback } from "react"
 import PropTypes from "prop-types"
-import ReactPlaceholder from "react-placeholder"
 import styled from "styled-components"
 
 const SIZE = {
@@ -17,21 +16,22 @@ const StyledAvatar = styled.img`
   max-height: ${props => props.size}px;
   border-radius: 50%;
   display: block;
+  &[data-settled="false"] {
+    background-color: grey;
+  }
 `
 
 const Avatar = memo(({ size, url }) => {
+  const [isLoaded, setLoaded] = useState(false)
+  const onImageLoaded = useCallback(() => setLoaded(true), [])
   const wh = SIZE[size] ?? 84
   return (
-    <ReactPlaceholder
-      type="round"
-      ready={!!url}
-      style={{
-        width: wh,
-        height: wh,
-      }}
-    >
-      <StyledAvatar src={url} size={wh} />
-    </ReactPlaceholder>
+    <StyledAvatar
+      src={url}
+      size={wh}
+      data-settled={isLoaded}
+      onLoad={onImageLoaded}
+    />
   )
 })
 

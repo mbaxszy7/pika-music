@@ -8,7 +8,7 @@ import App from "./App.jsx"
 import getReduxStore from "../store/storeCreator.js"
 import { isDEV } from "../utils"
 import routes from "../routes"
-import { clientPreloadReady } from "../utils/loadable"
+import { clientPreloadReady } from "../shared/Loadable"
 
 // eslint-disable-next-line no-underscore-dangle
 let payloadData = {}

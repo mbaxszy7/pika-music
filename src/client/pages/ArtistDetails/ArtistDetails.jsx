@@ -6,7 +6,6 @@ import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import useSWR from "swr"
-import ReactPlaceholder from "react-placeholder"
 import { useLocation } from "react-router-dom"
 import queryString from "query-string"
 import { useSelector, useDispatch } from "react-redux"
@@ -20,6 +19,18 @@ import MediaItemList from "../../components/MediaItemList"
 import PageBack from "../../components/PageBack"
 import { clamp } from "../../../utils"
 import Avatar from "../../../shared/Avatar"
+import MyPlaceholder, { StyledTextRow } from "../../../shared/MyPlaceholder"
+
+const ArtistNameBriefWrapper = styled.div`
+  ${StyledTextRow} {
+    width: 100% !important;
+  }
+  ${StyledTextRow}:first-of-type {
+    width: 120px !important;
+    height: 18px;
+    margin-bottom: 15px;
+  }
+`
 
 const PageBackWrapper = styled.div`
   position: fixed;
@@ -119,38 +130,21 @@ const ArtistNameAndBrief = memo(
           </InnerModal>
         )}
 
-        <ReactPlaceholder
-          type="text"
-          ready={!!(realArtistName != null && artistDesc != null)}
-          style={{ marginTop: 0 }}
-          customPlaceholder={
-            <>
-              <ReactPlaceholder
-                type="textRow"
-                ready={false}
-                style={{ width: 120, margin: "0 0 20px 0", height: "1.5em" }}
-              >
-                {" "}
-              </ReactPlaceholder>
-              <ReactPlaceholder type="textRow" ready={false}>
-                {" "}
-              </ReactPlaceholder>
-              <ReactPlaceholder type="textRow" ready={false}>
-                {" "}
-              </ReactPlaceholder>
-            </>
-          }
-          showLoadingAnimation
-        >
-          {realArtistName && (
-            <StyledName>
-              {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
-            </StyledName>
-          )}
-          {artistDesc && (
-            <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
-          )}
-        </ReactPlaceholder>
+        <ArtistNameBriefWrapper>
+          <MyPlaceholder
+            type="textBlock"
+            ready={!!(realArtistName != null && artistDesc != null)}
+          >
+            {realArtistName && (
+              <StyledName>
+                {`${realArtistName}${artistInfo ? ` (${artistInfo})` : ""}`}
+              </StyledName>
+            )}
+            {artistDesc && (
+              <StyledDesc onClick={onModalOpen}>{artistDesc}</StyledDesc>
+            )}
+          </MyPlaceholder>
+        </ArtistNameBriefWrapper>
       </>
     )
   },

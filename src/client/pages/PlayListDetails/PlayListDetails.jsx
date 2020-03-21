@@ -6,7 +6,6 @@ import React, { useCallback, useRef, memo } from "react"
 import PropTypes from "prop-types"
 import { useDispatch } from "react-redux"
 import useSWR from "swr"
-import ReactPlaceholder from "react-placeholder"
 import styled from "styled-components"
 import { useParams } from "react-router-dom"
 import playlistDetailPage from "./connectPlayListDetails"
@@ -23,6 +22,7 @@ import PageBack from "../../components/PageBack"
 import Label from "../../components/Label"
 import List from "../../../shared/List"
 import playBarPage from "../Root/connectPlayBarReducer"
+import MyPlaceholder, { StyledTextRow } from "../../../shared/MyPlaceholder"
 import {
   AlbumDetailsPage as PlaylistDetails,
   AlbumPic,
@@ -39,6 +39,9 @@ import {
 
 const PlaylistName = styled(AlbumName)`
   line-height: 1.4;
+  > ${StyledTextRow} {
+    width: 150px;
+  }
 `
 
 const StyledLabel = styled(Label)`
@@ -87,21 +90,15 @@ const PlaylistBrief = memo(
             </StyledDescModal>
           </InnerModal>
         )}
-        <ReactPlaceholder
-          type="textRow"
-          ready={!!title}
-          style={{ width: 150, marginTop: 12, height: "1.5em" }}
-        >
-          <PlaylistName>{title}</PlaylistName>
-        </ReactPlaceholder>
 
-        <ReactPlaceholder
-          type="textRow"
-          ready={desc != null}
-          style={{ marginTop: 20 }}
-        >
-          <StyledDesc onClick={onModalOpen}>{desc}</StyledDesc>
-        </ReactPlaceholder>
+        <PlaylistName>
+          <MyPlaceholder ready={!!title}>{title}</MyPlaceholder>
+        </PlaylistName>
+
+        <StyledDesc onClick={onModalOpen}>
+          <MyPlaceholder ready={desc != null}>{desc}</MyPlaceholder>
+        </StyledDesc>
+
         <TagsWrapper>
           <List
             list={tags}
