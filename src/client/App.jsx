@@ -1,10 +1,10 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 import { hot } from "react-hot-loader/root"
-import React, { useState, useMemo } from "react"
+import React, { useState, useEffect } from "react"
 import { SWRConfig, mutate } from "swr"
 import PropTypes from "prop-types"
-import { BrowserRouter, StaticRouter } from "react-router-dom"
+import { BrowserRouter, StaticRouter, useLocation } from "react-router-dom"
 import { Provider } from "react-redux"
 import { renderRoutes } from "react-router-config"
 import routes from "../routes"
@@ -15,10 +15,25 @@ import AppCss from "../shared/AppCss.styled"
 import PWAService from "../shared/PWAService"
 import PageTip from "../shared/PageTip"
 
-const ClientRouter = () => {
+const subRoutes = renderRoutes(routes)
+
+const ClientRouters = () => {
+  const { pathname } = useLocation()
   const [timeoutTips, setTimeoutTips] = useState([])
   const [errorTips, setErrorTips] = useState([])
-  const subRoutes = useMemo(() => renderRoutes(routes), [])
+  useEffect(() => {
+    setTimeoutTips([
+      {
+        key: Date.now(),
+      },
+    ])
+    setErrorTips([
+      {
+        key: Date.now(),
+      },
+    ])
+  }, [pathname])
+
   return (
     <SWRConfig
       value={{
@@ -50,10 +65,8 @@ const ClientRouter = () => {
         },
       }}
     >
-      <BrowserRouter>
-        <PageTip tips={[...errorTips, ...timeoutTips]} />
-        {subRoutes}
-      </BrowserRouter>
+      <PageTip tips={[...errorTips, ...timeoutTips]} />
+      {subRoutes}
     </SWRConfig>
   )
 }
@@ -64,7 +77,9 @@ const App = ({ store, isServer, staticContext, location, ssrRoutes }) => {
       {renderRoutes(ssrRoutes)}
     </StaticRouter>
   ) : (
-    <ClientRouter />
+    <BrowserRouter>
+      <ClientRouters />
+    </BrowserRouter>
   )
 
   return (

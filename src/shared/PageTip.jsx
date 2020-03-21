@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect, useCallback } from "react"
-import { useLocation } from "react-router-dom"
+
 import { animated, useTransition } from "react-spring"
 import styled from "styled-components"
 import InnerModal from "./InnerModal"
@@ -28,8 +28,6 @@ const StyledPageTip = styled(animated.div)`
 `
 
 const PageTip = ({ tips }) => {
-  const { pathname } = useLocation()
-
   const [showTipTexts, setShowTip] = useState(() =>
     tips.length
       ? tips
@@ -40,13 +38,6 @@ const PageTip = ({ tips }) => {
           },
         ],
   )
-  useEffect(() => {
-    setShowTip([
-      {
-        key: Date.now(),
-      },
-    ])
-  }, [pathname])
 
   useEffect(() => {
     setShowTip(tips)
@@ -57,7 +48,7 @@ const PageTip = ({ tips }) => {
           key: Date.now(),
         },
       ])
-    }, 10000)
+    }, 6000)
 
     return () => clearTimeout(autoClear)
   }, [tips])
@@ -73,10 +64,11 @@ const PageTip = ({ tips }) => {
       if (typeof item.action === "function") item.action()
 
       const clickedIndex = showTipTexts.findIndex(text => text.key === item.key)
-
+   
       if (clickedIndex !== -1) {
         const oldTips = [...showTipTexts]
-        oldTips.splice(0, clickedIndex || 1)
+        oldTips.splice(clickedIndex, 1)
+        console.log(clickedIndex,[...oldTips] )
         setShowTip(oldTips)
       }
     },
