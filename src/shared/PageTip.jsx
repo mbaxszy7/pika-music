@@ -77,7 +77,7 @@ const PageTip = ({ tips }) => {
   )
 
   return (
-    <InnerModal>
+    <InnerModal isDynamic>
       <StyledPageTipWrapper>
         {transitions.map(
           ({ item, props, key }) =>

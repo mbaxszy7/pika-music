@@ -187,6 +187,7 @@ const VideoWrapper = styled.div`
   ${mediaQuery.aboveTablet`
     width: 500px;
     margin: 0 auto;
+    position: relative;
   `};
 `
 
@@ -393,7 +394,7 @@ const MVPlay = memo(() => {
   const onProgressBarTouchMoving = useCallback(
     touchPointX => {
       const { width, left } = progressBarRef.current.getBoundingClientRect()
-      if (touchPointX >= width) {
+      if (touchPointX - left >= width) {
         audioSeek(0.99)
       } else if (!Number.isNaN(touchPointX)) {
         audioSeek((touchPointX - left) / width)

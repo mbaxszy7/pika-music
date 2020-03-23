@@ -25,6 +25,7 @@ const PageBackWrapper = styled.div`
 const ArtistMediaDetailsPage = styled.div`
   min-height: 100vh;
   padding: 30px 15px 40px 15px;
+  overflow: hidden;
 `
 
 const MediaTypeToRequest = {

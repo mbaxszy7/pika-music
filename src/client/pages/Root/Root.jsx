@@ -13,6 +13,8 @@ import React, {
   memo,
 } from "react"
 import useSWR from "swr"
+import { useDrag } from "react-use-gesture"
+import { useSpring, animated, config } from "react-spring"
 import PropTypes from "prop-types"
 import { renderRoutes } from "react-router-config"
 import styled from "styled-components"
@@ -120,7 +122,7 @@ const HiddenPlayPageIcon = styled(IconImg)`
 `
 
 const PlayPageBar = styled.div`
-  position: fixed;
+  position: absolute;
   padding: 0 3px 0 6px;
   bottom: 40px;
   left: 0;
@@ -222,7 +224,7 @@ const ProgressBarHandler = styled.div.attrs(({ progress }) => ({
 `
 
 const ProgressTime = styled.div`
-  position: fixed;
+  position: absolute;
   color: ${({ theme }) => theme.dg};
   opacity: 0.8;
   font-size: 14px;
@@ -236,7 +238,7 @@ const DurationProgress = styled(ProgressTime)`
 `
 
 const ProgressContainer = styled.div`
-  position: fixed;
+  position: absolute;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   bottom: 130px;
@@ -289,10 +291,10 @@ const PlayerStopIcon = styled.div`
   }
 `
 
-const StyledPlayBar = styled.div`
+const StyledPlayBar = styled(animated.div)`
   width: 126px;
   height: 40px;
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   left: 15px;
   z-index: 1000;
@@ -300,6 +302,7 @@ const StyledPlayBar = styled.div`
   border-radius: 500px;
   padding-left: 55px;
   transition: all 0.4s;
+  overflow: hidden;
   .duration {
     color: ${({ theme }) => theme.dg};
     font-weight: bold;
@@ -319,6 +322,7 @@ const StyledPlayBar = styled.div`
         width: "100vw",
         background: theme.mg,
         padding: 20,
+        willChange: "width, height",
       }
     }
   }}
@@ -336,6 +340,7 @@ const PlayListItem = ({ songName, artistName, isActivePlay, songIndex }) => {
   const onRemoveItem = useCallback(
     e => {
       e.stopPropagation()
+      e.target.parentElement.style.display = "none"
       storeDispatch(playBarPage.removeSong(songIndex))
     },
     [songIndex, storeDispatch],
@@ -475,6 +480,7 @@ const PlayBar = memo(({ route }) => {
   const isProgressBarActived = useRef(false)
   const playMode = useSelector(state => state.root.playMode)
   const progressBarRef = useRef()
+  const lastSongList = useRef()
 
   const {
     isShowModal,
@@ -719,10 +725,50 @@ const PlayBar = memo(({ route }) => {
   )
 
   const songPlayList = useMemo(() => {
-    return songList
-      ? songIdList.map(id => songList?.find?.(song => song.id === id))
-      : []
+    let list = []
+    if (songList) {
+      list = songIdList.map(id => songList?.find?.(song => song.id === id))
+      lastSongList.current = list
+    }
+    return list
   }, [songIdList, songList])
+
+  const finalSongList = useMemo(() => {
+    if (songPlayList.length) return songPlayList
+    if (lastSongList.current) return lastSongList.current
+    return []
+  }, [songPlayList])
+
+  useEffect(() => {
+    if ("mediaSession" in navigator && songDetail) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: songDetail?.[0]?.title ?? "",
+        artist: songDetail?.[0]?.artistName ?? "",
+        album: songDetail?.[0]?.albumName ?? "",
+        artwork: [{ src: songDetail?.[0]?.imgUrl ?? "" }],
+      })
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        onNextOrPrePlay(true, "prev")
+      })
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        onNextOrPrePlay(true, "next")
+      })
+    }
+  }, [onNextOrPrePlay, songDetail])
+
+  const [props, set] = useSpring(() => ({
+    config: config.gentle,
+  }))
+
+  const bind = useDrag(
+    ({ down, movement: [, yDelta], direction: [, yDir], cancel, dragging }) => {
+      if (!dragging && yDelta > 60 && yDir === 1) {
+        setShowPlayPage(false)
+        cancel()
+      }
+      console.log(down, yDelta, yDir)
+    },
+  )
 
   return (
     <>
@@ -732,7 +778,7 @@ const PlayBar = memo(({ route }) => {
           <ModalMask onClick={onModalClose}>
             <StyledModalContainer isShow={isShowContent}>
               <div className="contents">
-                <Playlist songList={songPlayList} />
+                <Playlist songList={finalSongList} />
               </div>
               <div className="close" data-close="true">
                 &times;
@@ -761,7 +807,7 @@ const PlayBar = memo(({ route }) => {
       />
 
       {isShowPlayBar && (
-        <StyledPlayBar isShowPlayPage={isShowPlayPage}>
+        <StyledPlayBar isShowPlayPage={isShowPlayPage} {...bind()}>
           {!isShowPlayPage ? (
             <>
               <PlayerStateIcon

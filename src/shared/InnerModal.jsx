@@ -17,7 +17,8 @@ class InnerModal extends PureComponent {
   constructor(props) {
     super(props)
     this.modalRoot = document.getElementById("modal_root")
-    if (!this.modalRoot) {
+    // eslint-disable-next-line react/prop-types
+    if (!this.modalRoot || props.isDynamic) {
       this.modalRoot = document.createElement("div")
       document.body.appendChild(this.modalRoot)
     }

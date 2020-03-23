@@ -54,8 +54,6 @@ export const StyledDescModal = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  bottom: 0;
-  right: 0;
   padding: 35px;
   font-size: 16px;
   background: ${props => props.theme.mg};
@@ -64,6 +62,7 @@ export const StyledDescModal = styled.div`
   transition: opacity 0.2s;
   opacity: ${props => (props.isShow ? "1" : "0")};
   z-index: 1000;
+  height: 100%;
   .close {
     position: absolute;
     bottom: 40px;
@@ -100,7 +99,7 @@ export const ArtistName = styled.span`
 `
 export const StyledDesc = styled.div`
   min-height: 20px;
-  max-height: 70vh;
+  max-height: 86%;
   overflow-y: scroll;
   margin-top: 20px;
   font-size: 14px;
