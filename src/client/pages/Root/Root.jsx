@@ -294,7 +294,7 @@ const PlayerStopIcon = styled.div`
 const StyledPlayBar = styled(animated.div)`
   width: 126px;
   height: 40px;
-  position: absolute;
+  position: fixed;
   bottom: 20px;
   left: 15px;
   z-index: 1000;
@@ -756,7 +756,7 @@ const PlayBar = memo(({ route }) => {
     }
   }, [onNextOrPrePlay, songDetail])
 
-  const [props, set] = useSpring(() => ({
+  const [, _] = useSpring(() => ({
     config: config.gentle,
   }))
 
@@ -766,7 +766,6 @@ const PlayBar = memo(({ route }) => {
         setShowPlayPage(false)
         cancel()
       }
-      console.log(down, yDelta, yDir)
     },
   )
 
