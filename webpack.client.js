@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
 const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
+const TerserJSPlugin = require("terser-webpack-plugin")
 const {
   isDEV,
   webpackPlugins,
@@ -54,7 +55,11 @@ module.exports = {
         loader: "babel-loader",
         options: {
           presets: [babelPresets(), "@babel/preset-react"],
-          plugins: [...babelPlugins, "react-hot-loader/babel"],
+          plugins: [
+            ...babelPlugins,
+            "react-hot-loader/babel",
+            ["transform-remove-console", { exclude: ["error", "warn"] }],
+          ],
         },
         exclude: /node_modules/,
       },
@@ -127,9 +132,41 @@ module.exports = {
     // new BundleAnalyzerPlugin(),
   ],
   optimization: {
-    runtimeChunk: {
-      name: "single",
-    },
+    minimize: !isDEV,
+    minimizer: !isDEV
+      ? [
+          new TerserJSPlugin({
+            terserOptions: {
+              parse: {
+                // we want terser to parse ecma 8 code. However, we don't want it
+                // to apply any minfication steps that turns valid ecma 5 code
+                // into invalid ecma 5 code. This is why the 'compress' and 'output'
+                // sections only apply transformations that are ecma 5 safe
+                // https://github.com/facebook/create-react-app/pull/4234
+                ecma: 8,
+              },
+              compress: {
+                ecma: 5,
+                warnings: false,
+              },
+              mangle: {
+                safari10: true,
+              },
+              output: {
+                ecma: 5,
+                comments: false,
+                safari10: true,
+              },
+              safari10: true,
+            },
+            extractComments: false,
+            cache: true,
+            parallel: true,
+            sourceMap: true, // Must be set to true if using source-maps in production
+          }),
+        ]
+      : [],
+    runtimeChunk: true,
     splitChunks: {
       chunks: "all",
       minSize: 30000,

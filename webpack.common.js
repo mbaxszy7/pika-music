@@ -52,10 +52,6 @@ exports.commonRules = () => {
         {
           loader: "image-webpack-loader",
           options: {
-            mozjpeg: {
-              progressive: true,
-              quality: 65,
-            },
             // optipng.enabled: false will disable optipng
             optipng: {
               enabled: true,
@@ -63,9 +59,6 @@ exports.commonRules = () => {
             pngquant: {
               quality: [0.65, 0.9],
               speed: 4,
-            },
-            gifsicle: {
-              interlaced: false,
             },
           },
         },
@@ -79,9 +72,11 @@ exports.babelPresets = env => {
   const common = [
     "@babel/preset-env",
     {
+      // targets: { esmodules: true },
       useBuiltIns: "usage",
       modules: false,
       debug: false,
+      bugfixes: true,
       corejs: { version: 3, proposals: true },
     },
   ]
