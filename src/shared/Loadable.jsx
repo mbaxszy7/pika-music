@@ -3,6 +3,7 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from "react"
+import LogRocket from "logrocket"
 import PropTypes from "prop-types"
 import { matchRoutes } from "react-router-config"
 
@@ -37,6 +38,7 @@ class Loadable extends React.Component {
       //   error: { message: "test" },
       // })
     } catch (e) {
+      LogRocket.captureException(e)
       if (e.message === "timeout") {
         this.setState({
           isTimeout: true,

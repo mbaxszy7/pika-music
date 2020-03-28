@@ -1,4 +1,5 @@
 import React, { memo, useState, useCallback, useEffect, useRef } from "react"
+import LogRocket from "logrocket"
 import Dialog from "./Dialog"
 import { useLocalStorage } from "../utils/hooks"
 
@@ -37,6 +38,7 @@ const PWAService = memo(() => {
             console.log("SW registered: ", registration)
           })
           .catch(registrationError => {
+            LogRocket.captureException(registrationError)
             console.log("SW registration failed: ", registrationError)
           })
       })

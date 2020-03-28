@@ -21,6 +21,7 @@ const settedBabelPlugins = !isDEV
   ? [
       ...babelPlugins,
       ["transform-remove-console", { exclude: ["error", "warn"] }],
+      "add-react-displayname",
     ]
   : [...babelPlugins, "react-hot-loader/babel"]
 
@@ -54,7 +55,7 @@ module.exports = {
     compress: true,
     contentBase: path.join(__dirname, "./public"),
   },
-  devtool: "cheap-module-eval-source-map",
+  devtool: isDEV ? "cheap-module-eval-source-map" : "nosources-source-map",
   resolve: {
     ...webpackResolve,
     alias: webpackAlias,
