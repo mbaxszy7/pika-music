@@ -17,6 +17,19 @@ const {
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin
 
+const settedBabelPlugins = !isDEV
+  ? [
+      ...babelPlugins,
+      ["transform-remove-console", { exclude: ["error", "warn"] }],
+    ]
+  : [...babelPlugins, "react-hot-loader/babel"]
+
+const webpackAlias = isDEV
+  ? {
+      "react-dom": "@hot-loader/react-dom",
+    }
+  : {}
+
 module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
   output: {
@@ -44,9 +57,7 @@ module.exports = {
   devtool: "cheap-module-eval-source-map",
   resolve: {
     ...webpackResolve,
-    alias: {
-      "react-dom": "@hot-loader/react-dom",
-    },
+    alias: webpackAlias,
   },
   module: {
     rules: [
@@ -55,11 +66,7 @@ module.exports = {
         loader: "babel-loader",
         options: {
           presets: [babelPresets(), "@babel/preset-react"],
-          plugins: [
-            ...babelPlugins,
-            "react-hot-loader/babel",
-            ["transform-remove-console", { exclude: ["error", "warn"] }],
-          ],
+          plugins: [...settedBabelPlugins],
         },
         exclude: /node_modules/,
       },
