@@ -48,6 +48,7 @@ app.use(async ctx => {
   const jsxReplace = ret.indexOf(replace)
   const resOne = ret.slice(0, jsxReplace)
   const resTwo = ret.slice(jsxReplace + replace.length)
+  ctx.status = 200
   ctx.res.write(resOne)
   await pipe(jsxStream, ctx.res, { end: false })
   ctx.res.write(resTwo)

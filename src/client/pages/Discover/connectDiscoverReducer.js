@@ -262,12 +262,11 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
   }
 
   getInitialData = async store => {
-    console.log(typeof window, "getInitialData")
     const [error, res] = await awaitWrapper((
       bannerUrl,
       personalizedSongUrl,
       playlistUrl,
-      newSongUrl,
+      // newSongUrl,
       // albumUrl,
       // mvUrl,
     ) =>
