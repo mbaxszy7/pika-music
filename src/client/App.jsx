@@ -1,7 +1,6 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 import { hot } from "react-hot-loader/root"
-import LogRocket from "logrocket"
 import React, { useState, useEffect } from "react"
 import { SWRConfig, mutate } from "swr"
 import PropTypes from "prop-types"
@@ -47,7 +46,6 @@ const ClientRouters = () => {
               action: () => mutate(key),
             },
           ])
-          LogRocket.captureException(`api ${key} load slow`)
         },
         onErrorRetry: (err, key, option, revalidate) => {
           if (key.includes("/api/check/music")) return
@@ -64,7 +62,6 @@ const ClientRouters = () => {
               },
             ]
           })
-          LogRocket.captureException(err)
         },
       }}
     >

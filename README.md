@@ -8,7 +8,7 @@ A PWA music site
 
 1. npm run build:server
 2. npm run build:client
-3. nodemon --inspect ./public/server/bundle.js
+3. nodemon --inspect ./server_app/bundle.js
 
 ### CSR
 

@@ -87,13 +87,13 @@
     "terser-webpack-plugin": "^2.3.5",
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "babel-plugin-add-react-displayname": "0.0.5",
     "clean-webpack-plugin": "^3.0.0",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.6",
     "html-webpack-plugin": "^3.2.0",
     "imagemin-webp-webpack-plugin": "^3.3.1",
     "immer": "^5.3.6",
@@ -102,9 +102,6 @@
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
-    "koa-views": "^6.2.1",
-    "logrocket": "^1.0.7",
-    "logrocket-react": "^4.0.1",
     "lozad": "^1.14.0",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
@@ -138,16 +135,6 @@
     "workbox-webpack-plugin": "^5.0.0"
   },
   "browserslist": {
-    "production": [
-      "> 1%",
-      "last 2 version",
-      "not android <= 6",
-      "not ie<=11",
-      "not ie_mob<=11",
-      "ios >= 10",
-      "safari >= 10",
-      "not op_mini all"
-    ],
     "ssr": [
       "node 12"
     ]

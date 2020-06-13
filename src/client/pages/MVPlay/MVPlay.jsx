@@ -4,7 +4,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-nested-ternary */
 import React, { memo, useState, useCallback, useRef, useEffect } from "react"
-import LogRocket from "logrocket"
 import screenfull from "screenfull"
 import styled from "styled-components"
 import useSWR from "swr"
@@ -377,7 +376,6 @@ const MVPlay = memo(() => {
         videoRef.current.buffered.length - 1,
       )
     } catch (e) {
-      LogRocket.captureException(e)
       console.warn(e)
     }
 
@@ -437,7 +435,6 @@ const MVPlay = memo(() => {
         }) === -1
       )
     } catch (e) {
-      LogRocket.captureException(e)
       return false
     }
   }, [])

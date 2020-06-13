@@ -84,6 +84,10 @@ exports.babelPresets = env => {
     common[1].targets = {
       node: "13",
     }
+  } else {
+    common[1].targets = {
+      esmodules: true,
+    }
   }
   return common
 }

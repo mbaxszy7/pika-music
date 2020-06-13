@@ -311,8 +311,8 @@ const StyledPlayBar = styled(animated.div)`
     line-height: 40px;
   }
 
-  ${({ isShowPlayPage, theme }) => {
-    if (isShowPlayPage) {
+  ${({ isshowplaypage, theme }) => {
+    if (isshowplaypage) {
       return {
         zIndex: 9999,
         bottom: 0,
@@ -469,7 +469,7 @@ const PlayPageBottomPart = memo(
 const PlayBar = memo(({ route }) => {
   const audioRef = useRef()
   const [playState, setPlayState] = useState("")
-  const [isShowPlayPage, setShowPlayPage] = useState(false)
+  const [isshowplaypage, setShowPlayPage] = useState(false)
   const [audioCurTime, setAudioCurTime] = useState(0)
   const isShowPlayBar = useSelector(state => state.root.isShowPlayBar)
   const [curLyricLine, setCurLyricLine] = useState("")
@@ -806,8 +806,8 @@ const PlayBar = memo(({ route }) => {
       />
 
       {isShowPlayBar && (
-        <StyledPlayBar isShowPlayPage={isShowPlayPage} {...bind()}>
-          {!isShowPlayPage ? (
+        <StyledPlayBar isshowplaypage={isshowplaypage} {...bind()}>
+          {!isshowplaypage ? (
             <>
               <PlayerStateIcon
                 playState={playState}

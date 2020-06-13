@@ -4,10 +4,25 @@ import Koa from "koa"
 import path from "path"
 import serve from "koa-static"
 import mount from "koa-mount"
-import views from "koa-views"
+import fs from "fs"
 import logger from "koa-logger"
 import renderHTML from "./renderHTML"
 import uaParser from "./middlewares/ua"
+
+function pipe(from, to, options) {
+  return new Promise((resolve, reject) => {
+    from.pipe(to, options)
+    from.on("error", reject)
+    from.on("end", resolve)
+  })
+}
+
+const template = fs.readFileSync(
+  path.join(process.cwd(), "/public", "./views/index.html"),
+  "utf-8",
+)
+
+const replace = "<!--clientContent-->"
 
 const app = new Koa()
 app.use(logger())
@@ -17,32 +32,26 @@ app.use(async (ctx, next) => {
   }
   await next()
 })
-app.use(
-  views(path.join(process.cwd(), "/public", "./views"), {
-    map: { hbs: "handlebars" },
-    extension: "hbs",
-    cache: true,
-  }),
-)
 app.use(mount("/images", serve("./public/images")))
 app.use(mount("/public", serve("./public")))
 app.use(uaParser)
 
 app.use(async ctx => {
   const staticContext = {}
-  const { styleTags, clientContent, state, dynamicBundles } = await renderHTML(
-    ctx,
-    staticContext,
-  )
+  const { jsxStream, state } = await renderHTML(ctx, staticContext)
   if (staticContext.NOT_FOUND) {
     ctx.status = 404
   }
-  await ctx.render("main", {
-    styleTags,
-    clientContent,
-    state,
-    dynamicBundles,
-  })
+
+  const ret = template.replace("<!--state-->", state)
+
+  const jsxReplace = ret.indexOf(replace)
+  const resOne = ret.slice(0, jsxReplace)
+  const resTwo = ret.slice(jsxReplace + replace.length)
+  ctx.res.write(resOne)
+  await pipe(jsxStream, ctx.res, { end: false })
+  ctx.res.write(resTwo)
+  ctx.res.end()
 })
 
 app.on("error", err => {

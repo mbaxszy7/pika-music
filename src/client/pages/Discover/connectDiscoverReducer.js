@@ -262,33 +262,30 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
   }
 
   getInitialData = async store => {
-    const [
-      error,
-      res,
-    ] = await awaitWrapper(
-      (
-        bannerUrl,
-        personalizedSongUrl,
-        playlistUrl,
-        newSongUrl,
-        albumUrl,
-        mvUrl,
-      ) =>
-        Promise.allSettled([
-          this.requestBannerList(bannerUrl),
-          this.requestPersonalizedSongs(personalizedSongUrl),
-          this.requestPlaylist(playlistUrl),
-          this.requestNewSongs(newSongUrl),
-          this.requestAlbums(albumUrl),
-          this.requestPrivateMVs(mvUrl),
-        ]),
+    console.log(typeof window, "getInitialData")
+    const [error, res] = await awaitWrapper((
+      bannerUrl,
+      personalizedSongUrl,
+      playlistUrl,
+      newSongUrl,
+      // albumUrl,
+      // mvUrl,
+    ) =>
+      Promise.allSettled([
+        this.requestBannerList(bannerUrl),
+        this.requestPersonalizedSongs(personalizedSongUrl),
+        this.requestPlaylist(playlistUrl),
+        // this.requestNewSongs(newSongUrl),
+        // this.requestAlbums(albumUrl),
+        // this.requestPrivateMVs(mvUrl),
+      ]),
     )(
       "/api/banner?type=2",
       "/api/personalized/newsong",
       "/api/top/playlist?limit=8&order=hot",
-      "/api/top/song?type=0",
-      "/api/album/newest",
-      "/api/personalized/privatecontent",
+      // "/api/top/song?type=0",
+      // "/api/album/newest",
+      // "/api/personalized/privatecontent",
     )
     if (error) {
       //  handle error in server setInitialDataToStore
@@ -303,15 +300,15 @@ class ConnectDiscoverReducer extends ConnectCompReducer {
     if (res[2].status === "fulfilled") {
       store.dispatch(this.setPlayLists(res[2].value))
     }
-    if (res[3].status === "fulfilled") {
-      store.dispatch(this.setNewSongs(res[3].value))
-    }
-    if (res[4].status === "fulfilled") {
-      store.dispatch(this.setAlbums(res[4].value))
-    }
-    if (res[5].status === "fulfilled") {
-      store.dispatch(this.setMVs(res[5].value))
-    }
+    // if (res[3].status === "fulfilled") {
+    //   store.dispatch(this.setNewSongs(res[3].value))
+    // }
+    // if (res[4].status === "fulfilled") {
+    //   store.dispatch(this.setAlbums(res[4].value))
+    // }
+    // if (res[5].status === "fulfilled") {
+    //   store.dispatch(this.setMVs(res[5].value))
+    // }
   }
 
   setBannerList = data => ({

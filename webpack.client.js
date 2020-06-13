@@ -85,9 +85,17 @@ module.exports = {
           template: path.resolve(__dirname, "./index.html"),
         })
       : new HtmlWebpackPlugin({
+          minify: {
+            collapseWhitespace: true,
+            removeComments: false,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
           title: "music-motion",
-          template: path.resolve(__dirname, "./src/assets/index.hbs"),
-          filename: path.join(__dirname, "./public/views/main.hbs"),
+          template: path.resolve(__dirname, "./src/assets/index.html"),
+          filename: path.join(__dirname, "./public/views/index.html"),
           favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
         }),
     new webpack.DefinePlugin({

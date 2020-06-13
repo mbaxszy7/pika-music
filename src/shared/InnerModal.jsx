@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { PureComponent } from "react"
-import LogRocket from "logrocket"
 import ReactDOM from "react-dom"
 import styled from "styled-components"
 
@@ -37,7 +36,6 @@ class InnerModal extends PureComponent {
     try {
       this.modalRoot.removeChild(this.el)
     } catch (e) {
-      LogRocket.captureException(e)
       console.error(e)
     }
     window.removeEventListener("beforeunload", this.modalCleanup)
@@ -48,7 +46,6 @@ class InnerModal extends PureComponent {
     try {
       this.modalRoot.removeChild(this.el)
     } catch (e) {
-      LogRocket.captureException(e)
       console.error(e)
     }
   }
