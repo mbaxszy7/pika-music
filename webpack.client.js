@@ -14,8 +14,8 @@ const {
   getCommandArg,
   commonRules,
 } = require("./webpack.common.js")
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin
 
 const settedBabelPlugins = !isDEV
   ? [
@@ -145,7 +145,7 @@ module.exports = {
         /\.webp$/,
       ],
     }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
   optimization: {
     minimize: !isDEV,
