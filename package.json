@@ -1,5 +1,6 @@
 {
   "name": "music-motion",
+  "sideEffects": false,
   "version": "1.0.0",
   "description": "网易云音乐web-app with pwa",
   "main": "index.js",

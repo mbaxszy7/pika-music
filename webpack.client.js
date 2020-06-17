@@ -14,8 +14,8 @@ const {
   getCommandArg,
   commonRules,
 } = require("./webpack.common.js")
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin
 
 const settedBabelPlugins = !isDEV
   ? [
@@ -145,7 +145,7 @@ module.exports = {
         /\.webp$/,
       ],
     }),
-    // new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin(),
   ],
   optimization: {
     minimize: !isDEV,
@@ -162,7 +162,7 @@ module.exports = {
                 ecma: 8,
               },
               compress: {
-                ecma: 5,
+                ecma: 2015,
                 warnings: false,
               },
               mangle: {
@@ -171,12 +171,12 @@ module.exports = {
               output: {
                 ecma: 5,
                 comments: false,
-                safari10: true,
+                safari10: false,
               },
-              safari10: true,
+              safari10: false,
             },
             extractComments: false,
-            cache: true,
+            // cache: true,
             parallel: true,
             sourceMap: true, // Must be set to true if using source-maps in production
           }),
