@@ -25,6 +25,17 @@ const template = fs.readFileSync(
 const replace = "<!--clientContent-->"
 
 const app = new Koa()
+
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (err) {
+    ctx.status = err.status || 500
+    ctx.body = "server error"
+    ctx.app.emit("error", err, ctx)
+  }
+})
+
 app.use(logger())
 app.use(async (ctx, next) => {
   if (ctx.path.includes(".js")) {
@@ -50,7 +61,10 @@ app.use(async ctx => {
   const resTwo = ret.slice(jsxReplace + replace.length)
   ctx.status = 200
   ctx.res.write(resOne)
-  await pipe(jsxStream, ctx.res, { end: false })
+  if (jsxStream) {
+    await pipe(jsxStream, ctx.res, { end: false })
+  }
+
   ctx.res.write(resTwo)
   ctx.res.end()
 })
