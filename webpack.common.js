@@ -75,7 +75,7 @@ exports.babelPresets = env => {
       // targets: { esmodules: true },
       useBuiltIns: "usage",
       modules: false,
-      debug: false,
+      debug: true,
       bugfixes: true,
       corejs: { version: 3, proposals: true },
     },
