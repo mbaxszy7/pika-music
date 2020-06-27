@@ -13,8 +13,6 @@ import React, {
   memo,
 } from "react"
 import useSWR from "swr"
-import { useDrag } from "react-use-gesture"
-import { useSpring, animated, config } from "react-spring"
 import PropTypes from "prop-types"
 import { renderRoutes } from "react-router-config"
 import styled from "styled-components"
@@ -291,7 +289,7 @@ const PlayerStopIcon = styled.div`
   }
 `
 
-const StyledPlayBar = styled(animated.div)`
+const StyledPlayBar = styled.div`
   width: 126px;
   height: 40px;
   position: fixed;
@@ -311,8 +309,8 @@ const StyledPlayBar = styled(animated.div)`
     line-height: 40px;
   }
 
-  ${({ isshowplaypage, theme }) => {
-    if (isshowplaypage) {
+  ${({ isShowPlayPage, theme }) => {
+    if (isShowPlayPage) {
       return {
         zIndex: 9999,
         bottom: 0,
@@ -469,7 +467,7 @@ const PlayPageBottomPart = memo(
 const PlayBar = memo(({ route }) => {
   const audioRef = useRef()
   const [playState, setPlayState] = useState("")
-  const [isshowplaypage, setShowPlayPage] = useState(false)
+  const [isShowPlayPage, setShowPlayPage] = useState(false)
   const [audioCurTime, setAudioCurTime] = useState(0)
   const isShowPlayBar = useSelector(state => state.root.isShowPlayBar)
   const [curLyricLine, setCurLyricLine] = useState("")
@@ -756,19 +754,6 @@ const PlayBar = memo(({ route }) => {
     }
   }, [onNextOrPrePlay, songDetail])
 
-  const [, _] = useSpring(() => ({
-    config: config.gentle,
-  }))
-
-  const bind = useDrag(
-    ({ down, movement: [, yDelta], direction: [, yDir], cancel, dragging }) => {
-      if (!dragging && yDelta > 60 && yDir === 1) {
-        setShowPlayPage(false)
-        cancel()
-      }
-    },
-  )
-
   return (
     <>
       <AppNavigate />
@@ -806,8 +791,9 @@ const PlayBar = memo(({ route }) => {
       />
 
       {isShowPlayBar && (
-        <StyledPlayBar isshowplaypage={isshowplaypage} {...bind()}>
-          {!isshowplaypage ? (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        <StyledPlayBar isShowPlayPage={!!isShowPlayPage}>
+          {!isShowPlayPage ? (
             <>
               <PlayerStateIcon
                 playState={playState}
