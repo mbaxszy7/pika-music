@@ -5,6 +5,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { matchRoutes } from "react-router-config"
+import { match } from "path-to-regexp"
 
 class Loadable extends React.Component {
   constructor(props) {
@@ -27,15 +28,15 @@ class Loadable extends React.Component {
   load = async () => {
     const { loader } = this.props
     try {
+      this.setState({
+        error: null,
+      })
       const loadedComp = await Promise.race([this.raceLoading(), loader()])
       this.setState({
         isTimeout: false,
         Comp:
           loadedComp && loadedComp.__esModule ? loadedComp.default : loadedComp,
       })
-      // this.setState({
-      //   error: { message: "test" },
-      // })
     } catch (e) {
       if (e.message === "timeout") {
         this.setState({
@@ -57,8 +58,9 @@ class Loadable extends React.Component {
   render() {
     const { error, isTimeout, Comp } = this.state
     const { loading } = this.props
-    if (error) return loading({ error })
+    if (error) return loading({ error, retry: this.load })
     if (isTimeout) return loading({ pastDelay: true })
+
     if (Comp) return <Comp {...this.props} />
     return null
   }
@@ -85,40 +87,46 @@ export const asyncLoader = ({ loader, loading, pastDelay }) => {
   return importable
 }
 
-let ssrRoutes
 // ssr的时候没必要使用动态路由，不然server端不会渲染组件本身的内容
-// 所以需要主动去加载动态路由
-export const ssrRoutesCapture = async routes => {
-  if (!ssrRoutes) {
-    ssrRoutes = await Promise.all(
-      [...routes].map(async route => {
-        if (route.routes) {
-          return {
-            ...route,
-            routes: await Promise.all(
-              [...route.routes].map(async compRoute => {
-                if (compRoute.component.isAsyncComp) {
-                  const realComp = await compRoute.component().props.loader()
-                  const reactComp =
-                    realComp && realComp.__esModule
-                      ? realComp.default
-                      : realComp
-                  return {
-                    ...compRoute,
-                    component: reactComp,
-                  }
-                }
-                return compRoute
-              }),
-            ),
-          }
-        }
+// 所以需要主动去执行动态路由的组件
+export const ssrRoutesCapture = async (routes, requestPath) => {
+  const ssrRoutes = await Promise.allSettled(
+    [...routes].map(async route => {
+      if (route.routes) {
         return {
           ...route,
+          routes: await Promise.allSettled(
+            [...route.routes].map(async compRoute => {
+              const { component } = compRoute
+
+              if (component.isAsyncComp) {
+                try {
+                  const RealComp = await component().props.loader()
+
+                  const ReactComp =
+                    RealComp && RealComp.__esModule
+                      ? RealComp.default
+                      : RealComp
+
+                  return {
+                    ...compRoute,
+                    component: ReactComp,
+                  }
+                } catch (e) {
+                  console.error(e)
+                }
+              }
+              return compRoute
+            }),
+          ).then(res => res.map(r => r.value)),
         }
-      }),
-    )
-  }
+      }
+      return {
+        ...route,
+      }
+    }),
+  ).then(res => res.map(r => r.value))
+
   return ssrRoutes
 }
 
@@ -129,17 +137,26 @@ export const ssrRoutesCapture = async routes => {
 
 // 指定为csr的页面除外
 export const clientPreloadReady = async routes => {
-  const matchedRoutes = matchRoutes(routes, window.location.pathname)
-  if (matchedRoutes && matchedRoutes.length) {
-    await Promise.all(
-      matchedRoutes.map(async route => {
-        if (
-          route?.route?.component?.isAsyncComp &&
-          !route?.route?.component.csr
-        ) {
-          await route.route.component().props.loader()
-        }
-      }),
-    )
+  try {
+    const matchedRoutes = matchRoutes(routes, window.location.pathname)
+    // console.warn(route.route.component())
+    if (matchedRoutes && matchedRoutes.length) {
+      await Promise.allSettled(
+        matchedRoutes.map(async route => {
+          if (
+            route?.route?.component?.isAsyncComp &&
+            !route?.route?.component.csr
+          ) {
+            try {
+              await route.route.component().props.loader()
+            } catch (e) {
+              await Promise.reject(e)
+            }
+          }
+        }),
+      )
+    }
+  } catch (e) {
+    console.error(e)
   }
 }

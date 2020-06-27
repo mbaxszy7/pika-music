@@ -145,4 +145,8 @@ const AlbumDetails = memo(() => {
   )
 })
 
+AlbumDetails.getInitialProps = async (store, ctx) => {
+  await albumDetailsPage.getInitialData(store, ctx)
+}
+
 export default AlbumDetails

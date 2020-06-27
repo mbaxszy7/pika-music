@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { memo, useMemo, useCallback } from "react"
@@ -12,6 +13,7 @@ import playBarPage from "../Root/connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
 import MediaItemList, { MediaItemTitle } from "../../components/MediaItemList"
 import { useIsomorphicEffect } from "../../../utils/hooks"
+import { awaitWrapper } from "../../../utils"
 import mediaQury from "../../../shared/mediaQury.styled"
 
 const StyledMediaItemTitle = styled(MediaItemTitle)`
@@ -172,9 +174,6 @@ const Discover = memo(() => {
     state => state.discover.personalizedSongs,
   )
   const initialPlaylists = useSelector(state => state.discover.playlists)
-  const initialNewSongs = useSelector(state => state.discover.newSongs)
-  const initialAlbums = useSelector(state => state.discover.albums)
-  const initialMVs = useSelector(state => state.discover.mvs)
 
   useIsomorphicEffect(() => {
     document.getElementById("root").scrollTop = 0
@@ -204,25 +203,16 @@ const Discover = memo(() => {
   const { data: newSongs } = useSWR(
     "/api/top/song?type=0",
     discoverPage.requestNewSongs,
-    {
-      initialData: initialNewSongs,
-    },
   )
 
   const { data: albums } = useSWR(
     "/api/album/newest",
     discoverPage.requestAlbums,
-    {
-      initialData: initialAlbums,
-    },
   )
 
   const { data: mvs } = useSWR(
     "/api/personalized/privatecontent",
     discoverPage.requestPrivateMVs,
-    {
-      initialData: initialMVs,
-    },
   )
 
   const threePersonalizedSongs = useMemo(
@@ -318,8 +308,8 @@ const Discover = memo(() => {
   )
 })
 
-Discover.getInitialData = () => {
-  console.log('uuu')
+Discover.getInitialProps = async (store, ctx) => {
+  await discoverPage.getInitialData(store, ctx)
 }
 
 export default Discover

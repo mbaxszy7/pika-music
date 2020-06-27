@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import ConnectCompReducer from "../../../utils/connectPageReducer"
 import { awaitWrapper } from "../../../utils"
 import {
@@ -13,10 +14,13 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
   }
 
   requestArtistInfo = (url, id) => {
-    return this.fetcher
-      .get(url)
-      .then(res => res.data.result)
-      .then(data => data.artists?.filter(ar => ar.id == id)[0])
+    return (
+      this.fetcher
+        .get(url)
+        .then(res => res.data.result)
+        // eslint-disable-next-line eqeqeq
+        .then(data => data.artists?.filter(ar => ar.id == id)[0])
+    )
   }
 
   requestArtistSongs = async url => {
@@ -98,12 +102,12 @@ class ConnectArtistDetailsReducer extends ConnectCompReducer {
     )
     if (error) {
       //  handle error in server setInitialDataToStore
-      return Promise.reject(error)
+      console.error(error)
     }
     store.dispatch(this.setDesc(result[0]))
-    store.dispatch(this.setSONGS(result[1][0]))
-    store.dispatch(this.setAlbums(result[2][0]))
-    store.dispatch(this.setMVS(result[3][0]))
+    store.dispatch(this.setSONGS(result[1]))
+    store.dispatch(this.setAlbums(result[2]))
+    store.dispatch(this.setMVS(result[3]))
   }
 
   setDesc = data => {

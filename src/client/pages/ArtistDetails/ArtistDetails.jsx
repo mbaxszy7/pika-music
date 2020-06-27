@@ -176,7 +176,10 @@ const ArtistDetails = () => {
 
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
+  console.warn("initArtistSongs", initArtistSongs)
+
   const initArtistAlbums = useSelector(state => state.artistDetails.albums)
+  console.warn("initArtistAlbums", initArtistAlbums)
   const initMVs = useSelector(state => state.artistDetails.mvs)
   const storeDispatch = useDispatch()
   const location = useLocation()
@@ -205,8 +208,6 @@ const ArtistDetails = () => {
     artistDetailsPage.requestArtistDesc,
     {
       initialData: initArtistDesc,
-    },
-    {
       revalidateOnFocus: false,
     },
   )
@@ -216,8 +217,6 @@ const ArtistDetails = () => {
     artistDetailsPage.requestArtistSongs,
     {
       initialData: initArtistSongs,
-    },
-    {
       revalidateOnFocus: false,
     },
   )
@@ -227,8 +226,6 @@ const ArtistDetails = () => {
     artistDetailsPage.requestArtistAlbums,
     {
       initialData: initArtistAlbums,
-    },
-    {
       revalidateOnFocus: false,
     },
   )
@@ -238,8 +235,6 @@ const ArtistDetails = () => {
     artistDetailsPage.requestArtistMVs,
     {
       initialData: initMVs,
-    },
-    {
       revalidateOnFocus: false,
     },
   )
@@ -264,7 +259,7 @@ const ArtistDetails = () => {
           moreUrl={`/artist/media?type=song&artistId=${artistId}`}
           title="歌曲"
           list={
-            artistSongs?.[0][0].slice?.(0, 5) ??
+            artistSongs?.[0][0]?.slice?.(0, 5) ??
             new Array(5).fill({ type: "song" })
           }
         />
@@ -281,6 +276,10 @@ const ArtistDetails = () => {
       </ScrollContainer>
     </ArtistDetailsPage>
   )
+}
+
+ArtistDetails.getInitialProps = async (store, ctx) => {
+  await artistDetailsPage.getInitialData(store, ctx)
 }
 
 export default ArtistDetails
