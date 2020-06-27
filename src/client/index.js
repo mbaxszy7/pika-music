@@ -20,7 +20,7 @@ try {
 }
 
 const store = getReduxStore(payloadData)
-console.warn(payloadData)
+// console.warn(payloadData)
 const render = isDEV ? ReactDOM.render : ReactDOM.hydrate
 
 if (isDEV) {

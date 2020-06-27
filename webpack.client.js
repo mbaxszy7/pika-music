@@ -3,7 +3,7 @@ const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const WorkboxPlugin = require("workbox-webpack-plugin")
 const WebpackPwaManifest = require("webpack-pwa-manifest")
-const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
+// const ImageminWebpWebpackPlugin = require("imagemin-webp-webpack-plugin")
 const TerserJSPlugin = require("terser-webpack-plugin")
 const {
   isDEV,
@@ -76,7 +76,7 @@ module.exports = {
   },
   plugins: [
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new ImageminWebpWebpackPlugin(),
+    // new ImageminWebpWebpackPlugin(),
     ...webpackPlugins,
     isDEV
       ? new HtmlWebpackPlugin({

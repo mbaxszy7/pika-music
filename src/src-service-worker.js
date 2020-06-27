@@ -10,7 +10,6 @@ import {
 import { ExpirationPlugin } from "workbox-expiration"
 import { CacheableResponsePlugin } from "workbox-cacheable-response"
 import { registerRoute } from "workbox-routing/registerRoute"
-import { awaitWrapper } from "./utils/index"
 
 // 预缓存设置
 setCacheNameDetails({
@@ -27,46 +26,46 @@ registerRoute(
   }),
 )
 
-// 站点png图片拦截为webp
-registerRoute(/\.png$/, ({ event }) => {
-  let supportWebp = false
-  if (event.request.headers.has("accept")) {
-    supportWebp = event.request.headers.get("accept").includes("webp")
-  }
+// // 站点png图片拦截为webp
+// registerRoute(/\.png$/, ({ event }) => {
+//   let supportWebp = false
+//   if (event.request.headers.has("accept")) {
+//     supportWebp = event.request.headers.get("accept").includes("webp")
+//   }
 
-  if (supportWebp) {
-    const req = event.request.clone()
-    const returnUrl = `${req.url.substr(0, req.url.lastIndexOf("."))}.webp`
-    event.respondWith(
-      (async () => {
-        // 创建或者打开pika-webp
-        const pikaWebpCache = await caches.open("pika-webp")
-        // 匹配缓存
-        const cacheRes = await pikaWebpCache.match(returnUrl)
-        // 如果匹配缓存，则立即返回
-        if (cacheRes) {
-          return cacheRes
-        }
-        // 不匹配缓存， 去fetch
-        const [error, response] = await awaitWrapper(fetch)(returnUrl, {
-          mode: "no-cors",
-        })
+//   if (supportWebp) {
+//     const req = event.request.clone()
+//     const returnUrl = `${req.url.substr(0, req.url.lastIndexOf("."))}.webp`
+//     event.respondWith(
+//       (async () => {
+//         // 创建或者打开pika-webp
+//         const pikaWebpCache = await caches.open("pika-webp")
+//         // 匹配缓存
+//         const cacheRes = await pikaWebpCache.match(returnUrl)
+//         // 如果匹配缓存，则立即返回
+//         if (cacheRes) {
+//           return cacheRes
+//         }
+//         // 不匹配缓存， 去fetch
+//         const [error, response] = await awaitWrapper(fetch)(returnUrl, {
+//           mode: "no-cors",
+//         })
 
-        // 如果fetch出错，则返回png缓存（precache的）
-        if (error) {
-          const res = await caches.match(event.request)
-          if (res) return res
-        } else if (response) {
-          // fetch成功，则放入pika-webp， 并返回
-          if (response) {
-            pikaWebpCache.put(returnUrl, response.clone())
-            return response
-          }
-        }
-      })(),
-    )
-  }
-})
+//         // 如果fetch出错，则返回png缓存（precache的）
+//         if (error) {
+//           const res = await caches.match(event.request)
+//           if (res) return res
+//         } else if (response) {
+//           // fetch成功，则放入pika-webp， 并返回
+//           if (response) {
+//             pikaWebpCache.put(returnUrl, response.clone())
+//             return response
+//           }
+//         }
+//       })(),
+//     )
+//   }
+// })
 
 // Images
 registerRoute(
