@@ -49,19 +49,19 @@ exports.commonRules = () => {
             emitFile: !isServerBuild,
           },
         },
-        {
-          loader: "image-webpack-loader",
-          options: {
-            // optipng.enabled: false will disable optipng
-            optipng: {
-              enabled: true,
-            },
-            pngquant: {
-              quality: [0.65, 0.9],
-              speed: 4,
-            },
-          },
-        },
+        // {
+        //   loader: "image-webpack-loader",
+        //   options: {
+        //     // optipng.enabled: false will disable optipng
+        //     optipng: {
+        //       enabled: true,
+        //     },
+        //     pngquant: {
+        //       quality: [0.65, 0.9],
+        //       speed: 4,
+        //     },
+        //   },
+        // },
       ],
     },
   ]
