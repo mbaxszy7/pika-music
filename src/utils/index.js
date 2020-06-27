@@ -11,7 +11,7 @@ export const awaitWrapper = pFn => {
   }
 }
 
-export const isDEV = process.env.NODE_ENV === "development"
+export const isDEV = process.env.NODE_ENV !== "production"
 
 export const clamp = (num, min, max) => {
   if (num < min) return min

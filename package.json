@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "git-cz",
+    "git": "git add .",
+    "commit": "npm run git && lint-staged  && git-cz",
     "build:client": "webpack --watch --mode=production --config 'webpack.client.js'",
     "build:server": "webpack --build=server --watch --mode=production --config 'webpack.server.js'",
     "start:client": "NODE_ENV=development webpack-dev-server --host 0.0.0.0 --mode=development  --hot  --config 'webpack.client.js'",
@@ -21,7 +22,7 @@
   "lint-staged": {
     "{src,test}/**/*.js": [
       "prettier --write",
-      "git add"
+      "eslint"
     ]
   },
   "config": {
@@ -85,14 +86,13 @@
     "nodemon": "^2.0.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "terser-webpack-plugin": "^2.3.5",
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "terser-webpack-plugin": "^2.3.5",
     "axios": "^0.19.2",
-    "babel-plugin-add-react-displayname": "0.0.5",
     "clean-webpack-plugin": "^3.0.0",
     "handlebars": "^4.7.6",
     "html-webpack-plugin": "^3.2.0",
@@ -137,7 +137,7 @@
   },
   "browserslist": {
     "ssr": [
-      "node 12"
+      "node 13"
     ]
   }
 }

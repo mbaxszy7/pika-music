@@ -21,7 +21,6 @@ const settedBabelPlugins = !isDEV
   ? [
       ...babelPlugins,
       ["transform-remove-console", { exclude: ["error", "warn"] }],
-      "add-react-displayname",
     ]
   : [...babelPlugins, "react-hot-loader/babel"]
 

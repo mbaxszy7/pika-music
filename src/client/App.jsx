@@ -103,4 +103,6 @@ App.propTypes = {
   ssrRoutes: PropTypes.array,
 }
 
-export default isDEV ? hot(App) : App
+const app = isDEV ? hot(App) : App
+
+export default app
