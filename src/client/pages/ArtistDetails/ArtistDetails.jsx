@@ -195,13 +195,13 @@ const ArtistDetails = () => {
   }, [artistId, storeDispatch])
 
   useEffect(() => {
-    if (artistId) {
+    return () => {
       storeDispatch(artistDetailsPage.setAlbums(null))
       storeDispatch(artistDetailsPage.setSONGS(null))
       storeDispatch(artistDetailsPage.setDesc(null))
       storeDispatch(artistDetailsPage.setMVS(null))
     }
-  }, [artistId, storeDispatch])
+  }, [storeDispatch])
 
   const { data: artistDesc } = useSWR(
     `/api/artist/desc?id=${artistId}`,
