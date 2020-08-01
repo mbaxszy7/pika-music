@@ -12,7 +12,8 @@
     "build:server": "webpack --build=server --watch --mode=production --config 'webpack.server.js'",
     "start:client": "NODE_ENV=development webpack-dev-server --host 0.0.0.0 --mode=development  --hot  --config 'webpack.client.js'",
     "build-client": "webpack --mode=production --config 'webpack.client.js'",
-    "build-server": "webpack --build=server --mode=production --config 'webpack.server.js'"
+    "build-server": "webpack --build=server --mode=production --config 'webpack.server.js'",
+    "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "husky": {
     "hooks": {
