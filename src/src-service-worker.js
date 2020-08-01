@@ -113,7 +113,7 @@ registerRoute(
     plugins: [
       new CacheFirst({
         // 要缓存的最大条目数。使用最少的条目将被删除，直到达到最大值。
-        // maxEntries: 50,
+        maxEntries: 50,
         maxAgeSeconds: 60 * 60 * 24 * 4,
         // 如果超出了可用的存储配额，是否选择将此缓存用于自动删除。
         purgeOnQuotaError: true,
