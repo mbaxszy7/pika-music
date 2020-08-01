@@ -1,9 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-restricted-globals */
-import { precacheAndRoute } from "workbox-precaching/precacheAndRoute"
-import { setCacheNameDetails, skipWaiting, clientsClaim } from "workbox-core"
+import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching"
 import {
-  NetworkFirst,
+  setCacheNameDetails,
+  skipWaiting,
+  clientsClaim,
+  cacheNames,
+} from "workbox-core"
+import {
+  // NetworkFirst,
   CacheFirst,
   StaleWhileRevalidate,
 } from "workbox-strategies"
@@ -15,16 +20,49 @@ import { registerRoute } from "workbox-routing/registerRoute"
 setCacheNameDetails({
   prefix: "pika",
 })
+
+const currentCacheNames = {
+  "whole-site": "whole-site",
+  "net-easy-p": "net-easy-p",
+  "api-banner": "api-banner",
+  "api-personalized-newsong": "api-personalized-newsong",
+  "api-playlist": "api-play-list",
+  "api-songs": "api-songs",
+  "api-albums": "api-albums",
+  "api-mvs": "api-mvs",
+  "api-music-check": "api-music-check",
+  [cacheNames.precache]: cacheNames.precache,
+  [cacheNames.runtime]: cacheNames.runtime,
+}
+
 skipWaiting()
 clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
+cleanupOutdatedCaches()
+
 registerRoute(
   new RegExp("/"),
-  new NetworkFirst({
-    cacheName: "whole-site",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["whole-site"],
   }),
 )
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(cacheGroup => {
+      return Promise.all(
+        cacheGroup
+          .filter(cacheName => {
+            return !Object.values(currentCacheNames).includes(`${cacheName}`)
+          })
+          .map(cacheName => {
+            return caches.delete(cacheName)
+          }),
+      )
+    }),
+  )
+})
 
 // // 站点png图片拦截为webp
 // registerRoute(/\.png$/, ({ event }) => {
@@ -70,8 +108,8 @@ registerRoute(
 // Images
 registerRoute(
   /^https?:\/\/p[1-4]\.music\.126\.net/,
-  new CacheFirst({
-    cacheName: "net-easy-p",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["net-easy-p"],
     plugins: [
       new ExpirationPlugin({
         // 要缓存的最大条目数。使用最少的条目将被删除，直到达到最大值。
@@ -90,8 +128,8 @@ registerRoute(
 // 首页banner
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/banner\?type=2/,
-  new NetworkFirst({
-    cacheName: "api-banner",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["api-banner"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
@@ -104,8 +142,8 @@ registerRoute(
 // 首页个性歌曲推荐
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/personalized\/newsong/,
-  new NetworkFirst({
-    cacheName: "api-personalized-newsong",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["api-personalized-newsong"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
@@ -118,8 +156,8 @@ registerRoute(
 // 首页歌单
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/top\/playlist\?limit=8&order=hot/,
-  new NetworkFirst({
-    cacheName: "api-playlist",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["api-playlist"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
@@ -133,7 +171,7 @@ registerRoute(
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/top\/song\?type=0/,
   new StaleWhileRevalidate({
-    cacheName: "api-songs",
+    cacheName: currentCacheNames["api-songs"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
@@ -146,8 +184,8 @@ registerRoute(
 // 首页专辑
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/album\/newest/,
-  new NetworkFirst({
-    cacheName: "api-albums",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames["api-albums"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
@@ -161,11 +199,28 @@ registerRoute(
 registerRoute(
   /https?:\/\/111\.229\.78\.115\/api\/personalized\/privatecontent/,
   new StaleWhileRevalidate({
-    cacheName: "api-mvs",
+    cacheName: currentCacheNames["api-mvs"],
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
         purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+)
+
+// 检查音乐是否可播放
+registerRoute(
+  /https?:\/\/111\.229\.78\.115\/api\/check\/music/,
+  new CacheFirst({
+    cacheName: currentCacheNames["api-music-check"],
+    plugins: [
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24,
+        purgeOnQuotaError: true,
+      }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
       }),
     ],
   }),
