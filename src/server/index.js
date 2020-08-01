@@ -40,7 +40,6 @@ app.use(logger())
 app.use(async (ctx, next) => {
   if (ctx.path.includes("service-worker.js")) {
     ctx.set({ "Service-Worker-Allowed": "/" })
-    ctx.set({ "Cache-Control": "private, max-age=0, no-cache, no-store" })
   }
   await next()
 })
