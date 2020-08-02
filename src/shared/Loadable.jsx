@@ -5,7 +5,6 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { matchRoutes } from "react-router-config"
-import { match } from "path-to-regexp"
 
 class Loadable extends React.Component {
   constructor(props) {
