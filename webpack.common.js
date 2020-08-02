@@ -18,14 +18,7 @@ const isServerBuild = findPara("build") === "server"
 const setWebpackPlugins = () => {
   const plugins = []
   if (!isDEV) {
-    plugins.push(
-      new CleanWebpackPlugin({
-        cleanOnceBeforeBuildPatterns: [
-          path.join(__dirname, "./build/**/*"),
-          path.join(__dirname, "./public/**/*"),
-        ],
-      }),
-    )
+    plugins.push(new CleanWebpackPlugin())
   }
   return plugins
 }

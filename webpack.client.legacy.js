@@ -62,7 +62,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "./build/views/index.html"),
+      template: path.resolve(__dirname, "./public/build/views/index.html"),
       filename: path.join(__dirname, "./public/views/index.html"),
     }),
     new webpack.DefinePlugin({

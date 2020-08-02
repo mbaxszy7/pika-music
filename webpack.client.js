@@ -93,7 +93,7 @@ module.exports = {
           },
           title: "music-motion",
           template: path.resolve(__dirname, "./src/assets/index.html"),
-          filename: path.join(__dirname, "./build/views/index.html"),
+          filename: path.join(__dirname, "./public/build/views/index.html"),
           favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
         }),
     new webpack.DefinePlugin({
