@@ -1,3 +1,4 @@
+const path = require("path")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 const isDEV = process.env.NODE_ENV === "development"
@@ -17,7 +18,14 @@ const isServerBuild = findPara("build") === "server"
 const setWebpackPlugins = () => {
   const plugins = []
   if (!isDEV) {
-    plugins.push(new CleanWebpackPlugin())
+    plugins.push(
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [
+          path.join(__dirname, "./build/**/*"),
+          path.join(__dirname, "./public/**/*"),
+        ],
+      }),
+    )
   }
   return plugins
 }
@@ -34,7 +42,30 @@ exports.webpackResolve = {
 }
 
 exports.webpackPlugins = setWebpackPlugins()
-
+exports.webpackSplitChunks = {
+  chunks: "all",
+  minSize: 30000,
+  maxSize: 0,
+  minChunks: 1,
+  maxAsyncRequests: 6,
+  maxInitialRequests: 4,
+  automaticNameDelimiter: "-",
+  automaticNameMaxLength: 30,
+  cacheGroups: {
+    vendors: {
+      test: /[\\/]node_modules[\\/]/,
+      priority: -10,
+      chunks: "all",
+      name: "vendors",
+    },
+    default: {
+      name: "commmon",
+      minChunks: 2,
+      priority: -20,
+      reuseExistingChunk: true,
+    },
+  },
+}
 exports.commonRules = () => {
   const rules = [
     {
@@ -84,6 +115,12 @@ exports.babelPresets = env => {
     common[1].targets = {
       node: "13",
     }
+  } else if (env === "legacy") {
+    common[1].targets = {
+      ios: "9",
+      safari: "9",
+    }
+    common[1].bugfixes = false
   } else {
     common[1].targets = {
       esmodules: true,

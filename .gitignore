@@ -104,3 +104,5 @@ server_app/
 
 # TernJS port file
 .tern-port
+
+build/**/*

@@ -13,7 +13,9 @@ const {
   webpackResolve,
   getCommandArg,
   commonRules,
+  webpackSplitChunks,
 } = require("./webpack.common.js")
+const ModuleHtmlPlugin = require("./module-html-plugin")
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin
 
@@ -34,7 +36,6 @@ module.exports = {
   entry: path.resolve(__dirname, "./src/client/index.js"),
   output: {
     publicPath: isDEV ? "/" : "/public/",
-    // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     filename: isDEV ? "client-[hash].js" : `client-[contenthash].js`,
     chunkFilename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
     path: path.resolve(__dirname, "public"),
@@ -70,13 +71,11 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
-
       ...commonRules(),
     ],
   },
   plugins: [
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    // new ImageminWebpWebpackPlugin(),
     ...webpackPlugins,
     isDEV
       ? new HtmlWebpackPlugin({
@@ -94,7 +93,7 @@ module.exports = {
           },
           title: "music-motion",
           template: path.resolve(__dirname, "./src/assets/index.html"),
-          filename: path.join(__dirname, "./public/views/index.html"),
+          filename: path.join(__dirname, "./build/views/index.html"),
           favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
         }),
     new webpack.DefinePlugin({
@@ -144,6 +143,7 @@ module.exports = {
         /\.webp$/,
       ],
     }),
+    new ModuleHtmlPlugin(),
     // new BundleAnalyzerPlugin(),
   ],
   optimization: {
@@ -164,11 +164,8 @@ module.exports = {
                 ecma: 2015,
                 warnings: false,
               },
-              mangle: {
-                safari10: true,
-              },
               output: {
-                ecma: 5,
+                ecma: 2015,
                 comments: false,
                 safari10: false,
               },
@@ -182,29 +179,6 @@ module.exports = {
         ]
       : [],
     runtimeChunk: true,
-    splitChunks: {
-      chunks: "all",
-      minSize: 30000,
-      maxSize: 0,
-      minChunks: 1,
-      maxAsyncRequests: 6,
-      maxInitialRequests: 4,
-      automaticNameDelimiter: "-",
-      automaticNameMaxLength: 30,
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10,
-          chunks: "all",
-          name: "vendors",
-        },
-        default: {
-          name: "commmon",
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true,
-        },
-      },
-    },
+    splitChunks: webpackSplitChunks,
   },
 }

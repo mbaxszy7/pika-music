@@ -17,6 +17,7 @@ const AppBgTheme = createGlobalStyle`
    overflow-y:scroll;
    padding-bottom: 63px;
    background-color: #212121;
+   -webkit-overflow-scrolling: touch;
  }
 `
 export const theme = {
