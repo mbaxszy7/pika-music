@@ -276,7 +276,7 @@ const MVPlay = memo(() => {
   )
 
   const onVideoWrapperClick = useCallback(() => {
-    console.warn("playState", playState)
+    // console.warn("playState", playState)
     setVideoFocuced(pre => !pre)
     // 当前为可播放状态就直接点击播放
     if (playState === "canplay") {

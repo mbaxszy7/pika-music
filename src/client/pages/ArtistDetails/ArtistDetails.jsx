@@ -176,10 +176,10 @@ const ArtistDetails = () => {
 
   const initArtistDesc = useSelector(state => state.artistDetails.desc)
   const initArtistSongs = useSelector(state => state.artistDetails.songs)
-  console.warn("initArtistSongs", initArtistSongs)
+  // console.warn("initArtistSongs", initArtistSongs)
 
   const initArtistAlbums = useSelector(state => state.artistDetails.albums)
-  console.warn("initArtistAlbums", initArtistAlbums)
+  // console.warn("initArtistAlbums", initArtistAlbums)
   const initMVs = useSelector(state => state.artistDetails.mvs)
   const storeDispatch = useDispatch()
   const location = useLocation()
