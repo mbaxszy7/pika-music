@@ -11,7 +11,7 @@
 
 
 ## 网站截图
-<img src="./src/assets/WechatIMG9.png" width="187.5px"/
+<img src="./src/assets/WechatIMG9.png" width="187.5" />
 ![Getting Started](./src/assets/WechatIMG8.png)
 ![Getting Started](./src/assets/WechatIMG7.png)
 ![Getting Started](./src/assets/WechatIMG6.png)
