@@ -31,6 +31,7 @@ import SingleLineTexts, {
 } from "../../../shared/LinesTexts.styled"
 import AppNavigate from "../AppNavigate/AppNavigate"
 import MyPlaceholder, { StyledTextRow } from "../../../shared/MyPlaceholder"
+import Dialog from "../../../shared/Dialog"
 import mediaQury from "../../../shared/mediaQury.styled"
 import playIcon from "../../../assets/play.png"
 import pauseIcon from "../../../assets/pause.png"
@@ -479,6 +480,7 @@ const PlayBar = memo(({ route }) => {
   const playMode = useSelector(state => state.root.playMode)
   const progressBarRef = useRef()
   const lastSongList = useRef()
+  const [isShowDialog, setShowDialog] = useState(false)
 
   const {
     isShowModal,
@@ -541,12 +543,30 @@ const PlayBar = memo(({ route }) => {
     [currentPlayIndex, playMode, songIdList.length, storeDispatch],
   )
 
+  const checkMusicValid = useCallback(async id => {
+    const data = await playBarPage.fetcher
+      .get(`/api/check/music?id=${id}`)
+      .then(res => res.data)
+
+    return data
+  }, [])
+
   useEffect(() => {
     const setTrack = async () => {
       if (currentPlayId) {
         setPlayState("loading")
+        const [checkValidErr, songValid] = await awaitWrapper(checkMusicValid)(
+          currentPlayId,
+        )
+        if (checkValidErr || !songValid?.success) {
+          setShowDialog(true)
+          setPlayState("stopped")
+          storeDispatch(playBarPage.removeCur())
+          // onNextOrPrePlay(false, "next")
+          return
+        }
         const [error, track] = await awaitWrapper(getTrack)(currentPlayId)
-        console.log(error, !track?.url)
+        // console.log(error, !track?.url)
         if (error?.response?.status === 403) {
           audioRef.current.src = ` https://music.163.com/song/media/outer/url?id=${currentPlayId}.mp3`
           audioRef.current.currentTime = 0
@@ -756,6 +776,15 @@ const PlayBar = memo(({ route }) => {
 
   return (
     <>
+      {isShowDialog && (
+        <Dialog
+          title="抱歉"
+          dialogText="此歌曲暂无版权"
+          isShowCancel={false}
+          isShowConfirm
+          onConfirmClick={() => setShowDialog(false)}
+        />
+      )}
       <AppNavigate />
       {isShowModal && (
         <InnerModal>

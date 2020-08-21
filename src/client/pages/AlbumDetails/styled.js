@@ -62,6 +62,7 @@ export const StyledDescModal = styled.div`
   transition: opacity 0.2s;
   opacity: ${props => (props.isShow ? "1" : "0")};
   z-index: 1000;
+  width: 100%;
   height: 100%;
   .close {
     position: absolute;

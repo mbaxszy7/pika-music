@@ -19,7 +19,7 @@ import SingleLineTexts, {
 } from "../../shared/LinesTexts.styled"
 import Page from "../../utils/connectPageReducer"
 import moreIcon from "../../assets/more.png"
-import Dialog from "../../shared/Dialog"
+
 import mediaQuery from "../../shared/mediaQury.styled"
 import MyPlaceholder, { StyledTextRow } from "../../shared/MyPlaceholder"
 
@@ -292,15 +292,15 @@ const MediaItem = memo(props => {
     id,
     renderRightPart,
   } = props
-  const { data: songValid, isValidating } = useSWR(
-    type === MediaItemTypes.SONG && id ? `/api/check/music?id=${id}` : null,
-    url => pageFetch.fetcher.get(url).then(res => res.data),
-    {
-      refreshInterval: 0,
-      revalidateOnFocus: false,
-    },
-  )
-  const [isShowDialog, setShowDialog] = useState(false)
+  // const { data: songValid, isValidating } = useSWR(
+  //   type === MediaItemTypes.SONG && id ? `/api/check/music?id=${id}` : null,
+  //   url => pageFetch.fetcher.get(url).then(res => res.data),
+  //   {
+  //     refreshInterval: 0,
+  //     revalidateOnFocus: false,
+  //   },
+  // )
+  // const [isShowDialog, setShowDialog] = useState(false)
   const [artistNameDesc, albumNameDesc] = desc?.split(" · ") ?? ["", ""]
   const innerDD = desc || publishTime
   const storeDispatch = useDispatch()
@@ -308,9 +308,9 @@ const MediaItem = memo(props => {
   const onResultItemClick = useCallback(
     e => {
       e.stopPropagation()
-      if (isValidating) {
-        return
-      }
+      // if (isValidating) {
+      //   return
+      // }
 
       if (type === MediaItemTypes.BIG_ALBUM || type === MediaItemTypes.ALBUM) {
         history.push(`/album?id=${id}`)
@@ -319,9 +319,7 @@ const MediaItem = memo(props => {
         type === MediaItemTypes.BIG_PLAY_LIST
       ) {
         history.push(`/playlist/${id}`)
-      } else if (type === MediaItemTypes.SONG && !songValid?.success) {
-        setShowDialog(true)
-      } else if (type === MediaItemTypes.SONG && songValid?.success) {
+      } else if (type === MediaItemTypes.SONG) {
         storeDispatch(playBarPage.setImmediatelyPlay(id))
       } else if (
         type === MediaItemTypes.BIG_MV ||
@@ -339,16 +337,7 @@ const MediaItem = memo(props => {
         })
       }
     },
-    [
-      isValidating,
-      type,
-      songValid,
-      onItemClick,
-      id,
-      history,
-      storeDispatch,
-      artistName,
-    ],
+    [type, onItemClick, id, history, storeDispatch, artistName],
   )
 
   const activePlayId = useSelector(state => state.root.currentPlayId)
@@ -365,15 +354,6 @@ const MediaItem = memo(props => {
 
   return (
     <>
-      {isShowDialog && (
-        <Dialog
-          title="抱歉"
-          dialogText="此歌曲暂无版权"
-          isShowCancel={false}
-          isShowConfirm
-          onConfirmClick={() => setShowDialog(false)}
-        />
-      )}
       <SwitchStyledResultItem
         type={type}
         onClick={onResultItemClick}
@@ -384,11 +364,7 @@ const MediaItem = memo(props => {
         isActivePlay={activePlayId === id && type === MediaItemTypes.SONG}
       >
         {!noImg ? (
-          <ItemImg
-            type={type}
-            imgUrl={isValidating ? "" : imgUrl}
-            renderTag={imageTag}
-          />
+          <ItemImg type={type} imgUrl={imgUrl} renderTag={imageTag} />
         ) : !noIndex ? (
           <ItemIndex>{`${index + 1}`.padStart(2, 0)}</ItemIndex>
         ) : (
@@ -396,11 +372,7 @@ const MediaItem = memo(props => {
         )}
 
         <dl>
-          <MyPlaceholder
-            ready={!!title && !isValidating}
-            rows={2}
-            type="textBlock"
-          >
+          <MyPlaceholder ready={!!title} rows={2} type="textBlock">
             <dt>{title}</dt>
             <dd>{innerDD}</dd>
           </MyPlaceholder>
@@ -416,7 +388,7 @@ const MediaItem = memo(props => {
                 artistId={artistId}
                 albumId={albumId}
                 id={id}
-                isValid={songValid?.success && !isValidating}
+                isValid
               />
             )}
       </SwitchStyledResultItem>

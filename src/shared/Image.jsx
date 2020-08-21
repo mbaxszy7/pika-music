@@ -1,6 +1,12 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, { memo, useState, useEffect, useCallback, useRef } from "react"
+import React, {
+  memo,
+  useState,
+  useLayoutEffect,
+  useCallback,
+  useRef,
+} from "react"
 import PropTypes from "prop-types"
 import lozad from "lozad"
 import styled from "styled-components"
@@ -29,11 +35,17 @@ const MyImage = memo(({ url, styledCss, className }) => {
   const imgRef = useRef()
   const [isLoaded, setLoaded] = useState(false)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
+  const isPageMounted = useRef()
 
-  useEffect(() => {
-    imgRef.current.setAttribute("data-loaded", false)
-    imgRef.current.setAttribute("data-settled", true)
-    imgRef.current.src = ""
+  useLayoutEffect(() => {
+    if (isPageMounted.current) {
+      imgRef.current.setAttribute("data-loaded", false)
+      imgRef.current.setAttribute("data-settled", true)
+      imgRef.current.src = ""
+    } else {
+      isPageMounted.current = true
+    }
+
     const observer = lozad()
     observer.observe()
   }, [url])
