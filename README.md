@@ -1,5 +1,4 @@
 ## [项目网址](url:https://111.229.9.30/)
-## music-motion api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](url:https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 ## 项目技术特点：
 1. PWA支持
@@ -11,14 +10,17 @@
 
 
 ## 网站截图
-<img src="./src/assets/WechatIMG9.png" width="187.5" />
-![Getting Started](./src/assets/WechatIMG8.png)
-![Getting Started](./src/assets/WechatIMG7.png)
-![Getting Started](./src/assets/WechatIMG6.png)
-![Getting Started](./src/assets/WechatIMG5.png)
-![Getting Started](./src/assets/WechatIMG4.png)
-![Getting Started](./src/assets/WechatIMG3.png)
-![Getting Started](./src/assets/WechatIMG2.png)
+<div style="display: flex">
+  <img src="./src/assets/WechatIMG9.png" width="187.5" />
+  <img src="./src/assets/WechatIMG8.png" width="187.5" />
+  <img src="./src/assets/WechatIMG7.png" width="187.5" />
+  <img src="./src/assets/WechatIMG6.png" width="187.5" />
+  <img src="./src/assets/WechatIMG5.png" width="187.5" />
+  <img src="./src/assets/WechatIMG4.png" width="187.5" />
+  <img src="./src/assets/WechatIMG3.png" width="187.5" />
+  <img src="./src/assets/WechatIMG2.png" width="187.5" />
+</div>
+
 
 
 ## 技术特点介绍
@@ -47,4 +49,6 @@ node version >= 13.8
 
 ### 本地开发开启CSR模式
 npm run start:client
+
+## music-motion api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](url:https://github.com/Binaryify/NeteaseCloudMusicApi)
 
