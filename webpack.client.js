@@ -95,7 +95,7 @@ module.exports = (env, argv) => {
             title: "music-motion",
             template: path.resolve(__dirname, "./src/assets/index.html"),
             filename:
-              env.es === "modern"
+              env.module === "yes"
                 ? path.join(__dirname, "./public/views/index.html")
                 : path.join(__dirname, "./public/build/views/index.html"),
             favicon: path.resolve(__dirname, "./src/assets/favicon.ico"),
