@@ -1,19 +1,18 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/no-array-index-key */
-import React, { useRef, useState, memo, useMemo, useEffect } from "react"
-import { animated, useSprings } from "react-spring"
-import { useDrag } from "react-use-gesture"
+import React, { useRef, useState, memo, useMemo, useCallback } from "react"
+import { animated } from "react-spring"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import Label from "./Label"
 import { MyImage } from "../../shared/Image"
-import { clamp } from "../../utils"
+import { MyBanner } from "../../shared/MyBanner"
 
 const BannerList = styled.div`
   position: relative;
   width: 100%;
-  padding: 38.15% 0 0;
+  padding: 39% 0 0;
   overflow: hidden;
 `
 
@@ -100,53 +99,27 @@ BannerListItem.propTypes = {
 const BannerListContainer = memo(({ bannerList }) => {
   const [activeBanner, setActiveBanner] = useState(0)
 
-  const index = useRef(0)
-  const [bannerWidth, setBannerWidth] = useState(768)
-  useEffect(() => setBannerWidth(window.innerWidth), [])
-
-  const [banners, set] = useSprings(bannerList.length, i => ({
-    x: i * bannerWidth,
-    sc: 1,
-    display: "block",
-  }))
-
-  const bind = useDrag(
-    ({ down, movement: [xDelta], direction: [xDir], distance, cancel }) => {
-      if (down && distance > 90)
-        cancel(
-          (index.current = clamp(
-            index.current + (xDir > 0 ? -1 : 1),
-            0,
-            bannerList.length - 1,
-          )),
-        )
-      set(i => {
-        if (i < index.current - 1 || i > index.current + 1)
-          return { display: "none" }
-        setActiveBanner(index.current)
-        const x = (i - index.current) * bannerWidth + (down ? xDelta : 0)
-        const sc = down ? 1 - distance / bannerWidth / 2 : 1
-        return { x, sc, display: "block" }
-      })
-    },
-  )
+  const myBannerref = useRef()
+  const onBannerChange = useCallback(index => {
+    setActiveBanner(index)
+  }, [])
 
   return (
     <BannerList>
-      {banners.map(({ x, display, sc }, i) => (
-        <BannerListItem
-          key={i}
-          eventBind={bind}
-          display={display}
-          translateX={x}
-          imgUrl={bannerList[i].pic}
-          labelText={bannerList[i].typeTitle}
-          scale={sc}
-        />
-      ))}
+      <MyBanner
+        banners={bannerList.map(b => b.pic)}
+        onBannerChange={onBannerChange}
+        ref={myBannerref}
+      />
       <DotsContainer>
         {bannerList.map((_, idx) => (
-          <Dot active={idx === activeBanner} key={idx} />
+          <Dot
+            active={idx === activeBanner}
+            key={idx}
+            onClick={() => {
+              myBannerref.current.nextPic(idx)
+            }}
+          />
         ))}
       </DotsContainer>
     </BannerList>
