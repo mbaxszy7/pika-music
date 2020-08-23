@@ -108,7 +108,7 @@ module.exports = (env, argv) => {
         short_name: "Pika",
         description: "A PWA Muisc Web Site",
         display: "standalone",
-        start_url: "/?from=homescreen",
+        start_url: "/",
         background_color: "#ffffff",
         theme_color: "#FEDD27",
         inject: true,
