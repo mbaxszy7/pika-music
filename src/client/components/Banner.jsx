@@ -48,6 +48,7 @@ const DotsContainer = styled.ul`
   bottom: 3px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 20;
 `
 
 const Dot = styled.li`
@@ -106,13 +107,6 @@ const BannerListContainer = memo(({ bannerList }) => {
 
   return (
     <BannerList>
-      <MyBanner
-        banners={bannerList.map(b =>
-          b.pic ? b.pic.replace(/https?/, "https") : "",
-        )}
-        onBannerChange={onBannerChange}
-        ref={myBannerref}
-      />
       <DotsContainer>
         {bannerList.map((_, idx) => (
           <Dot
@@ -124,6 +118,13 @@ const BannerListContainer = memo(({ bannerList }) => {
           />
         ))}
       </DotsContainer>
+      <MyBanner
+        banners={bannerList.map(b =>
+          b.pic ? b.pic.replace(/https?/, "https") : "",
+        )}
+        onBannerChange={onBannerChange}
+        ref={myBannerref}
+      />
     </BannerList>
   )
 })
