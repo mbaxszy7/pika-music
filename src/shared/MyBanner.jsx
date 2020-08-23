@@ -49,7 +49,7 @@ export const MyBanner = memo(
     const goTo = useCallback(() => {
       const currentPosition = position.current
       const nextPosition = (currentPosition + 1) % banners.length
-      const current = root.current.childNodes[currentPosition]
+      const current = root.current?.childNodes?.[currentPosition]
       const next = root.current.childNodes[nextPosition]
 
       current.style.transition = "none"

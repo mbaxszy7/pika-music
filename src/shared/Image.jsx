@@ -7,9 +7,9 @@ import React, {
   useCallback,
   useRef,
 } from "react"
-import PropTypes from "prop-types"
-import lozad from "lozad"
 import styled from "styled-components"
+import PropTypes from "prop-types"
+import pikaLazy from "../utils/lazyImage"
 
 const StyledImage = styled.img`
   background-color: ${props => props.theme.dg};
@@ -46,15 +46,15 @@ const MyImage = memo(({ url, styledCss, className }) => {
       isPageMounted.current = true
     }
 
-    const observer = lozad()
-    observer.observe()
+    const observer = pikaLazy()
+    observer.lazyObserver()
   }, [url])
 
   return (
     <StyledImage
       onMouseDown={e => e.preventDefault()}
       ref={imgRef}
-      className={` ${className} ${url ? "lozad" : ""}`}
+      className={` ${className} ${url ? "pika-lazy" : ""}`}
       data-src={url ? url.replace(/https?/, "https") : ""}
       styledCss={styledCss}
       data-settled={isLoaded}
