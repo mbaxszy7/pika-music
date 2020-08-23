@@ -1,10 +1,10 @@
-# 基于React实现的仿MOO音乐风格的音乐网站，支持PWA
+# 基于 React 实现的仿 MOO 音乐风格的音乐网站，支持 PWA
 
-## [github 地址](url:https://github.com/mbaxszy7/pika-music)
+[github 地址](https://github.com/mbaxszy7/pika-music)
 
-## [项目网址](url:https://111.229.9.30/)
+[项目网址](https://111.229.9.30/)
 
-pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](url:https://github.com/Binaryify/NeteaseCloudMusicApi)
+pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 ## 项目技术特点：
 
@@ -36,7 +36,7 @@ pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](url:https://
 
 ### React-SSR 框架介绍
 
-主要思想参考的是 NextJS。首屏服务端渲染时，调用组件的 getInitialProps(store)方法，注入 redux store，getInitialProps 获取该页面的数据后，把数据储存到 redux store 中。在客户端 hydrate 时，从 redux store 中获取数据，然后把数据注入[swr](url:https://github.com/vercel/swr)的 initialData 中，后续页面的数据获取和更新就使用了 swr 的能力。非 SSR 的页面会直接使用 swr。
+主要思想参考的是 NextJS。首屏服务端渲染时，调用组件的 getInitialProps(store)方法，注入 redux store，getInitialProps 获取该页面的数据后，把数据储存到 redux store 中。在客户端 hydrate 时，从 redux store 中获取数据，然后把数据注入[swr](https://github.com/vercel/swr)的 initialData 中，后续页面的数据获取和更新就使用了 swr 的能力。非 SSR 的页面会直接使用 swr。
 
 下面以首页（Discover）为例：
 项目中有 ConnectCompReducer 这个父类:
@@ -349,7 +349,7 @@ exports.babelPresets = env => {
 
 ### 全站图片懒加载
 
-图片懒加载的实现使用的是 IntersectionObserver 和浏览器原生支持的[image lazy loading](url:https://web.dev/native-lazy-loading/)
+图片懒加载的实现使用的是 IntersectionObserver 和浏览器原生支持的[image lazy loading](https://web.dev/native-lazy-loading/)
 
 ```javascript
 const pikaLazy = options => {
@@ -436,9 +436,9 @@ self.addEventListener("activate", event => {
     }),
   )
 })
-
-项目的PWA缓存控制策略主要选择的是StaleWhileRevalidate，先展示缓存（如果有的话），然后pwa会更新缓存。由于项目用了swr，该库会轮询页面的数据或者在页面从隐藏到显示时也会请求更新数据，从而达到了使用pwa更新的缓存的目的。
 ```
+
+项目的 PWA 缓存控制策略主要选择的是 StaleWhileRevalidate，先展示缓存（如果有的话），然后 pwa 会更新缓存。由于项目用了 swr，该库会轮询页面的数据或者在页面从隐藏到显示时也会请求更新数据，从而达到了使用 pwa 更新的缓存的目的。
 
 ## 浏览器兼容
 
@@ -461,4 +461,4 @@ node version >= 13.8
 
 npm run start:client
 
-## 最后，如果对你的 react 学习有帮助的话，麻烦 star 一下呗～[github 地址](url:https://github.com/mbaxszy7/pika-music) 🎉🎉
+## 最后，如果对你的 react 学习有帮助的话，麻烦 star 一下呗～[github 地址](https://github.com/mbaxszy7/pika-music) 🎉🎉
