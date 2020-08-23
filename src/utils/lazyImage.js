@@ -4,19 +4,17 @@
 const load = element => {
   if (element.getAttribute("data-src")) {
     element.src = element.getAttribute("data-src")
+    element.setAttribute("data-loaded", true)
   }
 }
 
 const isLoaded = element => element.getAttribute("data-loaded") === "true"
-
-const setLoaded = element => element.setAttribute("data-loaded", true)
 
 const pikaLazy = options => {
   if ("loading" in HTMLImageElement.prototype) {
     return {
       lazyObserver: imgRef => {
         load(imgRef)
-        setLoaded(imgRef)
       },
     }
   }
@@ -29,7 +27,6 @@ const pikaLazy = options => {
             originalObserver.unobserve(entry.target)
             if (!isLoaded(entry.target)) {
               load(entry.target)
-              setLoaded(entry.target)
             }
           }
         })
@@ -53,7 +50,6 @@ const pikaLazy = options => {
         if (isLoaded(ele)) continue
 
         load(ele)
-        setLoaded(ele)
       }
     },
   }
