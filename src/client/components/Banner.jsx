@@ -49,13 +49,17 @@ const DotsContainer = styled.ul`
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
+  will-change: transform;
 `
 
 const Dot = styled.li`
   margin-right: 4px;
   width: 6px;
   height: 6px;
-  ${props => (props.active ? "background: white;" : " background: lightgray;")}
+  ${props =>
+    props.active
+      ? "background: rgb(254, 221, 39);"
+      : "background: rgb(245,245,245);"}
   border-radius: 50%;
   display: inline-block;
 `
