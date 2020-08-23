@@ -47,7 +47,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
     }
 
     const observer = pikaLazy()
-    observer.lazyObserver()
+    observer.lazyObserver(imgRef.current)
   }, [url])
 
   return (
@@ -60,6 +60,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
       data-settled={isLoaded}
       alt=""
       onLoad={onImageLoaded}
+      loading="lazy"
     />
   )
 })

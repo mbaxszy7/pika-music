@@ -12,6 +12,14 @@ const isLoaded = element => element.getAttribute("data-loaded") === "true"
 const setLoaded = element => element.setAttribute("data-loaded", true)
 
 const pikaLazy = options => {
+  if ("loading" in HTMLImageElement.prototype) {
+    return {
+      lazyObserver: imgRef => {
+        load(imgRef)
+        setLoaded(imgRef)
+      },
+    }
+  }
   let observer
   if (typeof window !== "undefined" && window.IntersectionObserver) {
     observer = new IntersectionObserver(
