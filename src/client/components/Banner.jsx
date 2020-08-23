@@ -107,7 +107,9 @@ const BannerListContainer = memo(({ bannerList }) => {
   return (
     <BannerList>
       <MyBanner
-        banners={bannerList.map(b => b.pic)}
+        banners={bannerList.map(b =>
+          b.pic ? b.pic.replace(/https?/, "https") : "",
+        )}
         onBannerChange={onBannerChange}
         ref={myBannerref}
       />
