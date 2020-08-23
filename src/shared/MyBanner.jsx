@@ -17,6 +17,7 @@ export const MyStyledBanner = styled.div`
   top: 0;
   left: 0;
   white-space: nowrap;
+  touch-action: pan-x;
   .banner_wrapper {
     width: 100%;
     display: inline-block;
