@@ -9,15 +9,17 @@ pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://gith
 ## 项目技术特点：
 
 1. PWA 支持
-2. 自行实现的 React-SSR 框架
-3. 自行实现结合 SSR 的 Dynamic Import
-4. module/nomudule 模式
-5. 全站图片懒加载
+2. 实现 React-SSR 框架
+3. 实现结合 SSR 的 Dynamic Import
+4. 实现 webpack 打包支持module/nomudule 模式
+5. 实现全站图片懒加载
 
 ### 其他特点：
 
 1. http2
 2. 安卓端支持锁屏音乐控制
+3. banner轮播组件
+4. 视频和音频播放组件
 
 ## 网站截图
 
@@ -461,4 +463,7 @@ node version >= 13.8
 
 npm run start:client
 
-## 最后，如果对你的 react 学习有帮助的话，麻烦 star 一下呗～[github 地址](https://github.com/mbaxszy7/pika-music) 🎉🎉
+## ToDo
+- [ ] 实现React长列表优化（虚拟列表）
+- [ ] 项目TS迁移
+- [ ] api服务器koa重写
