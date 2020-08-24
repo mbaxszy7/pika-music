@@ -8,7 +8,7 @@ pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://gith
 
 ## 项目技术特点：
 
-1. PWA 支持
+1. PWA 支持。支持PWA的浏览器可以安装到桌面
 2. 实现 React-SSR 框架
 3. 实现结合 SSR 的 Dynamic Import
 4. 实现 webpack 打包支持module/nomudule 模式
