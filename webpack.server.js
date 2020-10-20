@@ -12,8 +12,8 @@ const {
 } = require("./webpack.common.js")
 
 module.exports = {
-  target: "node",
-  devtool: "cheap-module-eval-source-map",
+  target: "node14",
+  devtool: "cheap-module-source-map",
   entry: {
     main: [path.resolve(__dirname, "src/server/index.js")],
   },

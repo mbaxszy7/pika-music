@@ -37,24 +37,24 @@ exports.webpackResolve = {
 exports.webpackPlugins = setWebpackPlugins()
 exports.webpackSplitChunks = {
   chunks: "all",
-  minSize: 30000,
-  maxSize: 0,
+  // minSize: 30000,
+  // maxSize: 0,
   minChunks: 1,
   maxAsyncRequests: 6,
   maxInitialRequests: 4,
   automaticNameDelimiter: "-",
-  automaticNameMaxLength: 30,
+  // automaticNameMaxLength: 30,
   cacheGroups: {
     vendors: {
       test: /[\\/]node_modules[\\/]/,
-      priority: -10,
+      priority: 2,
       chunks: "all",
       name: "vendors",
     },
     default: {
       name: "commmon",
       minChunks: 2,
-      priority: -20,
+      priority: 1,
       reuseExistingChunk: true,
     },
   },
@@ -106,7 +106,7 @@ exports.babelPresets = env => {
   ]
   if (env === "node") {
     common[1].targets = {
-      node: "13",
+      node: "14",
     }
   } else if (env === "legacy") {
     common[1].targets = {

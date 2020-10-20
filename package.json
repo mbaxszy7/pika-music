@@ -9,14 +9,14 @@
     "git": "git add .",
     "commit": "npm run git && lint-staged  && git-cz",
     "build:client:legacy": "webpack --mode=production --config 'webpack.client.legacy.js'",
-    "build:client:modern": "webpack --watch --env.module=yes --mode=production --config 'webpack.client.js'",
+    "build:client:modern": "webpack --watch --env module=yes --mode=production --config 'webpack.client.js'",
     "build:client": "npm run build:client:modern && npm run build:client:legacy ",
-    "build:server": "webpack --build=server --watch --mode=production --config 'webpack.server.js'",
-    "start:client": "NODE_ENV=development webpack-dev-server  --env.module=yes  --host 0.0.0.0 --mode=development  --hot  --config 'webpack.client.js'",
-    "build-client:modern": "webpack --env.module=no --mode=production --config 'webpack.client.js'",
+    "build:server": "webpack --env build=server --watch --mode=production --config 'webpack.server.js'",
+    "start:client": "NODE_ENV=development webpack-dev-server  --env module=yes  --host 0.0.0.0 --mode=development  --hot  --config 'webpack.client.js'",
+    "build-client:modern": "webpack --env module=no --mode=production --config 'webpack.client.js'",
     "build-client:legacy": "webpack --mode=production --config 'webpack.client.legacy.js'",
     "build-client": "npm run build-client:modern && npm run build-client:legacy",
-    "build-server": "webpack --build=server --mode=production --config 'webpack.server.js'",
+    "build-server": "webpack --env.build=server --mode=production --config 'webpack.server.js'",
     "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "husky": {
@@ -91,7 +91,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
     "webpack-bundle-analyzer": "^3.8.0",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.0.0",
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
@@ -125,7 +125,7 @@
     "swr": "^0.1.18",
     "terser-webpack-plugin": "^2.3.8",
     "ua-device": "^0.1.10",
-    "webpack": "^4.44.1",
+    "webpack": "^5.1.2",
     "webpack-node-externals": "^1.7.2",
     "webpack-pwa-manifest": "^4.2.0",
     "workbox-cacheable-response": "^5.1.3",

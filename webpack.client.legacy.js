@@ -29,13 +29,16 @@ const webpackAlias = isDEV
   : {}
 
 module.exports = {
-  entry: path.resolve(__dirname, "./src/client/index.js"),
+  target: ["web", "es5"],
+  entry: {
+    client: path.resolve(__dirname, "./src/client/index.js"),
+  },
   output: {
     publicPath: isDEV ? "/" : "/public/",
     // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     filename: isDEV
-      ? "client-[hash]-legacy.js"
-      : `client-[contenthash]-legacy.js`,
+      ? "[name]-[hash]-legacy.js"
+      : `[name]-[contenthash]-legacy.js`,
     chunkFilename: isDEV
       ? "[name]-[hash]-legacy.js"
       : `[name]-[contenthash]-legacy.js`,
@@ -64,6 +67,14 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "./public/build/views/index.html"),
       filename: path.join(__dirname, "./public/views/index.html"),
+      minify: {
+        collapseWhitespace: true,
+        removeComments: false,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true,
+      },
     }),
     new webpack.DefinePlugin({
       RENDER_OPTS: JSON.stringify(getCommandArg("render")),

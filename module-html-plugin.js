@@ -1,17 +1,19 @@
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 const safariFix = `!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();`
 
 class ModuleHtmlPlugin {
   constructor(isModule) {
     this.isLegacyModule = isModule
+    this.isInjectsafariFixPolyfill = false
   }
 
   apply(compiler) {
     const id = "ModuleHtmlPlugin"
     compiler.hooks.compilation.tap(id, compilation => {
-      compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(
+      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tapAsync(
         id,
         (data, cb) => {
-          data.body.forEach(tag => {
+          data.bodyTags.forEach(tag => {
             // add script nomodule/module
             if (tag.tagName === "script") {
               if (/-legacy./.test(tag.attributes.src)) {
@@ -23,9 +25,10 @@ class ModuleHtmlPlugin {
             }
           })
 
-          if (this.isLegacyModule) {
+          if (this.isLegacyModule && !this.isInjectsafariFixPolyfill) {
+            this.isInjectsafariFixPolyfill = true
             // inject Safari 10 nomdoule fix
-            data.body.push({
+            data.bodyTags.push({
               tagName: "script",
               closeTag: true,
               innerHTML: safariFix,
@@ -36,7 +39,7 @@ class ModuleHtmlPlugin {
       )
 
       // 把<script nomudule=""> 处理成 <script nomudule>
-      compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tap(id, data => {
+      HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tap(id, data => {
         data.html = data.html.replace(/\snomodule="">/g, " nomodule>")
       })
     })

@@ -16,8 +16,8 @@ const {
   webpackSplitChunks,
 } = require("./webpack.common.js")
 const ModuleHtmlPlugin = require("./module-html-plugin")
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-//   .BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin
 
 const settedBabelPlugins = !isDEV
   ? [
@@ -34,10 +34,13 @@ const webpackAlias = isDEV
 
 module.exports = (env, argv) => {
   return {
-    entry: path.resolve(__dirname, "./src/client/index.js"),
+    target: ["web", "es6"],
+    entry: {
+      client: path.resolve(__dirname, "./src/client/index.js"),
+    },
     output: {
       publicPath: isDEV ? "/" : "/public/",
-      filename: isDEV ? "client-[hash].js" : `client-[contenthash].js`,
+      filename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       chunkFilename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       path: path.resolve(__dirname, "public"),
     },
@@ -76,7 +79,10 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
       ...webpackPlugins,
       isDEV
         ? new HtmlWebpackPlugin({
@@ -148,7 +154,7 @@ module.exports = (env, argv) => {
         ],
       }),
       new ModuleHtmlPlugin(),
-      // new BundleAnalyzerPlugin(),
+      new BundleAnalyzerPlugin(),
     ],
     optimization: {
       minimize: !isDEV,
