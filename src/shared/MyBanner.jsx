@@ -10,6 +10,7 @@ import React, {
   useImperativeHandle,
 } from "react"
 import styled from "styled-components"
+import { MyImage, StyledImage } from "../shared/Image.jsx"
 
 export const MyStyledBanner = styled.div`
   position: absolute;
@@ -23,11 +24,12 @@ export const MyStyledBanner = styled.div`
     display: inline-block;
     transition: transform ease 0.8s;
     transform: scale(1);
-    img {
-      width: 100%;
-      border-radius: 10px;
-    }
   }
+`
+
+const BannerImage = styled(MyImage)`
+  width: 100%;
+  border-radius: 10px;
 `
 
 export const MyBanner = memo(
@@ -308,7 +310,7 @@ export const MyBanner = memo(
       <MyStyledBanner ref={root}>
         {banners.map((b, index) => (
           <div className="banner_wrapper" key={index}>
-            <img src={b} alt="" draggable={false} />
+            <BannerImage url={b} alt="" draggable={false} />
           </div>
         ))}
       </MyStyledBanner>
