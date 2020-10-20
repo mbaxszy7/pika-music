@@ -16,8 +16,8 @@ const {
   webpackSplitChunks,
 } = require("./webpack.common.js")
 const ModuleHtmlPlugin = require("./module-html-plugin")
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin
 
 const settedBabelPlugins = !isDEV
   ? [
@@ -33,6 +33,7 @@ const webpackAlias = isDEV
   : {}
 
 module.exports = (env, argv) => {
+  console.log("env", env)
   return {
     target: ["web", "es6"],
     entry: {
@@ -154,7 +155,7 @@ module.exports = (env, argv) => {
         ],
       }),
       new ModuleHtmlPlugin(),
-      new BundleAnalyzerPlugin(),
+      // new BundleAnalyzerPlugin(),
     ],
     optimization: {
       minimize: !isDEV,

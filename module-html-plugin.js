@@ -10,10 +10,10 @@ class ModuleHtmlPlugin {
   apply(compiler) {
     const id = "ModuleHtmlPlugin"
     compiler.hooks.compilation.tap(id, compilation => {
-      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tapAsync(
+      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tap(
         id,
-        (data, cb) => {
-          data.bodyTags.forEach(tag => {
+        data => {
+          data.headTags.forEach(tag => {
             // add script nomodule/module
             if (tag.tagName === "script") {
               if (/-legacy./.test(tag.attributes.src)) {
@@ -28,13 +28,12 @@ class ModuleHtmlPlugin {
           if (this.isLegacyModule && !this.isInjectsafariFixPolyfill) {
             this.isInjectsafariFixPolyfill = true
             // inject Safari 10 nomdoule fix
-            data.bodyTags.push({
+            data.headTags.unshift({
               tagName: "script",
               closeTag: true,
               innerHTML: safariFix,
             })
           }
-          cb(null, data)
         },
       )
 

@@ -1,4 +1,4 @@
-# 基于 React SSR实现的仿 MOO 音乐风格的音乐网站，支持 PWA
+# 基于 React SSR 实现的仿 MOO 音乐风格的音乐网站，支持 PWA
 
 [github 地址](https://github.com/mbaxszy7/pika-music)
 
@@ -8,17 +8,17 @@ pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://gith
 
 ## 项目技术特点：
 
-1. PWA 支持。支持PWA的浏览器可以安装到桌面
+1. PWA 支持。支持 PWA 的浏览器可以安装到桌面
 2. 实现 React-SSR 框架
 3. 实现结合 SSR 的 Dynamic Import
-4. 实现 webpack 打包支持module/nomudule 模式
+4. 实现 webpack 打包支持 module/nomudule 模式
 5. 实现全站图片懒加载
 
 ### 其他特点：
 
 1. http2
 2. 安卓端支持锁屏音乐控制
-3. banner轮播组件
+3. banner 轮播组件
 4. 视频和音频播放组件
 
 ## 网站截图
@@ -457,14 +457,16 @@ node version >= 13.8
 
 1. npm run build:server
 2. npm run build:client:modern
-3. nodemon --inspect ./server_app/bundle.js
+3. npm run build:client:legacy
+4. nodemon --inspect ./server_app/bundle.js
 
 ### 本地开发开启 CSR 模式
 
 npm run start:client
 
 ## ToDo
-- [ ] 实现React长列表优化（虚拟列表）
-- [ ] 项目TS迁移
-- [ ] 项目React native 实现
-- [ ] api服务器koa重写
+
+- [ ] 实现 React 长列表优化（虚拟列表）
+- [ ] 项目 TS 迁移
+- [ ] 项目 React native 实现
+- [ ] api 服务器 koa 重写
