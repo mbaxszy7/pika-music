@@ -16,7 +16,7 @@
     "build-client:modern": "webpack --env module=no --mode=production --config 'webpack.client.js'",
     "build-client:legacy": "webpack --mode=production --config 'webpack.client.legacy.js'",
     "build-client": "npm run build-client:modern && npm run build-client:legacy",
-    "build-server": "webpack --env.build=server --mode=production --config 'webpack.server.js'",
+    "build-server": "webpack --env build=server --mode=production --config 'webpack.server.js'",
     "deploy": "pm2 deploy ecosystem.config.js production"
   },
   "husky": {
