@@ -13,6 +13,7 @@ pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://gith
 3. 实现结合 SSR 的 Dynamic Import
 4. 实现 webpack 打包支持 module/nomudule 模式
 5. 实现全站图片懒加载
+6. webpack5 支持
 
 ### 其他特点：
 
