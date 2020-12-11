@@ -1,4 +1,4 @@
-# 基于 React SSR 实现的仿 MOO 音乐风格的音乐网站，支持 PWA
+# 基于 React SSR 实现的仿 MOO 音乐风格的音乐网站
 
 [github 地址](https://github.com/mbaxszy7/pika-music)
 
