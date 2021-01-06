@@ -96,7 +96,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "clean-webpack-plugin": "^3.0.0",
     "handlebars": "^4.7.6",
     "immer": "^5.3.6",
