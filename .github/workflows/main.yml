@@ -16,7 +16,8 @@ jobs:
       - name: Build
         uses: actions/setup-node@master
       - run: npm install
-      - run: npm run build
+      - run: npm run build-client
+      - run: npm run build-server
       - run: tar -zcvf release.tgz public server_app package.json package-lock.json ecosystem.config.js
 
       # 发布 Release

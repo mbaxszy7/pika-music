@@ -13,7 +13,6 @@ import playBarPage from "../Root/connectPlayBarReducer"
 import { MyImage } from "../../../shared/Image"
 import MediaItemList, { MediaItemTitle } from "../../components/MediaItemList"
 import { useIsomorphicEffect } from "../../../utils/hooks"
-import { awaitWrapper } from "../../../utils"
 import mediaQury from "../../../shared/mediaQury.styled"
 
 const StyledMediaItemTitle = styled(MediaItemTitle)`
@@ -167,6 +166,7 @@ const SectionScroll = styled.div`
 `
 
 const Discover = memo(() => {
+  console.log("action success")
   const lastSearchWord = useSelector(state => state.discover.lastSearchWord)
 
   const initialBannerList = useSelector(state => state.discover.bannerList)
