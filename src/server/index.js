@@ -53,8 +53,28 @@ app.use(async ctx => {
   if (staticContext.NOT_FOUND) {
     ctx.status = 404
   }
+  let ret = template.replace("<!--state-->", JSON.stringify(state))
+  const preloadImgs = [
+    ...(state?.discover?.personalizedSongs
+      ?.slice?.(0, 3)
+      .map(song => song.picUrl) || []),
+    state?.discover?.bannerList?.[0]?.pic,
+  ]
 
-  const ret = template.replace("<!--state-->", state)
+  if (preloadImgs.length) {
+    ret = ret.replace(
+      "<!--preload-->",
+      preloadImgs
+        .map(
+          img => `<link rel="preload" href=${img.replace(
+            "http://",
+            "https://",
+          )} as="image">
+  `,
+        )
+        .join("\n"),
+    )
+  }
 
   const jsxReplace = ret.indexOf(replace)
   const resOne = ret.slice(0, jsxReplace)

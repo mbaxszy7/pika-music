@@ -66,7 +66,7 @@ const renderHTML = async (ctx, staticContext) => {
 
   return {
     jsxStream,
-    state: JSON.stringify(store.getState()),
+    state: store.getState(),
   }
 }
 

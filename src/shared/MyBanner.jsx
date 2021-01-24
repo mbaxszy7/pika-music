@@ -10,7 +10,7 @@ import React, {
   useImperativeHandle,
 } from "react"
 import styled from "styled-components"
-import { MyImage, StyledImage } from "../shared/Image.jsx"
+import { MyImage } from "./Image"
 
 export const MyStyledBanner = styled.div`
   position: absolute;
@@ -27,7 +27,12 @@ export const MyStyledBanner = styled.div`
   }
 `
 
-const BannerImage = styled(MyImage)`
+const LazyBannerImage = styled(MyImage)`
+  width: 100%;
+  border-radius: 10px;
+`
+
+const BannerImage = styled.img`
   width: 100%;
   border-radius: 10px;
 `
@@ -52,7 +57,7 @@ export const MyBanner = memo(
       const currentPosition = position.current
       const nextPosition = (currentPosition + 1) % banners.length
       const current = root.current?.childNodes?.[currentPosition]
-      const next = root.current.childNodes[nextPosition]
+      const next = root.current?.childNodes?.[nextPosition]
 
       current.style.transition = "none"
       next.style.transition = "none"
@@ -79,10 +84,20 @@ export const MyBanner = memo(
         onBannerChange(position.current)
       }
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => tick())
+        requestAnimationFrame(() => {
+          try {
+            tick()
+          } catch (e) {
+            console.log(e)
+          }
+        })
       })
       requestNextTick.current = setTimeout(() => {
-        goTo()
+        try {
+          goTo()
+        } catch (e) {
+          console.log(e)
+        }
       }, 3000)
     }, [banners.length, onBannerChange])
 
@@ -91,13 +106,13 @@ export const MyBanner = memo(
         if (index != null) {
           onBannerChange(index)
           pause()
-          const cur = root.current.childNodes[position.current]
+          const cur = root.current?.childNodes?.[position.current]
           cur.style.transition = "none"
           // 移走当前的position
           cur.style.transform = `translate3d(${(banners.length + 1) *
             100}%, 0, 0)`
 
-          const current = root.current.childNodes[index]
+          const current = root.current?.childNodes?.[index]
           current.style.transition = "none"
           // 移动指定的index到当前位置
           current.style.transform = `translate3d(${-100 * index}%, 0, 0)`
@@ -108,7 +123,11 @@ export const MyBanner = memo(
         }
 
         requestNextPicId.current = setTimeout(() => {
-          goTo()
+          try {
+            goTo()
+          } catch (e) {
+            console.log(e)
+          }
         }, 3000)
       },
       [banners.length, goTo, onBannerChange, pause],
@@ -198,9 +217,9 @@ export const MyBanner = memo(
           (position.current - 1 + banners.length) % banners.length
         const nextPosition = (position.current + 1) % banners.length
 
-        const current = root.current.childNodes[position.current]
-        const last = root.current.childNodes[lastPosition]
-        const next = root.current.childNodes[nextPosition]
+        const current = root.current?.childNodes?.[position.current]
+        const last = root.current?.childNodes?.[lastPosition]
+        const next = root.current?.childNodes?.[nextPosition]
 
         onEventStart(
           event.clientX,
@@ -248,9 +267,9 @@ export const MyBanner = memo(
             (position.current - 1 + banners.length) % banners.length
           const nextPosition = (position.current + 1) % banners.length
 
-          const current = root.current.childNodes[position.current]
-          const last = root.current.childNodes[lastPosition]
-          const next = root.current.childNodes[nextPosition]
+          const current = root.current?.childNodes?.[position.current]
+          const last = root.current?.childNodes?.[lastPosition]
+          const next = root.current?.childNodes?.[nextPosition]
 
           onEventStart(
             event.changedTouches[0].pageX,
@@ -310,7 +329,11 @@ export const MyBanner = memo(
       <MyStyledBanner ref={root}>
         {banners.map((b, index) => (
           <div className="banner_wrapper" key={index}>
-            <BannerImage url={b} alt="" draggable={false} />
+            {index === 0 ? (
+              <BannerImage src={b} alt="" draggable={false} />
+            ) : (
+              <LazyBannerImage url={b} alt="" draggable={false} />
+            )}
           </div>
         ))}
       </MyStyledBanner>
