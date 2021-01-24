@@ -99,7 +99,7 @@
     "axios": "^0.19.2",
     "clean-webpack-plugin": "^3.0.0",
     "handlebars": "^4.7.6",
-    "immer": "^5.3.6",
+    "immer": "^8.0.1",
     "intersection-observer": "^0.7.0",
     "koa": "^2.13.0",
     "koa-logger": "^3.2.1",
