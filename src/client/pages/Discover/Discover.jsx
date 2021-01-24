@@ -166,7 +166,6 @@ const SectionScroll = styled.div`
 `
 
 const Discover = memo(() => {
-  console.log("action success")
   const lastSearchWord = useSelector(state => state.discover.lastSearchWord)
 
   const initialBannerList = useSelector(state => state.discover.bannerList)

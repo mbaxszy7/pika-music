@@ -19,15 +19,15 @@ module.exports = {
     },
   ],
 
-  deploy: {
-    production: {
-      user: "root",
-      host: "111.229.9.30",
-      ref: "origin/master",
-      repo: "git@github.com:mbaxszy7/music-motion.git",
-      path: "/var/www/production",
-      "post-deploy":
-        "sudo npm install && npm run build-client && npm run build-server && pm2 reload ecosystem.config.js --env production",
-    },
-  },
+  // deploy: {
+  //   production: {
+  //     user: "root",
+  //     host: "111.229.9.30",
+  //     ref: "origin/master",
+  //     repo: "git@github.com:mbaxszy7/music-motion.git",
+  //     path: "/var/www/production",
+  //     "post-deploy":
+  //       "sudo npm install && npm run build-client && npm run build-server && pm2 reload ecosystem.config.js --env production",
+  //   },
+  // },
 }

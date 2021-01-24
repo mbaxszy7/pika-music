@@ -54,5 +54,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/production/current
-            git pull
-            pm2 deploy ecosystem.config.js production
+            wget https://github.com/mbaxszy7/pika-music/releases/latest/download/release.tgz -O release.tgz
+            tar zxvf release.tgz
+            npm install --production
+            pm2 reload ecosystem.config.js

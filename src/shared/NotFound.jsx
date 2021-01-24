@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import { useDispatch } from "react-redux"
 import PropTypes from "prop-types"
@@ -23,6 +23,10 @@ const NotFound = ({ staticContext }) => {
   useIsomorphicEffect(() => {
     dispatch(playBarPage.setShowPlayBar(false))
   }, [dispatch])
+
+  useEffect(() => {
+    console.error("action success")
+  }, [])
 
   return <NotFoundAlert>You Are Lost</NotFoundAlert>
 }
