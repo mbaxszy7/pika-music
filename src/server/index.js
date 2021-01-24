@@ -61,12 +61,12 @@ app.use(async ctx => {
     state?.discover?.bannerList?.[0]?.pic,
   ]
 
-  if (preloadImgs.filter(i => i).length) {
+  if (preloadImgs.filter(i => !!i).length) {
     ret = ret.replace(
       "<!--preload-->",
       preloadImgs
         .map(
-          img => `<link rel="preload" href=${img?.replace(
+          img => `<link rel="preload" href=${img?.replace?.(
             "http://",
             "https://",
           )} as="image">
