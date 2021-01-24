@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: centos-latest
+    runs-on: ubuntu-latest
     steps:
       # 下载源码
       - name: Checkout
