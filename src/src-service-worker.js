@@ -9,6 +9,7 @@ import {
 } from "workbox-core"
 import {
   // NetworkFirst,
+  NetworkFirst,
   CacheFirst,
   StaleWhileRevalidate,
 } from "workbox-strategies"
@@ -22,7 +23,8 @@ setCacheNameDetails({
 })
 
 const currentCacheNames = {
-  "whole-site": "whole-site",
+  "home-page": "home-page",
+  "whole-site-assets": "whole-site-assets",
   "net-easy-p": "net-easy-p",
   "api-banner": "api-banner",
   "api-personalized-newsong": "api-personalized-newsong",
@@ -42,9 +44,16 @@ precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
 
 registerRoute(
-  new RegExp("/"),
+  ({ url }) => url.pathname === "/",
+  new NetworkFirst({
+    cacheName: currentCacheNames["home-page"],
+  }),
+)
+
+registerRoute(
+  ({ url }) => url.pathname !== "/",
   new StaleWhileRevalidate({
-    cacheName: currentCacheNames["whole-site"],
+    cacheName: currentCacheNames["whole-site-assets"],
   }),
 )
 
