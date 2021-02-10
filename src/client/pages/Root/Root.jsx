@@ -524,7 +524,8 @@ const PlayBar = memo(({ route }) => {
         }
       } else if (playMode === SINGLE_CYCLE && !isForcedNextOrPrev) {
         audioRef.current.currentTime = 0
-        audioRef.current.play()
+        const promise = audioRef.current.play()
+        if (promise) promise.catch(console.log)
         return
       } else if (playMode === SHUFFLE_PLAY) {
         toPlayIndex = Math.ceil(Math.random() * songIdList.length)
@@ -570,7 +571,8 @@ const PlayBar = memo(({ route }) => {
         if (error?.response?.status === 403) {
           audioRef.current.src = ` https://music.163.com/song/media/outer/url?id=${currentPlayId}.mp3`
           audioRef.current.currentTime = 0
-          audioRef.current.play()
+          const promise = audioRef.current.play()
+          if (promise) promise.catch(console.log)
         } else if (error || !track?.url) {
           setPlayState("stopped")
           storeDispatch(playBarPage.removeCur())
@@ -578,7 +580,8 @@ const PlayBar = memo(({ route }) => {
         } else {
           audioRef.current.src = track.url?.replace?.(/https?/, "https") ?? ""
           audioRef.current.currentTime = 0
-          audioRef.current.play()
+          const promise = audioRef.current.play()
+          if (promise) promise.catch(console.log)
         }
       } else {
         audioRef.current.src = ""

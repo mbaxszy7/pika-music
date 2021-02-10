@@ -51,9 +51,12 @@ registerRoute(
 )
 
 registerRoute(
-  ({ url }) => url.pathname !== "/",
+  ({ url }) => url.pathname !== "/" && !url.includes(".mp3"),
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["whole-site-assets"],
+  }),
+  new CacheableResponsePlugin({
+    statuses: [0, 200],
   }),
 )
 
