@@ -576,7 +576,7 @@ const PlayBar = memo(({ route }) => {
           storeDispatch(playBarPage.removeCur())
           onNextOrPrePlay(false, "next")
         } else {
-          audioRef.current.src = track.url
+          audioRef.current.src = track.url?.replace?.(/https?/, "https") ?? ""
           audioRef.current.currentTime = 0
           audioRef.current.play()
         }
