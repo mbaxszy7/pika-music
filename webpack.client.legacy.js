@@ -44,7 +44,7 @@ module.exports = {
       : `[name]-[contenthash]-legacy.js`,
     path: path.resolve(__dirname, "public"),
   },
-  devtool: isDEV ? "cheap-module-eval-source-map" : "nosources-source-map",
+  devtool: isDEV ? "eval-cheap-source-map" : "nosources-source-map",
   resolve: {
     ...webpackResolve,
     alias: webpackAlias,

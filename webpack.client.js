@@ -48,7 +48,7 @@ module.exports = (env, argv) => {
     devServer: {
       proxy: {
         "/api": {
-          target: "https://111.229.78.115",
+          target: "https://81.69.200.140",
           // 修改发往 target的host: "localhost:8010", referrer: "http://localhost:8010/"
           changeOrigin: true,
           secure: false,
@@ -60,7 +60,7 @@ module.exports = (env, argv) => {
       compress: true,
       contentBase: path.join(__dirname, "./public"),
     },
-    devtool: isDEV ? "cheap-module-eval-source-map" : "nosources-source-map",
+    devtool: isDEV ? "eval-cheap-source-map" : "nosources-source-map",
     resolve: {
       ...webpackResolve,
       alias: webpackAlias,
