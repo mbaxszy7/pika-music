@@ -2,6 +2,7 @@
 /* eslint-disable react/require-default-props */
 import React, { memo, useState, useEffect, useCallback, useRef } from "react"
 import styled from "styled-components"
+import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
 import pikaLazy from "../utils/lazyImage"
 
@@ -28,25 +29,27 @@ const StyledImage = styled.img`
 const MyImage = memo(({ url, styledCss, className }) => {
   const imgRef = useRef()
   const [isLoaded, setLoaded] = useState(false)
+  const device = useSelector(state => state.config)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
   const isPageMounted = useRef()
 
   useEffect(() => {
     let observer
+    const img = imgRef.current
     if (url) {
       if (isPageMounted.current) {
-        imgRef.current.setAttribute("data-loaded", false)
-        imgRef.current.setAttribute("data-settled", true)
-        imgRef.current.src = ""
+        img.setAttribute("data-loaded", false)
+        img.setAttribute("data-settled", true)
+        img.src = ""
       } else {
         isPageMounted.current = true
       }
 
-      const lazy = pikaLazy()
-      observer = lazy.lazyObserver(imgRef.current)
+      const lazy = pikaLazy({ imgRef: img, device })
+      observer = lazy.lazyObserver(img)
     }
     return () => observer?.disconnect?.()
-  }, [url])
+  }, [url, device])
 
   return (
     <StyledImage
@@ -58,7 +61,7 @@ const MyImage = memo(({ url, styledCss, className }) => {
       data-settled={isLoaded}
       alt=""
       onLoad={onImageLoaded}
-      loading="lazy"
+      // loading="lazy"
     />
   )
 })

@@ -11,7 +11,12 @@ const load = element => {
 const isLoaded = element => element.getAttribute("data-loaded") === "true"
 
 const pikaLazy = options => {
-  if ("loading" in HTMLImageElement.prototype) {
+  if (
+    "loading" in HTMLImageElement.prototype &&
+    // iphone safari 加loading=‘lazy’ 会崩溃
+    options.device?.ua?.broswer?.name === "Chrome"
+  ) {
+    options.imgRef.loading = "lazy"
     return {
       lazyObserver: imgRef => {
         load(imgRef)
@@ -32,7 +37,7 @@ const pikaLazy = options => {
         })
       },
       {
-        ...options,
+        // ...options,
         rootMargin: "0px",
         threshold: 0,
       },
@@ -40,18 +45,27 @@ const pikaLazy = options => {
   }
 
   return {
-    lazyObserver: () => {
-      const eles = document.querySelectorAll(".pika-lazy")
-      for (const ele of Array.from(eles)) {
-        if (observer) {
-          observer.observe(ele)
-          continue
-        }
-        if (isLoaded(ele)) continue
-
-        load(ele)
+    lazyObserver: imgRef => {
+      if (isLoaded(imgRef)) {
+        return null
       }
-      return observer
+      if (observer) {
+        observer.observe(imgRef)
+        return observer
+      }
+
+      load(imgRef)
+      return null
+      // const eles = document.querySelectorAll(".pika-lazy")
+      // for (const ele of Array.from(eles)) {
+      //   if (observer) {
+      //     observer.observe(ele)
+      //     continue
+      //   }
+      //   if (isLoaded(ele)) continue
+
+      //   load(ele)
+      // }
     },
   }
 }
