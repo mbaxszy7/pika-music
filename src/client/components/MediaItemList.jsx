@@ -252,11 +252,14 @@ const ItemImg = memo(({ type, imgUrl, renderTag }) => {
     margin-right: 16px;
     position: relative;
   `
+  const isPXImage = imgConfig.width.endsWith("px")
+  let size = 0
+  if (isPXImage) size = imgConfig.width.replace("px", "")
   return (
     <ItemImgWrapper css={extraCss}>
       {renderTag && renderTag()}
       <StyledMyImage
-        url={imgUrl}
+        url={isPXImage ? `${imgUrl}?param=${size}y${size}` : imgUrl}
         css={css`
           border-radius: ${imgConfig.borderRadius};
           position: absolute;

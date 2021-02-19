@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -53,7 +54,7 @@ const StyledMyImage = styled(MyImage)`
 
 const StyledCenterMyImage = styled(MyImage)`
   & {
-    width: 56% !important;
+    width: 76px !important;
     position: absolute;
     left: 50%;
     bottom: 0;
@@ -77,12 +78,11 @@ const PersonalizedSongsContainer = styled.div`
   `}
   .left_images {
     font-size: 0;
-    flex: 2;
     height: 100%;
     position: relative;
     img {
       border-radius: 5px;
-      width: 50%;
+      width: 67px;
     }
   }
   .title {
@@ -247,9 +247,17 @@ const Discover = memo(() => {
           <div className="left_images">
             {threePersonalizedSongs?.map((pic, index) =>
               index === 2 ? (
-                <StyledCenterMyImage key={index} url={pic} alt="" />
+                <StyledCenterMyImage
+                  key={index}
+                  url={pic ? `${pic}?param=67y67` : ""}
+                  alt=""
+                />
               ) : (
-                <StyledMyImage key={index} url={pic} alt="" />
+                <StyledMyImage
+                  key={index}
+                  url={pic ? `${pic}?param=76y76` : ""}
+                  alt=""
+                />
               ),
             )}
           </div>

@@ -1,4 +1,3 @@
-const path = require("path")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 const isDEV = process.env.NODE_ENV === "development"
@@ -68,7 +67,7 @@ exports.commonRules = () => {
           loader: "file-loader",
           options: {
             name: "[name]-[hash:6].[ext]",
-            publicPath: "/public/images",
+            publicPath: isDEV ? "/images" : "/public/images",
             outputPath: "images",
             emitFile: !isServerBuild,
           },
