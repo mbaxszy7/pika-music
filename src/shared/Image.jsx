@@ -38,16 +38,18 @@ const MyImage = memo(({ url, styledCss, className }) => {
   const isPageMounted = useRef()
 
   useLayoutEffect(() => {
-    if (isPageMounted.current) {
-      imgRef.current.setAttribute("data-loaded", false)
-      imgRef.current.setAttribute("data-settled", true)
-      imgRef.current.src = ""
-    } else {
-      isPageMounted.current = true
-    }
+    if (url) {
+      if (isPageMounted.current) {
+        imgRef.current.setAttribute("data-loaded", false)
+        imgRef.current.setAttribute("data-settled", true)
+        imgRef.current.src = ""
+      } else {
+        isPageMounted.current = true
+      }
 
-    const observer = pikaLazy()
-    observer.lazyObserver(imgRef.current)
+      const observer = pikaLazy()
+      observer.lazyObserver(imgRef.current)
+    }
   }, [url])
 
   return (
