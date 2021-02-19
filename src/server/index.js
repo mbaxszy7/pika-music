@@ -43,7 +43,7 @@ app.use(async (ctx, next) => {
   }
   await next()
 })
-app.use(mount("/images", serve("./public/images")))
+
 app.use(mount("/public", serve("./public")))
 app.use(uaParser)
 

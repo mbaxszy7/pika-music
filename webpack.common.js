@@ -68,7 +68,7 @@ exports.commonRules = () => {
           loader: "file-loader",
           options: {
             name: "[name]-[hash:6].[ext]",
-            publicPath: "/images",
+            publicPath: "/public/images",
             outputPath: "images",
             emitFile: !isServerBuild,
           },

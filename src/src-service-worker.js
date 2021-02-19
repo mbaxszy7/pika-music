@@ -24,7 +24,7 @@ setCacheNameDetails({
 
 const currentCacheNames = {
   "home-page": "home-page",
-  "whole-site-assets": "whole-site-assets",
+  // "whole-site-assets": "whole-site-assets",
   "net-easy-p": "net-easy-p",
   "api-banner": "api-banner",
   "api-personalized-newsong": "api-personalized-newsong",
@@ -50,15 +50,15 @@ registerRoute(
   }),
 )
 
-registerRoute(
-  ({ url }) => url.pathname !== "/" && !url.includes(".mp3"),
-  new StaleWhileRevalidate({
-    cacheName: currentCacheNames["whole-site-assets"],
-  }),
-  new CacheableResponsePlugin({
-    statuses: [0, 200],
-  }),
-)
+// registerRoute(
+//   ({ url }) => url.pathname !== "/" && !url.includes(".mp3"),
+//   new StaleWhileRevalidate({
+//     cacheName: currentCacheNames["whole-site-assets"],
+//   }),
+//   new CacheableResponsePlugin({
+//     statuses: [0, 200],
+//   }),
+// )
 
 self.addEventListener("activate", event => {
   event.waitUntil(
@@ -139,7 +139,7 @@ registerRoute(
 
 // 首页banner
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/banner\?type=2/,
+  /https?:\/\/81\.69\.200\.140\/api\/banner\?type=2/,
   new CacheFirst({
     cacheName: currentCacheNames["api-banner"],
     plugins: [
@@ -153,7 +153,7 @@ registerRoute(
 
 // 首页个性歌曲推荐
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/personalized\/newsong/,
+  /https?:\/\/81\.69\.200\.140\/api\/personalized\/newsong/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-personalized-newsong"],
     plugins: [
@@ -167,7 +167,7 @@ registerRoute(
 
 // 首页歌单
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/top\/playlist\?limit=8&order=hot/,
+  /https?:\/\/81\.69\.200\.140\/api\/top\/playlist\?limit=8&order=hot/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-playlist"],
     plugins: [
@@ -181,7 +181,7 @@ registerRoute(
 
 // 首页新歌
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/top\/song\?type=0/,
+  /https?:\/\/81\.69\.200\.140\/api\/top\/song\?type=0/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-songs"],
     plugins: [
@@ -195,7 +195,7 @@ registerRoute(
 
 // 首页专辑
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/album\/newest/,
+  /https?:\/\/81\.69\.200\.140\/api\/album\/newest/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-albums"],
     plugins: [
@@ -209,7 +209,7 @@ registerRoute(
 
 // 首页独家MV
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/personalized\/privatecontent/,
+  /https?:\/\/81\.69\.200\.140\/api\/personalized\/privatecontent/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-mvs"],
     plugins: [
@@ -223,7 +223,7 @@ registerRoute(
 
 // 检查音乐是否可播放
 registerRoute(
-  /https?:\/\/111\.229\.78\.115\/api\/check\/music/,
+  /https?:\/\/81\.69\.200\.140\/api\/check\/music/,
   new CacheFirst({
     cacheName: currentCacheNames["api-music-check"],
     plugins: [
