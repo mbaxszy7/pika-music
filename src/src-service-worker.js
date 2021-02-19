@@ -14,7 +14,7 @@ import {
   StaleWhileRevalidate,
 } from "workbox-strategies"
 import { ExpirationPlugin } from "workbox-expiration"
-import { CacheableResponsePlugin } from "workbox-cacheable-response"
+// import { CacheableResponsePlugin } from "workbox-cacheable-response"
 import { registerRoute } from "workbox-routing/registerRoute"
 
 // 预缓存设置
@@ -25,14 +25,14 @@ setCacheNameDetails({
 const currentCacheNames = {
   "home-page": "home-page",
   // "whole-site-assets": "whole-site-assets",
-  "net-easy-p": "net-easy-p",
+  // "net-easy-p": "net-easy-p",
   "api-banner": "api-banner",
   "api-personalized-newsong": "api-personalized-newsong",
   "api-playlist": "api-play-list",
   "api-songs": "api-songs",
   "api-albums": "api-albums",
   "api-mvs": "api-mvs",
-  "api-music-check": "api-music-check",
+  // "api-music-check": "api-music-check",
   [cacheNames.precache]: cacheNames.precache,
   [cacheNames.runtime]: cacheNames.runtime,
 }
@@ -118,24 +118,24 @@ self.addEventListener("activate", event => {
 // })
 
 // Images
-registerRoute(
-  /^https?:\/\/p[1-4]\.music\.126\.net/,
-  new StaleWhileRevalidate({
-    cacheName: currentCacheNames["net-easy-p"],
-    plugins: [
-      new CacheFirst({
-        // 要缓存的最大条目数。使用最少的条目将被删除，直到达到最大值。
-        maxEntries: 50,
-        maxAgeSeconds: 60 * 60 * 24 * 4,
-        // 如果超出了可用的存储配额，是否选择将此缓存用于自动删除。
-        purgeOnQuotaError: true,
-      }),
-      new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-    ],
-  }),
-)
+// registerRoute(
+//   /^https?:\/\/p[1-4]\.music\.126\.net/,
+//   new StaleWhileRevalidate({
+//     cacheName: currentCacheNames["net-easy-p"],
+//     plugins: [
+//       new CacheFirst({
+//         // 要缓存的最大条目数。使用最少的条目将被删除，直到达到最大值。
+//         maxEntries: 50,
+//         maxAgeSeconds: 60 * 60 * 24 * 4,
+//         // 如果超出了可用的存储配额，是否选择将此缓存用于自动删除。
+//         purgeOnQuotaError: true,
+//       }),
+//       new CacheableResponsePlugin({
+//         statuses: [0, 200],
+//       }),
+//     ],
+//   }),
+// )
 
 // 首页banner
 registerRoute(
@@ -222,18 +222,18 @@ registerRoute(
 )
 
 // 检查音乐是否可播放
-registerRoute(
-  /https?:\/\/81\.69\.200\.140\/api\/check\/music/,
-  new CacheFirst({
-    cacheName: currentCacheNames["api-music-check"],
-    plugins: [
-      new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24,
-        purgeOnQuotaError: true,
-      }),
-      new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-    ],
-  }),
-)
+// registerRoute(
+//   /https?:\/\/81\.69\.200\.140\/api\/check\/music/,
+//   new CacheFirst({
+//     cacheName: currentCacheNames["api-music-check"],
+//     plugins: [
+//       new ExpirationPlugin({
+//         maxAgeSeconds: 60 * 60 * 24,
+//         purgeOnQuotaError: true,
+//       }),
+//       new CacheableResponsePlugin({
+//         statuses: [0, 200],
+//       }),
+//     ],
+//   }),
+// )
