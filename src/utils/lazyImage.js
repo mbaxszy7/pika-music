@@ -51,6 +51,7 @@ const pikaLazy = options => {
 
         load(ele)
       }
+      return observer
     },
   }
 }

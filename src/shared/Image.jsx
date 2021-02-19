@@ -1,12 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/require-default-props */
-import React, {
-  memo,
-  useState,
-  useLayoutEffect,
-  useCallback,
-  useRef,
-} from "react"
+import React, { memo, useState, useEffect, useCallback, useRef } from "react"
 import styled from "styled-components"
 import PropTypes from "prop-types"
 import pikaLazy from "../utils/lazyImage"
@@ -37,7 +31,8 @@ const MyImage = memo(({ url, styledCss, className }) => {
   const onImageLoaded = useCallback(() => setLoaded(true), [])
   const isPageMounted = useRef()
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    let observer
     if (url) {
       if (isPageMounted.current) {
         imgRef.current.setAttribute("data-loaded", false)
@@ -47,9 +42,10 @@ const MyImage = memo(({ url, styledCss, className }) => {
         isPageMounted.current = true
       }
 
-      const observer = pikaLazy()
-      observer.lazyObserver(imgRef.current)
+      const lazy = pikaLazy()
+      observer = lazy.lazyObserver(imgRef.current)
     }
+    return () => observer?.disconnect?.()
   }, [url])
 
   return (
