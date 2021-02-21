@@ -446,7 +446,7 @@ const MediaItemList = memo(
               index={index}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...item}
-              key={index}
+              key={`${item.id}-${index}`}
               onItemClick={onItemClick}
               renderRightPart={rendItemRight}
             />

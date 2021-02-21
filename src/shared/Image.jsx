@@ -31,25 +31,16 @@ const MyImage = memo(({ url, styledCss, className }) => {
   const [isLoaded, setLoaded] = useState(false)
   const device = useSelector(state => state.config)
   const onImageLoaded = useCallback(() => setLoaded(true), [])
-  const isPageMounted = useRef()
+  const observerRef = useRef()
 
   useEffect(() => {
-    let observer
     const img = imgRef.current
     if (url) {
-      if (isPageMounted.current) {
-        img.setAttribute("data-loaded", false)
-        img.setAttribute("data-settled", true)
-        img.src = ""
-      } else {
-        isPageMounted.current = true
-      }
-
       const lazy = pikaLazy({ imgRef: img, device })
-      observer = lazy.lazyObserver(img)
+      observerRef.current = lazy.lazyObserver(img)
     }
-    return () => observer?.disconnect?.()
-  }, [url, device])
+    return () => observerRef.current?.disconnect?.()
+  }, [device, url])
 
   return (
     <StyledImage
