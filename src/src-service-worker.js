@@ -19,12 +19,12 @@ import { registerRoute } from "workbox-routing/registerRoute"
 
 // 预缓存设置
 setCacheNameDetails({
-  prefix: "pika",
+  prefix: "pika-v",
 })
 
 const currentCacheNames = {
   "home-page": "home-page",
-  // "whole-site-assets": "whole-site-assets",
+  scripts: "scripts",
   "net-easy-p": "net-easy-p",
   "api-banner": "api-banner",
   "api-personalized-newsong": "api-personalized-newsong",
@@ -42,6 +42,19 @@ clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
 cleanupOutdatedCaches()
+
+registerRoute(
+  ({ request }) => request.destination === "script",
+  new StaleWhileRevalidate({
+    cacheName: currentCacheNames.scripts,
+    plugins: [
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 2,
+        purgeOnQuotaError: false,
+      }),
+    ],
+  }),
+)
 
 registerRoute(
   ({ url }) => url.pathname === "/",
