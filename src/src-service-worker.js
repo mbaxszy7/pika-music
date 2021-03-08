@@ -133,7 +133,7 @@ self.addEventListener("activate", event => {
 // Images
 registerRoute(
   /^https?:\/\/p[1-4]\.music\.126\.net/,
-  new StaleWhileRevalidate({
+  new CacheFirst({
     cacheName: currentCacheNames["net-easy-p"],
     plugins: [
       new CacheFirst({
@@ -183,12 +183,6 @@ registerRoute(
   /https?:\/\/81\.69\.200\.140\/api\/top\/playlist\?limit=8&order=hot/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-playlist"],
-    plugins: [
-      new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24,
-        purgeOnQuotaError: true,
-      }),
-    ],
   }),
 )
 
