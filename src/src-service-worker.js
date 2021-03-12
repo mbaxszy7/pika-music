@@ -16,6 +16,7 @@ import {
 import { ExpirationPlugin } from "workbox-expiration"
 import { CacheableResponsePlugin } from "workbox-cacheable-response"
 import { registerRoute } from "workbox-routing/registerRoute"
+import { BroadcastUpdatePlugin } from "workbox-broadcast-update"
 
 // 预缓存设置
 setCacheNameDetails({
@@ -26,9 +27,9 @@ const currentCacheNames = {
   "home-page": "home-page",
   scripts: "scripts",
   "net-easy-p": "net-easy-p",
-  "api-banner": "api-banner",
+  "api-banner": "/api/banner?type=2",
   "api-personalized-newsong": "api-personalized-newsong",
-  "api-playlist": "api-play-list",
+  "api-playlist": "/api/top/playlist?limit=8&order=hot",
   "api-songs": "api-songs",
   "api-albums": "api-albums",
   "api-mvs": "api-mvs",
@@ -156,6 +157,7 @@ registerRoute(
   new CacheFirst({
     cacheName: currentCacheNames["api-banner"],
     plugins: [
+      new BroadcastUpdatePlugin(),
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24,
         purgeOnQuotaError: true,
@@ -183,6 +185,13 @@ registerRoute(
   /https?:\/\/81\.69\.200\.140\/api\/top\/playlist\?limit=8&order=hot/,
   new StaleWhileRevalidate({
     cacheName: currentCacheNames["api-playlist"],
+    plugins: [
+      new BroadcastUpdatePlugin(),
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24,
+        purgeOnQuotaError: true,
+      }),
+    ],
   }),
 )
 

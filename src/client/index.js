@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable import/extensions */
 import React from "react"
+import { mutate } from "swr"
 import ReactDOM from "react-dom"
 import "intersection-observer"
 import App from "./App.jsx"
@@ -26,6 +27,13 @@ const render = isDEV ? ReactDOM.render : ReactDOM.hydrate
 if (isDEV) {
   render(<App store={store} />, document.getElementById("root"))
 } else {
+  navigator.serviceWorker.addEventListener("message", async event => {
+    if (event.data.meta === "workbox-broadcast-update") {
+      const { cacheName } = event.data.payload
+      console.warn(cacheName)
+      mutate(cacheName)
+    }
+  })
   clientPreloadReady(routes).then(() => {
     render(<App store={store} />, document.getElementById("root"))
   })
