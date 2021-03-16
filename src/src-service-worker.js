@@ -159,7 +159,7 @@ registerRoute(
     plugins: [
       new BroadcastUpdatePlugin(),
       new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24,
+        maxAgeSeconds: 60 * 60 * 0.5,
         purgeOnQuotaError: true,
       }),
     ],
@@ -173,7 +173,7 @@ registerRoute(
     cacheName: currentCacheNames["api-personalized-newsong"],
     plugins: [
       new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24,
+        maxAgeSeconds: 60 * 60,
         purgeOnQuotaError: true,
       }),
     ],
@@ -188,7 +188,7 @@ registerRoute(
     plugins: [
       new BroadcastUpdatePlugin(),
       new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24,
+        maxAgeSeconds: 60 * 60 * 0.05,
         purgeOnQuotaError: true,
       }),
     ],
