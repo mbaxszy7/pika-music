@@ -2,7 +2,14 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { memo, useMemo, useCallback } from "react"
+import React, {
+  memo,
+  useMemo,
+  useCallback,
+  Suspense,
+  useEffect,
+  useState,
+} from "react"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
@@ -15,6 +22,13 @@ import { MyImage } from "../../../shared/Image"
 import MediaItemList, { MediaItemTitle } from "../../components/MediaItemList"
 import { useIsomorphicEffect } from "../../../utils/hooks"
 import mediaQury from "../../../shared/mediaQury.styled"
+import Spinner from "../../../shared/Spinner"
+
+const DiscoverAlbumsAndPrivate = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'discover-albums-private',  webpackPreload:true  */ "../../components/DiscoverAlbums&Private"
+  ),
+)
 
 const StyledMediaItemTitle = styled(MediaItemTitle)`
   color: ${props => props.theme.fg};
@@ -131,31 +145,6 @@ const NewSongsSection = styled.section`
   overflow: hidden;
 `
 
-const AlbumsSection = styled.section`
-  position: relative;
-  > ${StyledMediaItemTitle} {
-    position: sticky;
-    left: 0;
-    margin-top: 20px !important;
-    color: ${props => props.theme.dg};
-  }
-  min-width: 100%;
-  white-space: nowrap;
-  overflow-y: scroll;
-`
-
-const PrivateMVsSection = styled.section`
-  > ${MediaItemTitle} {
-    margin-top: 20px;
-    color: ${props => props.theme.dg};
-  }
-  min-width: 100%;
-  ${mediaQury.aboveTablet`
-    white-space: nowrap;
-    overflow-y: scroll;
-    `}
-`
-
 const SectionScroll = styled.div`
   display: flex;
   max-width: 100%;
@@ -166,6 +155,7 @@ const SectionScroll = styled.div`
 `
 
 const Discover = memo(() => {
+  const [isPageMounted, setPageMounted] = useState(false)
   const lastSearchWord = useSelector(state => state.discover.lastSearchWord)
 
   const initialBannerList = useSelector(state => state.discover.bannerList)
@@ -204,16 +194,6 @@ const Discover = memo(() => {
     discoverPage.requestNewSongs,
   )
 
-  const { data: albums } = useSWR(
-    "/api/album/newest",
-    discoverPage.requestAlbums,
-  )
-
-  const { data: mvs } = useSWR(
-    "/api/personalized/privatecontent",
-    discoverPage.requestPrivateMVs,
-  )
-
   const threePersonalizedSongs = useMemo(
     () => personalizedSongs?.slice?.(0, 3).map(song => song.picUrl),
     [personalizedSongs],
@@ -228,6 +208,10 @@ const Discover = memo(() => {
       ),
     )
   }, [personalizedSongs, storeDispatch])
+
+  useEffect(() => {
+    setPageMounted(true)
+  }, [])
 
   return (
     <DiscoverPage>
@@ -290,27 +274,11 @@ const Discover = memo(() => {
           list={newSongs?.slice?.(0, 5) ?? new Array(5).fill({ type: "song" })}
         />
       </NewSongsSection>
-
-      <AlbumsSection>
-        <StyledMediaItemTitle withoutMore id="album">
-          Album_专辑
-        </StyledMediaItemTitle>
-        <MediaItemList
-          title=""
-          list={
-            albums?.slice?.(0, 12) ?? new Array(4).fill({ type: "bigAlbum" })
-          }
-        />
-      </AlbumsSection>
-
-      <PrivateMVsSection>
-        <StyledMediaItemTitle id="mv" withoutMore>
-          MV_独家放送
-        </StyledMediaItemTitle>
-        <MediaItemList
-          list={mvs?.slice?.(0, 3) ?? new Array(3).fill({ type: "privateMV" })}
-        />
-      </PrivateMVsSection>
+      {isPageMounted && (
+        <Suspense fallback={<Spinner />}>
+          <DiscoverAlbumsAndPrivate />
+        </Suspense>
+      )}
     </DiscoverPage>
   )
 })
