@@ -260,7 +260,11 @@ const ItemImg = memo(({ type, imgUrl, renderTag }) => {
       {renderTag && renderTag()}
       <StyledMyImage
         url={
-          imgUrl ? (isPXImage ? `${imgUrl}?param=${size * 2}y${size * 2}` : imgUrl) : ""
+          imgUrl
+            ? isPXImage
+              ? `${imgUrl}?param=${size * 3}y${size * 3}`
+              : imgUrl
+            : ""
         }
         css={css`
           border-radius: ${imgConfig.borderRadius};
