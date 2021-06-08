@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { memo, useState, useMemo, Suspense } from "react"
+import React, { memo, useState, useMemo, Suspense, useEffect } from "react"
 import { getFID } from "web-vitals"
 import { renderRoutes } from "react-router-config"
 
@@ -8,9 +8,11 @@ const Root = React.lazy(() =>
 )
 const ProxyPlayBar = memo(props => {
   const [isShowRoot, setShowRoot] = useState()
-  getFID(() => {
-    setShowRoot(true)
-  })
+  useEffect(() => {
+    getFID(() => {
+      setShowRoot(true)
+    })
+  }, [])
   const routesRender = useMemo(() => renderRoutes(props.route.routes), [
     props.route.routes,
   ])

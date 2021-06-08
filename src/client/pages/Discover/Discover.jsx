@@ -214,9 +214,11 @@ const Discover = memo(() => {
     if (!isShowAlbumsAndPrivate) setShowAlbumsAndPrivate(true)
   }, [isShowAlbumsAndPrivate])
 
-  getLCP(() => {
-    showAlbumsAndPrivate()
-  }, false)
+  useEffect(() => {
+    getLCP(() => {
+      showAlbumsAndPrivate()
+    }, false)
+  }, [showAlbumsAndPrivate])
 
   useEffect(() => {
     const root = document.getElementById("root")
