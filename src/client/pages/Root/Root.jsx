@@ -465,7 +465,7 @@ const PlayPageBottomPart = memo(
   },
 )
 
-const PlayBar = memo(({ route }) => {
+const PlayBar = memo(() => {
   const audioRef = useRef()
   const [playState, setPlayState] = useState("")
   const [isShowPlayPage, setShowPlayPage] = useState(false)
@@ -645,8 +645,6 @@ const PlayBar = memo(({ route }) => {
       audioRef.current.pause()
     }
   }, [playState])
-
-  const routesRender = useMemo(() => renderRoutes(route.routes), [route.routes])
 
   const toPlayPage = useCallback(() => {
     setShowPlayPage(pre => !!(!pre && currentPlayId))
@@ -877,7 +875,6 @@ const PlayBar = memo(({ route }) => {
           )}
         </StyledPlayBar>
       )}
-      {routesRender}
     </>
   )
 })

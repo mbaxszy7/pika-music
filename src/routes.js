@@ -8,12 +8,12 @@ import {
   DiscoverMore,
   SearchMore,
 } from "./utils/lazyPage"
-import Root from "./client/pages/Root/Root"
+import LazyRoot from "./client/pages/Root/LazyRoot"
 import NotFound from "./shared/NotFound"
 
 const routes = [
   {
-    component: Root,
+    component: LazyRoot,
     routes: [
       {
         path: "/",

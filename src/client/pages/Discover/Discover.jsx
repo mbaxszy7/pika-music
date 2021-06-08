@@ -7,11 +7,12 @@ import React, {
   useMemo,
   useCallback,
   Suspense,
-  useEffect,
   useState,
+  useEffect,
 } from "react"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
+import { getLCP } from "web-vitals"
 import { useSelector, useDispatch } from "react-redux"
 import useSWR from "swr"
 import discoverPage from "./connectDiscoverReducer"
@@ -26,7 +27,7 @@ import Spinner from "../../../shared/Spinner"
 
 const DiscoverAlbumsAndPrivate = React.lazy(() =>
   import(
-    /* webpackChunkName: 'discover-albums-private',  webpackPreload:true  */ "../../components/DiscoverAlbums&Private"
+    /* webpackChunkName: 'discover-albums-private' */ "../../components/DiscoverAlbums&Private"
   ),
 )
 
@@ -155,7 +156,7 @@ const SectionScroll = styled.div`
 `
 
 const Discover = memo(() => {
-  const [isPageMounted, setPageMounted] = useState(false)
+  const [isShowAlbumsAndPrivate, setShowAlbumsAndPrivate] = useState(false)
   const lastSearchWord = useSelector(state => state.discover.lastSearchWord)
 
   const initialBannerList = useSelector(state => state.discover.bannerList)
@@ -209,9 +210,21 @@ const Discover = memo(() => {
     )
   }, [personalizedSongs, storeDispatch])
 
+  const showAlbumsAndPrivate = useCallback(() => {
+    if (!isShowAlbumsAndPrivate) setShowAlbumsAndPrivate(true)
+  }, [isShowAlbumsAndPrivate])
+
+  getLCP(() => {
+    showAlbumsAndPrivate()
+  }, false)
+
   useEffect(() => {
-    setPageMounted(true)
-  }, [])
+    const root = document.getElementById("root")
+    if (root) root.addEventListener("scroll", showAlbumsAndPrivate)
+    return () => {
+      if (root) root.removeEventListener("scroll", showAlbumsAndPrivate)
+    }
+  }, [showAlbumsAndPrivate])
 
   return (
     <DiscoverPage>
@@ -274,7 +287,7 @@ const Discover = memo(() => {
           list={newSongs?.slice?.(0, 5) ?? new Array(5).fill({ type: "song" })}
         />
       </NewSongsSection>
-      {isPageMounted && (
+      {isShowAlbumsAndPrivate && (
         <Suspense fallback={<Spinner />}>
           <DiscoverAlbumsAndPrivate />
         </Suspense>

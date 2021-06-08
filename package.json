@@ -126,6 +126,7 @@
     "swr": "^0.1.18",
     "terser-webpack-plugin": "^2.3.8",
     "ua-device": "^0.1.10",
+    "web-vitals": "^2.0.1",
     "webpack": "^5.25.0",
     "webpack-node-externals": "^1.7.2",
     "webpack-pwa-manifest": "^4.3.0",
