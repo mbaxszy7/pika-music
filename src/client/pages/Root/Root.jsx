@@ -14,7 +14,7 @@ import React, {
 } from "react"
 import useSWR from "swr"
 import PropTypes from "prop-types"
-import { renderRoutes } from "react-router-config"
+
 import styled from "styled-components"
 import { useSelector, useDispatch } from "react-redux"
 import playBarPage from "./connectPlayBarReducer"
@@ -289,7 +289,6 @@ const PlayerStopIcon = styled.div`
     border-radius: 2px;
   }
 `
-
 const StyledPlayBar = styled.div`
   width: 126px;
   height: 40px;

@@ -1,6 +1,14 @@
 /* eslint-disable react/prop-types */
-import React, { memo, useState, useMemo, Suspense, useEffect } from "react"
+import React, {
+  memo,
+  useMemo,
+  Suspense,
+  useState,
+  useEffect,
+  useCallback,
+} from "react"
 import { getFID } from "web-vitals"
+import { useSelector } from "react-redux"
 import { renderRoutes } from "react-router-config"
 
 const Root = React.lazy(() =>
@@ -8,11 +16,21 @@ const Root = React.lazy(() =>
 )
 const ProxyPlayBar = memo(props => {
   const [isShowRoot, setShowRoot] = useState()
+  const device = useSelector(state => state.config)
+  const showPlayBar = useCallback(() => {
+    if (!isShowRoot) setShowRoot(true)
+  }, [isShowRoot])
   useEffect(() => {
-    getFID(() => {
-      setShowRoot(true)
-    })
-  }, [])
+    if (device?.ua?.broswer?.name === "Chrome")
+      getFID(() => {
+        showPlayBar()
+      })
+    else {
+      window.onload = () => {
+        showPlayBar()
+      }
+    }
+  }, [device, showPlayBar])
   const routesRender = useMemo(() => renderRoutes(props.route.routes), [
     props.route.routes,
   ])
@@ -25,6 +43,7 @@ const ProxyPlayBar = memo(props => {
           <Root {...props} />
         </Suspense>
       )}
+
       {routesRender}
     </>
   )
