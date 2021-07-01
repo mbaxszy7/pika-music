@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
       client: path.resolve(__dirname, "./src/client/index.js"),
     },
     output: {
-      publicPath: isDEV ? "/" : "/public/",
+      publicPath: isDEV ? "/" : "/projects/music/",
       filename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       chunkFilename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       path: path.resolve(__dirname, "public"),

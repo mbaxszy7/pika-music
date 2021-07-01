@@ -44,7 +44,7 @@ app.use(async (ctx, next) => {
   await next()
 })
 
-app.use(mount("/public", serve("./public")))
+app.use(mount("/projects/music", serve("./public")))
 app.use(uaParser)
 
 app.use(async ctx => {
