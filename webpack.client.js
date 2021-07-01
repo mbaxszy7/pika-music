@@ -115,12 +115,12 @@ module.exports = (env, argv) => {
         short_name: "Pika",
         description: "A PWA Muisc Web Site",
         display: "standalone",
-        start_url: "/",
+        start_url: "/projects/music",
         background_color: "#ffffff",
         theme_color: "#FEDD27",
         inject: true,
         ios: true,
-        scope: "/",
+        scope: "/projects/music",
         icons: [
           {
             src: path.resolve(__dirname, "./src/assets/pika_tail_192x192.png"),
