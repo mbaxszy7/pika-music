@@ -77,7 +77,7 @@ const App = ({ store, isServer, staticContext, location, ssrRoutes }) => {
       {renderRoutes(ssrRoutes)}
     </StaticRouter>
   ) : (
-    <BrowserRouter>
+    <BrowserRouter basename="/projects/music">
       <ClientRouters />
     </BrowserRouter>
   )
