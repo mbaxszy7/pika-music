@@ -39,7 +39,7 @@ app.use(async (ctx, next) => {
 app.use(logger())
 app.use(async (ctx, next) => {
   if (ctx.path.includes("service-worker.js")) {
-    ctx.set({ "Service-Worker-Allowed": "/" })
+    ctx.set({ "Service-Worker-Allowed": "/projects/music/" })
   }
   await next()
 })
