@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
       client: path.resolve(__dirname, "./src/client/index.js"),
     },
     output: {
-      publicPath: isDEV ? "/" : "/projects/music/",
+      publicPath: isDEV ? "/" : "/public/",
       filename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       chunkFilename: isDEV ? "[name]-[hash].js" : `[name]-[contenthash].js`,
       path: path.resolve(__dirname, "public"),
@@ -115,12 +115,12 @@ module.exports = (env, argv) => {
         short_name: "Pika",
         description: "A PWA Muisc Web Site",
         display: "standalone",
-        start_url: "/projects/music",
+        start_url: "/",
         background_color: "#ffffff",
         theme_color: "#FEDD27",
         inject: true,
         ios: true,
-        scope: "/projects/music",
+        scope: "",
         icons: [
           {
             src: path.resolve(__dirname, "./src/assets/pika_tail_192x192.png"),

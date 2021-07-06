@@ -2,7 +2,7 @@
 
 [github 地址](https://github.com/mbaxszy7/pika-music)
 
-[项目网址](https://111.229.9.30/projects/music)
+
 
 pika-music api 服务器参考 Binaryify 的 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 

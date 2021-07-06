@@ -34,7 +34,7 @@ module.exports = {
     client: path.resolve(__dirname, "./src/client/index.js"),
   },
   output: {
-    publicPath: isDEV ? "/" : "/projects/music/",
+    publicPath: isDEV ? "/" : "/public/",
     // filename: `application-[${isDEV ? "chunkhash" : "contenthash"}].js`,
     filename: isDEV
       ? "[name]-[hash]-legacy.js"

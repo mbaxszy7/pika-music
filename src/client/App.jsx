@@ -77,13 +77,14 @@ const App = ({ store, isServer, staticContext, location, ssrRoutes }) => {
       {renderRoutes(ssrRoutes)}
     </StaticRouter>
   ) : (
-    <BrowserRouter basename="/projects/music">
+    <BrowserRouter>
       <ClientRouters />
     </BrowserRouter>
   )
 
   return (
     <>
+      acka
       <AppCss />
       <AppTheme>
         <Provider store={store}>
