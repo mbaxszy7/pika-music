@@ -1,3 +1,5 @@
+# !!本项目已经有使用React 18 SSR + TS的重构项目，请移步👉[music-motion-x](https://github.com/mbaxszy7/music-motion-x), 
+
 # 基于 React SSR 实现的仿 MOO 音乐风格的音乐网站
 
 [github 地址](https://github.com/mbaxszy7/pika-music)
